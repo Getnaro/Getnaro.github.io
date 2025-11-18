@@ -1,0 +1,179 @@
+<div class="container">
+       <div class="list-one">
+         <div class="content-one">
+            <img src="images/gigabyte-logo.png" alt="">
+           <span class="tet">
+             <h5>GIGABYTE Driver</h5>
+            <a href="http://" target="_blank" rel="noopener noreferrer">DOWNLOAD</a>
+           </span>
+        </div>
+        <div class="content-one">
+            <img src="images/AMD-logo.png" alt="">
+           <span class="tet">
+             <h5>AMD Driver</h5>
+            <a href="https://drivers.amd.com/drivers/installer/25.20/whql/amd-software-adrenalin-edition-25.10.2-minimalsetup-251027_web.exe" target="_blank" rel="noopener noreferrer">DOWNLOAD</a>
+           </span>
+        </div>
+        <div class="content-one">
+            <img src="images/amdradeon-logo.png" alt="">
+           <span class="tet">
+             <h5>Radeon Driver</h5>
+            <a href="" target="_blank" rel="noopener noreferrer">DOWNLOAD</a>
+           </span>
+        </div>
+        <div class="content-one">
+            <img src="images/gigabyte-logo.png" alt="">
+           <span class="tet">
+             <h5>GIGABYTE Driver</h5>
+            <a href="http://" target="_blank" rel="noopener noreferrer">DOWNLOAD</a>
+           </span>
+        </div>
+        <div class="content-one">
+            <img src="images/gigabyte-logo.png" alt="">
+           <span class="tet">
+             <h5>GIGABYTE Driver</h5>
+            <a href="http://" target="_blank" rel="noopener noreferrer">DOWNLOAD</a>
+           </span>
+        </div>
+        <div class="content-one">
+            <img src="images/amdradeon-logo.png" alt="">
+           <span class="tet">
+             <h5>Radeon Driver</h5>
+            <a href="" target="_blank" rel="noopener noreferrer">DOWNLOAD</a>
+           </span>
+        </div>
+        <div class="content-one">
+            <img src="images/gigabyte-logo.png" alt="">
+           <span class="tet">
+             <h5>GIGABYTE Driver</h5>
+            <a href="http://" target="_blank" rel="noopener noreferrer">DOWNLOAD</a>
+           </span>
+        </div>
+        <div class="content-one">
+            <img src="images/gigabyte-logo.png" alt="">
+           <span class="tet">
+             <h5>GIGABYTE Driver</h5>
+            <a href="http://" target="_blank" rel="noopener noreferrer">DOWNLOAD</a>
+           </span>
+        </div>
+       </div>
+
+       <div class="list-two">
+         <div class="content-one">
+            <img src="images/gigabyte-logo.png" alt="">
+           <span class="tet">
+             <h5>GIGABYTE Driver</h5>
+            <a href="http://" target="_blank" rel="noopener noreferrer">DOWNLOAD</a>
+           </span>
+        </div>
+        <div class="content-one">
+            <img src="images/AMD-logo.png" alt="">
+           <span class="tet">
+             <h5>AMD Driver</h5>
+            <a href="https://drivers.amd.com/drivers/installer/25.20/whql/amd-software-adrenalin-edition-25.10.2-minimalsetup-251027_web.exe" target="_blank" rel="noopener noreferrer">DOWNLOAD</a>
+           </span>
+        </div>
+        <div class="content-one">
+            <img src="images/amdradeon-logo.png" alt="">
+           <span class="tet">
+             <h5>Radeon Driver</h5>
+            <a href="" target="_blank" rel="noopener noreferrer">DOWNLOAD</a>
+           </span>
+        </div>
+        <div class="content-one">
+            <img src="images/gigabyte-logo.png" alt="">
+           <span class="tet">
+             <h5>GIGABYTE Driver</h5>
+            <a href="http://" target="_blank" rel="noopener noreferrer">DOWNLOAD</a>
+           </span>
+        </div>
+        <div class="content-one">
+            <img src="images/gigabyte-logo.png" alt="">
+           <span class="tet">
+             <h5>GIGABYTE Driver</h5>
+            <a href="http://" target="_blank" rel="noopener noreferrer">DOWNLOAD</a>
+           </span>
+        </div>
+        <div class="content-one">
+            <img src="images/amdradeon-logo.png" alt="">
+           <span class="tet">
+             <h5>Radeon Driver</h5>
+            <a href="" target="_blank" rel="noopener noreferrer">DOWNLOAD</a>
+           </span>
+        </div>
+        <div class="content-one">
+            <img src="images/gigabyte-logo.png" alt="">
+           <span class="tet">
+             <h5>GIGABYTE Driver</h5>
+            <a href="http://" target="_blank" rel="noopener noreferrer">DOWNLOAD</a>
+           </span>
+        </div>
+        <div class="content-one">
+            <img src="images/gigabyte-logo.png" alt="">
+           <span class="tet">
+             <h5>GIGABYTE Driver</h5>
+            <a href="http://" target="_blank" rel="noopener noreferrer">DOWNLOAD</a>
+           </span>
+        </div>
+       </div>
+        
+       <div class="list-three">
+         <div class="content-one">
+            <img src="images/gigabyte-logo.png" alt="">
+           <span class="tet">
+             <h5>GIGABYTE Driver</h5>
+            <a href="http://" target="_blank" rel="noopener noreferrer">DOWNLOAD</a>
+           </span>
+        </div>
+        <div class="content-one">
+            <img src="images/AMD-logo.png" alt="">
+           <span class="tet">
+             <h5>AMD Driver</h5>
+            <a href="https://drivers.amd.com/drivers/installer/25.20/whql/amd-software-adrenalin-edition-25.10.2-minimalsetup-251027_web.exe" target="_blank" rel="noopener noreferrer">DOWNLOAD</a>
+           </span>
+        </div>
+        <div class="content-one">
+            <img src="images/amdradeon-logo.png" alt="">
+           <span class="tet">
+             <h5>Radeon Driver</h5>
+            <a href="" target="_blank" rel="noopener noreferrer">DOWNLOAD</a>
+           </span>
+        </div>
+        <div class="content-one">
+            <img src="images/gigabyte-logo.png" alt="">
+           <span class="tet">
+             <h5>GIGABYTE Driver</h5>
+            <a href="http://" target="_blank" rel="noopener noreferrer">DOWNLOAD</a>
+           </span>
+        </div>
+        <div class="content-one">
+            <img src="images/gigabyte-logo.png" alt="">
+           <span class="tet">
+             <h5>GIGABYTE Driver</h5>
+            <a href="http://" target="_blank" rel="noopener noreferrer">DOWNLOAD</a>
+           </span>
+        </div>
+        <div class="content-one">
+            <img src="images/amdradeon-logo.png" alt="">
+           <span class="tet">
+             <h5>Radeon Driver</h5>
+            <a href="" target="_blank" rel="noopener noreferrer">DOWNLOAD</a>
+           </span>
+        </div>
+        <div class="content-one">
+            <img src="images/gigabyte-logo.png" alt="">
+           <span class="tet">
+             <h5>GIGABYTE Driver</h5>
+            <a href="http://" target="_blank" rel="noopener noreferrer">DOWNLOAD</a>
+           </span>
+        </div>
+        <div class="content-one">
+            <img src="images/gigabyte-logo.png" alt="">
+           <span class="tet">
+             <h5>GIGABYTE Driver</h5>
+            <a href="http://" target="_blank" rel="noopener noreferrer">DOWNLOAD</a>
+           </span>
+        </div>
+       </div>
+        
+    </div>
