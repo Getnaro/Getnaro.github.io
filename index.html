@@ -4,24 +4,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Getnaro Online</title>
-    <link rel="stylesheet" href="header.css">
+    <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="chat-full.css">
-
+    <title>Getnaro Online</title>
     <!-- FONTS & ICONS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-
     <!-- SEO + META -->
     <meta name="title" content="Getnaro — Free Software, Drivers & Tools Download Hub">
     <meta name="description"
         content="Getnaro is your all-in-one download hub for Windows software, drivers, tools, utilities and essential apps. Fast, safe and direct downloads with no ads or redirects. Updated daily.">
-
     <meta name="keywords"
         content="Getnaro, software download, drivers download, free pc tools, windows apps download, downloader website, pc utilities, direct download hub">
     <meta name="author" content="Getnaro Team">
     <meta name="robots" content="index, follow">
     <link rel="canonical" href="https://getnaro.com/">
-
     <!-- SOCIAL -->
     <meta property="og:type" content="website">
     <meta property="og:title" content="Getnaro — Free Software, Drivers & Tools Download Hub">
@@ -29,359 +25,49 @@
         content="Download software, drivers, utilities and PC tools safely from Getnaro. Direct downloads without ads or redirects.">
     <meta property="og:image" content="https://getnaro.com/assets/getnaro-banner.jpg">
     <meta property="og:url" content="https://getnaro.com/">
-
     <meta name="twitter:card" content="summary_large_image">
-
     <!-- FAVICON -->
     <link rel="icon" type="image/x-icon" href="Assests/Favicon.png">
-    <style>
-
-/* ----------------------- CAROUSEL ------------------------ */
-
-.gn-carousel {
-    width: 95vw;
-    max-width: 100vw;
-    height: 850px;
-    margin: 130px auto 50px auto;
-    position: relative;
-    overflow: hidden;
-    border-radius: 15px;
-    background: #100909;
-}
-
-.gn-carousel-track {
-    display: flex;
-    height: 100%;
-    transition: transform 1s ease;
-}
-
-.gn-slide {
-    flex: 0 0 100%;
-    height: 100%;
-    position: relative;
-}
-
-.gn-slide img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    object-position: center -80px;
-    border: none;
-    outline: none;
-}
-/* slide overlay content */
-.slide-content {
-    position: absolute;
-    width: 300px;
-    height: 200px;
-    right: 0;
-    border-radius: 50PX 0PX 0PX 50PX;
-    background-color: #141414;
-    bottom: 15%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    pointer-events: auto;
-}
-
-.slide-content h5 {
-    font-size: 30px;
-    margin-bottom: 20px;
-}
-
-.slide-content a {
-    text-decoration: none;
-    background-color: #9F00FF;
-    padding: 15px;
-    width: 80%;
-    margin-left: 5PX;
-    text-align: center;
-    border-radius: 20px;
-    transition: 0.4s;
-}
-
-.slide-content a:hover {
-    box-shadow: 1px 1px 15px #9F00FF;
-}
-
-/* navigation buttons */
-.gn-prev, .gn-next {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    background: #9F00FF;
-    border: none;
-    padding: 12px 16px;
-    font-size: 28px;
-    color: #fff;
-    cursor: pointer;
-    border-radius: 10px;
-    box-shadow: 0 0 15px #9F00FF;
-    z-index: 10;
-}
-
-.gn-prev { left: 18px; }
-.gn-next { right: 18px; }
-
-.gn-prev:hover, .gn-next:hover {
-    background: #b82bff;
-}
-
-/* ----------------------- DOWNLOAD GRID ------------------------ */
-
-.container {
-    width: 95%;
-    margin: 0 auto 100px auto;
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-    gap: 40px;
-    gap: 60px;
-    padding-top: 40px;
-}
-.container.filtered {
-    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-    justify-content: center;
-}
-.list-one, .list-two, .list-three, .list-four {
-    display: flex;
-    flex-direction: column;
-    gap: 40px;
-}
-
-/* item cards */
-.content-one {
-    width: 100%;
-    height: 150px;
-    background-color: aliceblue;
-    border-radius: 5px;
-    position: relative;
-    transition: 0.4s;
-    display: flex;
-    align-items: center;
-       padding-left: 160px;
-    padding-right: 20px;
-}
-
-.content-one:hover {
-    transform: translateY(-5px);
-    box-shadow: 1px 1px 15px #9F00FF;
-}
-
-/* item image */
-.content-one img {
-    height: 120px;
-    width: 120px;
-    object-fit: contain;
-    position: absolute;
-    left: 20px;
-    top: 0;
-    bottom: 0;
-    margin: auto 0;
-}
-
-/* text + download button */
-.content-one .tet {
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    margin: auto;
-}
-
-.content-one .tet h5 {
-    color: black;
-    font-size: 22px;
-    margin: 0;
-    margin-top: 25px;
-}
-
-.content-one .tet a {
-    text-align: center;
-    border: 1px solid #9F00FF;
-    color: black;
-    height: 50px;
-    width: 200px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    border-radius: 10px;
-    text-decoration: none;
-    position: absolute;
-    bottom: 15px;
-    padding: 10px;
-    transition: 0.4s;
-
-}
-.content-one {
-    min-width: 350px;
-}
-.content-one .tet a:hover {
-    background-color: #9F00FF;
-    color: white;
-    box-shadow: 1px 1px 15px #9F00FF;
-}
-
-/* ----------------------- RESPONSIVE ------------------------ */
-
-@media (max-width: 1300px) {
-    .container {
-        grid-template-columns: repeat(2, 1fr);
-    }
-}
-
-@media (max-width: 800px) {
-    .container {
-        grid-template-columns: 1fr;
-    }
-    .content-one {
-        width: 90%;
-        position: relative;
-
-        left: 0;
-        right: 0;
-        margin: auto;
-    }
-
-    .heading ul, h4 { display: none; 
-    
-    
-
-    }
-    .logo{
-        left: 150px;
-    }
-}
-
-/* ----------------------- ANIMATIONS ------------------------ */
-
-@keyframes scale-in-ver-top {
-    0% {
-        transform: scaleY(0);
-        transform-origin: 100% 0%;
-        opacity: 1;
-    }
-    100% {
-        transform: scaleY(1);
-        transform-origin: 100% 0%;
-        opacity: 1;
-    }
-}
-/*------POP UP Message*/
-.popup {
-    position: fixed ;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.76);
-    backdrop-filter: blur(10px);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 9999;
-}
-
-.popup-box {
-
-    width: 50%;
-    height: 450px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-    border-radius: 20px;
-    text-align: center;
-    box-shadow: 0 0 20px #9F00FF;
-
-    ul{
-        margin-top: 0;
-        position: relative;
-        top: -25px;
-
-    }
-    li{
-        text-align: start;
-        letter-spacing: 1px;
-    }
-}
-.patchy{
-    font-size: 25px;
-    margin-top: 0;
-}
-.popup-box h3 {
-    margin: 0;
-    font-size: 26px;
-    font-weight: bolder;
-    
-}
-
-.popup-box p {
-    margin: 10px 0 20px;
-}
-
-.popup-box button {
-    padding: 10px 25px;
-    border: none;
-    background: #9F00FF;
-    border-radius: 8px;
-    cursor: pointer;
-    color: white;
-    width: 150px;
-    font-size: 18px;
-    transition: 0.3s;
-}
-
-.popup-box button:hover {
-    box-shadow: 0 0 15px #9F00FF;
-    
-}
-/* TABS AREA */
-.tabs {
-    width: 95%;
-    margin: 50px auto 20px auto;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 15px;
-    justify-content: center;
-}
-
-.tab {
-    background: #1e1e1e;
-    padding: 12px 25px;
-    border: 2px solid #9F00FF;
-    color: #fff;
-    cursor: pointer;
-    border-radius: 12px;
-    font-size: 16px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    transition: 0.3s;
-}
-
-.tab i {
-    font-size: 18px;
-}
-
-.tab:hover {
-    background: #9F00FF33;
-    box-shadow: 0 0 10px #9F00FF;
-}
-
-.tab.active {
-    background: #9F00FF;
-    box-shadow: 0 0 20px #9F00FF;
-}
-/*Footer*/
-.page-wrapper {
-    min-height: 100%;
-    display: flex;
-    flex-direction: column;
-}
-
-    </style>
 </head>
-
 <body>
+    <canvas id="gn-particles"></canvas>
+    <!-- ------------------ HEADER ------------------ -->
+<div class="heading">
+    <a href="index.html"><img src="Assests/logo-getnaro-nobg.png" class="logo"></a>
+    <h4>Getnaro</h4>
+    <ul>
+        <li><a href="index.html" style="background-color:#9F00FF; 
+        padding: 10px ; 
+        border-radius: 10px;"
+        >HOME</a></li>
+        <li><a href="notfound.html">DOWNLOADS</a></li>
+        <li><a href="notfound.html">SPECIALS</a></li>
+        <li><a href="about.html">ABOUT US</a></li>
+        <li><a href="faq.html">FAQ</a></li>
+    </ul>
+<button id="theme-toggle" class="theme-toggle">
+    <i id="theme-icon" class="fa-solid fa-moon"></i>
+</button>
+<div id="gn-search-btn" class="gn-search-btn">
+    <i class="fa-solid fa-magnifying-glass"></i>
+</div>
+    <a class="dl"
+        href="https://files.zohoexternal.in/public/workdrive-external/download/e8gn0d5ec3fd3767d45669a45145dcd3e8fcb">
+        <i class="fa-solid fa-download"></i> DOWNLOAD APP
+    </a>
+</div>
+<!-- MODERN FULLSCREEN SEARCH -->
+<div id="gn-search-overlay" class="gn-search-overlay">
+    <div class="gn-search-wrapper">
+        <i class="fa-solid fa-magnifying-glass search-icon"></i>
+        <input type="text" id="gn-search-input" placeholder="Search apps, tools, drivers…" autocomplete="off">
+        <button id="gn-search-close" class="close-btn">
+            <i class="fa-solid fa-xmark"></i>
+        </button>
+    </div>
+
+    <div id="gn-search-results" class="gn-search-results"></div>
+</div>
     <div id="popup" class="popup">
     <div class="popup-box">
         <h3>Welcome to Getnaro!</h3>
@@ -410,25 +96,7 @@
         <button id="closePopup">OK</button>
     </div>
 </div>
-<!-- ------------------ HEADER ------------------ -->
-<div class="heading">
-    <a href="index.html"><img src="Assests/logo-getnaro-nobg.png" class="logo"></a>
 
-    <h4>Getnaro</h4>
-
-    <ul>
-        <li><a href="index.html">HOME</a></li>
-        <li><a href="notfound.html">DOWNLOADS</a></li>
-        <li><a href="notfound.html">SPECIALS</a></li>
-        <li><a href="about.html">ABOUT US</a></li>
-        <li><a href="faq.html">FAQ</a></li>
-    </ul>
-
-    <a class="dl"
-        href="https://files.zohoexternal.in/public/workdrive-external/download/e8gn0d5ec3fd3767d45669a45145dcd3e8fcb">
-        <i class="fa-solid fa-download"></i> DOWNLOAD APP
-    </a>
-</div>
 
 <!-- ------------------ CAROUSEL ------------------ -->
 <div class="gn-carousel" aria-roledescription="carousel">
@@ -472,6 +140,33 @@
     <button class="gn-prev">&#10094;</button>
     <button class="gn-next">&#10095;</button>
 
+</div>
+<!-- ================= STATS BAR ================= -->
+<div class="stats-bar">
+    <div class="stat-box">
+        <h2 id="stat-total-apps">0</h2>
+        <p>Total Apps</p>
+    </div>
+
+    <div class="stat-box">
+        <h2 id="stat-updated">0</h2>
+        <p>Apps Up-to-date</p>
+    </div>
+
+    <div class="stat-box">
+        <h2 id="stat-update-needed">0</h2>
+        <p>Apps To Be Updated</p>
+    </div>
+
+    <div class="stat-box">
+        <h2 id="stat-downloads">0</h2>
+        <p>Total Downloads</p>
+    </div>
+
+    <div class="stat-box">
+        <h2 id="stat-viewing">0</h2>
+        <p>Live Visitors</p>
+    </div>
 </div>
 <!-- ================= CATEGORY TABS ================= -->
 <div class="tabs">
@@ -520,7 +215,7 @@
         <img src="images/gigabyte-logo.png">
         <span class="tet">
             <h5>GIGABYTE Driver</h5>
-            <a href=""https://www.gigabyte.com/Support/Consumer/Download">DOWNLOAD</a>
+            <a href="https://www.gigabyte.com/Support/Consumer/Download">DOWNLOAD</a>
         </span>
     </div>
 
@@ -784,8 +479,47 @@
             <a href="https://laptop-updates.brave.com/latest/winx64">DOWNLOAD</a>
         </span>
     </div>
+    <div class="content-one" data-category="opensource, Productivity">
+        <img src="images/github.png">
+        <span class="tet">
+            <h5>Github PC</h5>
+            <a href="https://desktop.githubusercontent.com/releases/3.5.4-9dfb8d8d/GitHubDesktopSetup-x64.exe">DOWNLOAD</a>
+        </span>
+    </div>
 
 </div>
+<!-- ================= FEATURE HIGHLIGHTS ================= -->
+<section class="gn-features">
+    <h2 class="gn-features-title">Why Choose Getnaro?</h2>
+
+    <div class="gn-features-grid">
+
+        <div class="gn-feature-box">
+            <i class="fa-solid fa-bolt"></i>
+            <h3>Direct Fast Downloads</h3>
+            <p>No ads, no redirects — just clean, safe, instant downloads.</p>
+        </div>
+
+        <div class="gn-feature-box">
+            <i class="fa-solid fa-shield-halved"></i>
+            <h3>100% Safe & Verified</h3>
+            <p>Every file is scanned and trusted to keep your PC secure.</p>
+        </div>
+
+        <div class="gn-feature-box">
+            <i class="fa-solid fa-cloud-arrow-down"></i>
+            <h3>Always Up-to-Date</h3>
+            <p>We track new releases and update apps daily.</p>
+        </div>
+
+        <div class="gn-feature-box">
+            <i class="fa-solid fa-laptop"></i>
+            <h3>Wide App Collection</h3>
+            <p>Drivers, Tools, Office, Social, Gaming… everything in one place.</p>
+        </div>
+
+    </div>
+</section>
 
 <footer class="footer">
     <div class="footer-container">
@@ -815,12 +549,51 @@
         </div>
 
     </div>
-
     <div class="footer-bottom">
         © 2025 Getnaro — Developed by Azad Bharatiyan • Hosted on GitHub • Domain by BigRock
     </div>
 </footer>
-        <script>
+        <div id="gn-chat-launcher"><i class="fa-regular fa-comment"></i><h4>Chat Now</h4></div>
+<!-- Fullscreen Chat -->
+<div id="gn-chat-fullscreen">
+    <div class="gn-chat-header">
+        <span class="Getnaro-B" style="color: #e3f2fd;">Getnaro Assistant</span>
+
+        <div class="gn-controls-header">
+            <button class="gn-speak-toggle" id="gn-speak-toggle">🔊</button>
+            <button id="gn-chat-close">✕</button>
+        </div>
+    </div>
+
+    <div id="gn-chat-messages"></div>
+
+    <div class="gn-chat-input-area">
+        <button id="gn-voice-btn">🎤</button>
+        <input id="gn-input" placeholder="Ask me anything...">
+        <button id="gn-send">➤</button>
+    </div>
+</div>
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-app.js";
+  import { getDatabase, ref, onValue, update } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-database.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyAJrJnSQl7X1YJHL0fHZkknmoAoioIGuEo",
+    authDomain: "getnaroapp.firebaseapp.com",
+    databaseURL: "https://getnaroapp-default-rtdb.asia-southeast1.firebasedatabase.app",
+    projectId: "getnaroapp",
+    storageBucket: "getnaroapp.firebasestorage.app",
+    messagingSenderId: "304744138530",
+    appId: "1:304744138530:web:8166344d61cdfa127ec77b",
+    measurementId: "G-FLBX24J98C"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getDatabase(app);
+
+</script>
+
+ <script>
         document.addEventListener('DOMContentLoaded', () => {
 
             const track = document.querySelector('.gn-carousel-track');
@@ -907,33 +680,260 @@
         });
 
         </script>
-        
+        <script type="module">
 
-        <div id="gn-chat-launcher"><i class="fa-regular fa-comment"></i><h4>Chat Now</h4></div>
+import { getDatabase, ref, onValue, update } 
+from "https://www.gstatic.com/firebasejs/9.15.0/firebase-database.js";
 
-<!-- Fullscreen Chat -->
-<div id="gn-chat-fullscreen">
-    <div class="gn-chat-header">
-        <span class="Getnaro-B" style="color: #e3f2fd;">Getnaro Assistant</span>
+const db = getDatabase();
 
-        <div class="gn-controls-header">
-            <button class="gn-speak-toggle" id="gn-speak-toggle">🔊</button>
-            <button id="gn-chat-close">✕</button>
-        </div>
-    </div>
+// LIVE STATS LISTENING
+function liveListen(path, elementId) {
+    onValue(ref(db, path), snapshot => {
+        const value = snapshot.val() ?? 0;
+        document.getElementById(elementId).textContent = value;
+    });
+}
 
-    <div id="gn-chat-messages"></div>
+    // Listen to database values
+    liveListen("stats/totalApps", "stat-total-apps");
+    liveListen("stats/appsUpdated", "stat-updated");
+    liveListen("stats/appsNeedUpdate", "stat-update-needed");
+    liveListen("stats/totalDownloads", "stat-downloads");
+    liveListen("stats/activeVisitors", "stat-viewing");
 
-    <div class="gn-chat-input-area">
-        <button id="gn-voice-btn">🎤</button>
-        <input id="gn-input" placeholder="Ask me anything...">
-        <button id="gn-send">➤</button>
-    </div>
-</div>
+    // ---- LIVE VISITORS COUNTER ----
+    const visitorRef = ref(db, "stats/activeVisitors");
 
-<link rel="stylesheet" href="chat-full.css">
-<script src="chat-full.js" defer></script>
+    onValue(visitorRef, snap => {
+        const current = snap.val() ?? 0;
+        update(visitorRef, current + 1);
+    });
 
+    // Reduce visitor count when user leaves
+    window.addEventListener("beforeunload", () => {
+        onValue(visitorRef, snap => {
+            const now = snap.val() ?? 1;
+            update(visitorRef, now - 1);
+        });
+    });
+    </script>
+    <script>
+    const toggleBtn = document.getElementById("theme-toggle");
+    const themeIcon = document.getElementById("theme-icon");
+
+    // Load saved theme
+    let currentTheme = localStorage.getItem("theme") || "dark";
+    applyTheme(currentTheme);
+
+    toggleBtn.addEventListener("click", () => {
+        currentTheme = currentTheme === "dark" ? "light" : "dark";
+        applyTheme(currentTheme);
+        localStorage.setItem("theme", currentTheme);
+    });
+
+    function applyTheme(mode) {
+        if (mode === "light") {
+            document.body.classList.remove("dark-mode");
+            document.body.classList.add("light-mode");
+            themeIcon.classList.replace("fa-moon", "fa-sun");
+        } else {
+            document.body.classList.remove("light-mode");
+            document.body.classList.add("dark-mode");
+            themeIcon.classList.replace("fa-sun", "fa-moon");
+        }
+    }
+    </script>
+    <script>
+// -----------------------------
+// GLOBAL COLLECTION OF ALL APPS
+// -----------------------------
+let aiData = [];
+
+// Collect every .content-one card into searchable AI data
+document.querySelectorAll(".content-one").forEach(card => {
+    const name = card.querySelector("h5")?.innerText.trim() || "";
+    const img = card.querySelector("img")?.src || "";
+    const category = card.dataset.category || "general";
+
+    aiData.push({
+        name,
+        img,
+        category,
+        element: card,
+        keywords: name.toLowerCase().split(" ")  // simple keyword extraction
+    });
+});
+
+console.log("AI Loaded:", aiData.length);
+
+// -----------------------------
+// DOM ELEMENTS
+// -----------------------------
+const overlay = document.getElementById("gn-search-overlay");
+const openBtn = document.getElementById("gn-search-btn");
+const closeBtn = document.getElementById("gn-search-close");
+const input = document.getElementById("gn-search-input");
+const resultsBox = document.getElementById("gn-search-results");
+const popup = document.querySelector(".popup"); // optional
+
+// -----------------------------
+// OPEN SEARCH OVERLAY
+// -----------------------------
+openBtn?.addEventListener("click", () => {
+    if (popup) popup.style.display = "none"; // hide popup if open
+    overlay.style.display = "flex";
+    input.value = "";
+    resultsBox.innerHTML = "";
+    input.focus();
+});
+
+// -----------------------------
+// CLOSE SEARCH OVERLAY
+// -----------------------------
+closeBtn?.addEventListener("click", () => {
+    overlay.style.display = "none";
+    input.value = "";
+    resultsBox.innerHTML = "";
+});
+
+// -----------------------------
+// AI SEARCH FUNCTION
+// -----------------------------
+function aiSearch(query) {
+    const q = query.toLowerCase();
+    let matches = [];
+
+    aiData.forEach(app => {
+        let score = 0;
+        const name = app.name.toLowerCase();
+
+        // Scores
+        if (name.includes(q)) score += 10;         // strong match
+        app.keywords.forEach(k => {                // keyword match
+            if (k.includes(q)) score += 5;
+        });
+        if (app.category.includes(q)) score += 3;  // category match
+        if (name[0] === q[0]) score += 1;          // fuzzy match
+
+        if (score > 0) matches.push({ ...app, score });
+    });
+
+    // Sort by score
+    return matches.sort((a, b) => b.score - a.score);
+}
+
+// -----------------------------
+// INPUT LISTENER
+// -----------------------------
+input.addEventListener("input", () => {
+    const query = input.value.trim();
+    resultsBox.innerHTML = "";
+
+    if (query.length === 0) return;
+
+    const results = aiSearch(query);
+
+    if (results.length === 0) {
+        resultsBox.innerHTML =
+            `<div class="no-result">No results found</div>`;
+        return;
+    }
+
+    // Create result items
+    results.forEach(app => {
+        const item = document.createElement("div");
+        item.classList.add("search-result-item");
+
+        item.innerHTML = `
+            <img src="${app.img}">
+            <div class="search-info">
+                <h4>${app.name}</h4>
+                <p>${app.category.toUpperCase()} • Score ${app.score}</p>
+            </div>
+        `;
+
+        // On click → show full card style
+        item.onclick = () => showFullCard(app);
+        resultsBox.appendChild(item);
+    });
+});
+
+// -----------------------------
+// SHOW ORIGINAL CARD IN OVERLAY
+// -----------------------------
+function showFullCard(app) {
+    resultsBox.innerHTML = "";
+
+    const original = app.element.cloneNode(true);
+    original.style.transform = "scale(1.02)";
+    original.style.background = "white";
+    original.style.color = "black";
+    original.style.padding = "20px";
+    original.style.borderRadius = "12px";
+    original.style.boxShadow = "0 0 25px rgba(0,0,0,0.20)";
+    original.style.marginTop = "20px";
+
+    resultsBox.appendChild(original);
+}
+</script>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    const canvas = document.getElementById("gn-particles");
+    const ctx = canvas.getContext("2d");
+
+    function resizeCanvas() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+    }
+    resizeCanvas();
+    window.addEventListener("resize", resizeCanvas);
+
+    // FORCE density based on screen size (much better)
+    const PARTICLES = Math.floor((window.innerWidth * window.innerHeight) / 12000);
+    // Example: 1920x1080 → ~172 particles
+
+    console.log("Particles generated:", PARTICLES);
+
+    const dots = [];
+    for (let i = 0; i < PARTICLES; i++) {
+        dots.push({
+            x: Math.random() * canvas.width,
+            y: Math.random() * canvas.height,
+            r: Math.random() * 2 + 1,
+            dx: (Math.random() - 0.5) * 0.5,
+            dy: (Math.random() - 0.5) * 0.5
+        });
+    }
+
+    function draw() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        ctx.fillStyle = "rgba(255,255,255,0.35)";
+
+        dots.forEach(p => {
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+            ctx.fill();
+
+            p.x += p.dx;
+            p.y += p.dy;
+
+            // wrap around edges
+            if (p.x < 0) p.x = canvas.width;
+            if (p.x > canvas.width) p.x = 0;
+            if (p.y < 0) p.y = canvas.height;
+            if (p.y > canvas.height) p.y = 0;
+        });
+
+        requestAnimationFrame(draw);
+    }
+
+    draw();
+});
+</script>
+<script src="tod.js"></script>
+<script src="tog.js"></script>
 </body>
-
 </html>
+

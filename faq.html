@@ -138,26 +138,43 @@ body {
 </head>
 
 <body>
-
-<div class="bg"></div>
-
-<!-- HEADER -->
+<canvas id="gn-particles"></canvas>
+    <!-- ------------------ HEADER ------------------ -->
 <div class="heading">
-   <a href="index.html"><img src="Assests/logo-getnaro-nobg.png" class="logo"></a>
+    <a href="index.html"><img src="Assests/logo-getnaro-nobg.png" class="logo"></a>
     <h4>Getnaro</h4>
-
     <ul>
-        <li><a href="index.html">HOME</a></li>
+        <li><a href="index.html" 
+        >HOME</a></li>
         <li><a href="notfound.html">DOWNLOADS</a></li>
         <li><a href="notfound.html">SPECIALS</a></li>
         <li><a href="about.html">ABOUT US</a></li>
-        <li><a href="faq.html">FAQ</a></li>
+        <li><a href="faq.html" style="background-color:#9F00FF; 
+        padding: 10px ; 
+        border-radius: 10px;">FAQ</a></li>
     </ul>
-
+<button id="theme-toggle" class="theme-toggle">
+    <i id="theme-icon" class="fa-solid fa-moon"></i>
+</button>
+<div id="gn-search-btn" class="gn-search-btn">
+    <i class="fa-solid fa-magnifying-glass"></i>
+</div>
     <a class="dl"
         href="https://files.zohoexternal.in/public/workdrive-external/download/e8gn0d5ec3fd3767d45669a45145dcd3e8fcb">
         <i class="fa-solid fa-download"></i> DOWNLOAD APP
     </a>
+</div>
+<!-- MODERN FULLSCREEN SEARCH -->
+<div id="gn-search-overlay" class="gn-search-overlay">
+    <div class="gn-search-wrapper">
+        <i class="fa-solid fa-magnifying-glass search-icon"></i>
+        <input type="text" id="gn-search-input" placeholder="Search apps, tools, drivers…" autocomplete="off">
+        <button id="gn-search-close" class="close-btn">
+            <i class="fa-solid fa-xmark"></i>
+        </button>
+    </div>
+
+    <div id="gn-search-results" class="gn-search-results"></div>
 </div>
 
 <!-- FAQ CONTENT -->
@@ -355,6 +372,7 @@ document.querySelectorAll(".faq-card").forEach(card => {
     });
 });
 </script>
-
+<script src="tod.js"></script>
+<script src="tog.js"></script>
 </body>
 </html>
