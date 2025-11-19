@@ -681,43 +681,46 @@
 
         </script>
         <script type="module">
-
-import { getDatabase, ref, onValue, update } 
-from "https://www.gstatic.com/firebasejs/9.15.0/firebase-database.js";
+import {
+    getDatabase,
+    ref,
+    onValue,
+    runTransaction
+} from "https://www.gstatic.com/firebasejs/9.15.0/firebase-database.js";
 
 const db = getDatabase();
 
-// LIVE STATS LISTENING
-function liveListen(path, elementId) {
-    onValue(ref(db, path), snapshot => {
-        const value = snapshot.val() ?? 0;
-        document.getElementById(elementId).textContent = value;
+// ---------------- LIVE UPDATES ----------------
+function bind(path, id) {
+    onValue(ref(db, path), snap => {
+        document.getElementById(id).textContent = snap.val() ?? 0;
     });
 }
 
-    // Listen to database values
-    liveListen("stats/totalApps", "stat-total-apps");
-    liveListen("stats/appsUpdated", "stat-updated");
-    liveListen("stats/appsNeedUpdate", "stat-update-needed");
-    liveListen("stats/totalDownloads", "stat-downloads");
-    liveListen("stats/activeVisitors", "stat-viewing");
+// ---- Match EXACT Firebase keys ----
+bind("stats/apps_available", "stat-total-apps");
+bind("stats/apps_up_to_date", "stat-updated");
+bind("stats/apps_need_update", "stat-update-needed");
+bind("stats/downloads", "stat-downloads");
+bind("stats/viewing", "stat-viewing");
 
-    // ---- LIVE VISITORS COUNTER ----
-    const visitorRef = ref(db, "stats/activeVisitors");
+// ---------------- ACTIVE VISITORS COUNTER ----------------
+const activeRef = ref(db, "stats/viewing");
 
-    onValue(visitorRef, snap => {
-        const current = snap.val() ?? 0;
-        update(visitorRef, current + 1);
+// When user opens website → +1
+runTransaction(activeRef, current => {
+    return (current || 0) + 1;
+});
+
+// When user closes website → -1
+window.addEventListener("beforeunload", () => {
+    runTransaction(activeRef, current => {
+        const val = (current || 1) - 1;
+        return val < 0 ? 0 : val; // never go below 0
     });
+});
+</script>
 
-    // Reduce visitor count when user leaves
-    window.addEventListener("beforeunload", () => {
-        onValue(visitorRef, snap => {
-            const now = snap.val() ?? 1;
-            update(visitorRef, now - 1);
-        });
-    });
-    </script>
     <script>
     const toggleBtn = document.getElementById("theme-toggle");
     const themeIcon = document.getElementById("theme-icon");
