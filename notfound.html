@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Getnaro Online</title>
-    <link rel="stylesheet" href="header.css">
-    <link rel="stylesheet" href="footer.css">
+        <link rel="stylesheet" href="header.css">
+    <link rel="stylesheet" href="chat-full.css">
 
     <!-- FONTS & ICONS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
@@ -64,119 +64,116 @@ body {
     display: none;
 }
 
-/* ----------------------- HEADER ------------------------ */
 
-.heading {
-    font-size: 25px;
-    position: fixed;
-    background-color: #141414de;
-    backdrop-filter: blur(10px);
-    top: 0;
-    left: 0;
-    right: 0;
-    z-index: 9999;
-    border-radius: 0px 0px 20px 20px;
-    margin: auto;
-    width: 96%;
-    height: 120px;
-    text-align: center;
-    animation: scale-in-ver-top 0.5s;
-}
+    body {
+        height: 100vh;
+        background: linear-gradient(135deg, #1a0028, #2d0052, #14001f);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        overflow: hidden;
+        color: #fff;
+    }
 
-.heading h4 {
-    position: absolute;
-    left: 18%;
-    margin-top: 20px;
-    font-size: 45px;
-    font-weight: bolder;
-    letter-spacing: 2px;
-}
+    /* Vibrant floating circles */
+    .circle {
+        position: absolute;
+        border-radius: 50%;
+        background: rgba(159, 0, 255, 0.15);
+        animation: float 7s infinite ease-in-out;
+        backdrop-filter: blur(5px);
+    }
 
-.heading h4::after {
-    content: "";
-    position: absolute;
-    left: 0;
-    right: 0;
-    margin: auto;
-    bottom: -10px;
-    background-color: #9F00FF;
-    border-radius: 50px;
-    width: 60%;
-    height: 5px;
-}
+    .circle:nth-child(1) {
+        width: 200px;
+        height: 200px;
+        top: 10%;
+        left: 10%;
+    }
+    .circle:nth-child(2) {
+        width: 260px;
+        height: 260px;
+        bottom: 15%;
+        right: 15%;
+        animation-delay: 2s;
+    }
+    .circle:nth-child(3) {
+        width: 150px;
+        height: 150px;
+        bottom: 30%;
+        left: 20%;
+        animation-delay: 4s;
+    }
 
-.heading .logo {
-    width: 100px;
-    position: absolute;
-    left: 10%;
-    top: 10px;
-    bottom: 0;
-    margin: auto;
-}
+    @keyframes float {
+        0%,100% { transform: translateY(0px); }
+        50% { transform: translateY(-25px); }
+    }
 
-.heading ul {
-    position: absolute;
-    right: 15%;
-    top: 0;
-    bottom: 0;
-    margin: auto;
-    width: 50%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
+    .container {
+        text-align: center;
+        z-index: 2;
+        animation: fadeIn 1.2s ease-in-out;
+    }
 
-.heading li {
-    display: inline-block;
-    margin-right: 20px;
-}
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(20px); }
+        to   { opacity: 1; transform: translateY(0); }
+    }
 
-.heading li a {
-    text-decoration: none;
-    transition: 0.4s;
-    font-size: 20px;
-}
+    .error {
+        font-size: 140px;
+        font-weight: 700;
+        letter-spacing: -5px;
+        color: #fff;
+        text-shadow: 
+            0 0 25px #9F00FF,
+            0 0 45px rgba(159,0,255,0.8),
+            0 0 80px rgba(159,0,255,0.6);
+        animation: glow 1.8s infinite alternate;
+    }
 
-.heading li a:hover {
-    color: #9F00FF;
-}
+    @keyframes glow {
+        from { text-shadow: 0 0 25px #9F00FF; }
+        to   { text-shadow: 0 0 60px #9F00FF; }
+    }
 
-.heading .dl {
-    position: absolute;
-    right: 5%;
-    text-decoration: none;
-    background-color: #9F00FF;
-    width: 300px;
-    height: 70px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    border-radius: 10px;
-    top: 0;
-    bottom: 0;
-    margin: auto;
-    transition: 0.4s;
-}
+    .text {
+        font-size: 22px;
+        margin-top: 10px;
+        opacity: 0.85;
+    }
+    .container{
+        position: absolute;
+        top: 100px;
+        left: 0;
+        right: 0;
+        width: 100%;
+        height: 550px;
+    }
+    .home-btn {
+        display: inline-block;
+        margin-top: 25px;
+        padding: 14px 35px;
+        background: #9F00FF;
+        color: white;
+        font-weight: 600;
+        text-decoration: none;
+        border-radius: 50px;
+        font-size: 18px;
+        transition: 0.3s ease;
+        letter-spacing: 0.5px;
+        box-shadow: 
+            0 0 10px #9F00FF,
+            0 0 25px rgba(159,0,255,0.6);
+    }
 
-.heading .dl:hover {
-    box-shadow: 1px 1px 15px #9F00FF;
-}
-
-.heading .dl i {
-    margin-right: 10px;
-    color: #e3f2fd;
-}
-
-.heading .dl::before {
-    content: "";
-    background-color: #e3f2fd;
-    position: absolute;
-    width: 5px;
-    border-radius: 50px;
-    height: 100%;
-    left: -25px;
-}
-
+    .home-btn:hover {
+        transform: translateY(-3px) scale(1.05);
+        box-shadow:
+            0 0 20px #9F00FF,
+            0 0 40px rgba(159,0,255,0.9);
+    }
     </style>
 <body>
 <div class="heading">
@@ -197,7 +194,8 @@ body {
         <i class="fa-solid fa-download"></i> DOWNLOAD APP
     </a>
 </div>
-    <!-- Floating vibrant circles -->
+    <div class="container">
+        <!-- Floating vibrant circles -->
     <div class="circle"></div>
     <div class="circle"></div>
     <div class="circle"></div>
@@ -207,7 +205,8 @@ body {
         <div class="text">Oops! The page you're looking for isn't available.</div>
         <a href="index.html" class="home-btn">Go Home</a>
     </div>
-<footer class="footer">
+    </div>
+<footer class="footer" style="width: 100%;">
     <div class="footer-container">
 
         <div class="footer-col">

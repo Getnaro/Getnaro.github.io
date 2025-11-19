@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Getnaro Online</title>
     <link rel="stylesheet" href="header.css">
-    <link rel="stylesheet" href="footer.css">
+    <link rel="stylesheet" href="chat-full.css">
 
     <!-- FONTS & ICONS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
@@ -300,6 +300,7 @@
     }
     li{
         text-align: start;
+        letter-spacing: 1px;
     }
 }
 .patchy{
@@ -310,6 +311,7 @@
     margin: 0;
     font-size: 26px;
     font-weight: bolder;
+    
 }
 
 .popup-box p {
@@ -905,6 +907,33 @@
         });
 
         </script>
+        
+
+        <div id="gn-chat-launcher"><i class="fa-regular fa-comment"></i><h4>Chat Now</h4></div>
+
+<!-- Fullscreen Chat -->
+<div id="gn-chat-fullscreen">
+    <div class="gn-chat-header">
+        <span class="Getnaro-B" style="color: #e3f2fd;">Getnaro Assistant</span>
+
+        <div class="gn-controls-header">
+            <button class="gn-speak-toggle" id="gn-speak-toggle">🔊</button>
+            <button id="gn-chat-close">✕</button>
+        </div>
+    </div>
+
+    <div id="gn-chat-messages"></div>
+
+    <div class="gn-chat-input-area">
+        <button id="gn-voice-btn">🎤</button>
+        <input id="gn-input" placeholder="Ask me anything...">
+        <button id="gn-send">➤</button>
+    </div>
+</div>
+
+<link rel="stylesheet" href="chat-full.css">
+<script src="chat-full.js" defer></script>
+
 </body>
 
 </html>

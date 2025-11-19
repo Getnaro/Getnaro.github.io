@@ -5,6 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Getnaro Online</title>
+        <link rel="stylesheet" href="header.css">
+    <link rel="stylesheet" href="chat-full.css">
 
     <!-- FONTS & ICONS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
@@ -53,119 +55,6 @@ body {
 
 ::-webkit-scrollbar {
     display: none;
-}
-
-/* ----------------------- HEADER ------------------------ */
-
-.heading {
-    font-size: 25px;
-    position: fixed;
-    background-color: #141414de;
-    backdrop-filter: blur(10px);
-    top: 0;
-    left: 0;
-    right: 0;
-    z-index: 9999;
-    border-radius: 0px 0px 20px 20px;
-    margin: auto;
-    width: 96%;
-    height: 120px;
-    text-align: center;
-    animation: scale-in-ver-top 0.5s;
-}
-
-.heading h4 {
-    position: absolute;
-    left: 18%;
-    margin-top: 20px;
-    font-size: 45px;
-    font-weight: bolder;
-    letter-spacing: 2px;
-}
-
-.heading h4::after {
-    content: "";
-    position: absolute;
-    left: 0;
-    right: 0;
-    margin: auto;
-    bottom: -10px;
-    background-color: #9F00FF;
-    border-radius: 50px;
-    width: 60%;
-    height: 5px;
-}
-
-.heading .logo {
-    width: 100px;
-    position: absolute;
-    left: 10%;
-    top: 10px;
-    bottom: 0;
-    margin: auto;
-}
-
-.heading ul {
-    position: absolute;
-    right: 15%;
-    top: 0;
-    bottom: 0;
-    margin: auto;
-    width: 50%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.heading li {
-    display: inline-block;
-    margin-right: 20px;
-}
-
-.heading li a {
-    text-decoration: none;
-    transition: 0.4s;
-    font-size: 20px;
-}
-
-.heading li a:hover {
-    color: #9F00FF;
-}
-
-.heading .dl {
-    position: absolute;
-    right: 5%;
-    text-decoration: none;
-    background-color: #9F00FF;
-    width: 300px;
-    height: 70px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    border-radius: 10px;
-    top: 0;
-    bottom: 0;
-    margin: auto;
-    transition: 0.4s;
-}
-
-.heading .dl:hover {
-    box-shadow: 1px 1px 15px #9F00FF;
-}
-
-.heading .dl i {
-    margin-right: 10px;
-    color: #e3f2fd;
-}
-
-.heading .dl::before {
-    content: "";
-    background-color: #e3f2fd;
-    position: absolute;
-    width: 5px;
-    border-radius: 50px;
-    height: 100%;
-    left: -25px;
 }
 
 /* -------------------------------------------------- */
