@@ -133,7 +133,8 @@
     width: 95%;
     margin: 0 auto 100px auto;
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 40px;
     gap: 60px;
     padding-top: 40px;
 }
@@ -155,6 +156,10 @@
     border-radius: 5px;
     position: relative;
     transition: 0.4s;
+    display: flex;
+    align-items: center;
+       padding-left: 160px;
+    padding-right: 20px;
 }
 
 .content-one:hover {
@@ -177,7 +182,6 @@
 /* text + download button */
 .content-one .tet {
     position: absolute;
-    left: 170px;
     top: 0;
     bottom: 0;
     margin: auto;
@@ -207,7 +211,9 @@
     transition: 0.4s;
 
 }
-
+.content-one {
+    min-width: 350px;
+}
 .content-one .tet a:hover {
     background-color: #9F00FF;
     color: white;
@@ -261,7 +267,7 @@
 }
 /*------POP UP Message*/
 .popup {
-    position: sticky;
+    position: fixed ;
     top: 0;
     left: 0;
     width: 100%;
@@ -271,24 +277,39 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    z-index: 9999;
 }
 
 .popup-box {
 
     width: 50%;
-    height: 250px;
+    height: 450px;
     display: flex;
     justify-content: center;
     align-items: center;
     flex-direction: column;
-    border-radius: 12px;
+    border-radius: 20px;
     text-align: center;
     box-shadow: 0 0 20px #9F00FF;
-}
 
+    ul{
+        margin-top: 0;
+        position: relative;
+        top: -25px;
+
+    }
+    li{
+        text-align: start;
+    }
+}
+.patchy{
+    font-size: 25px;
+    margin-top: 0;
+}
 .popup-box h3 {
     margin: 0;
     font-size: 26px;
+    font-weight: bolder;
 }
 
 .popup-box p {
@@ -302,7 +323,7 @@
     border-radius: 8px;
     cursor: pointer;
     color: white;
-    width: 100px;
+    width: 150px;
     font-size: 18px;
     transition: 0.3s;
 }
@@ -363,6 +384,27 @@
     <div class="popup-box">
         <h3>Welcome to Getnaro!</h3>
         <p>Your safe download hub.</p>
+
+        <div class="update-notes">
+            <h4 class="patchy">Patch Notes</h4>
+            <ul>
+                <li>
+                    UI Animation Optimized
+                </li>
+                <li>
+                    Fixed Crash
+                </li>
+                <li>
+                    Reworked The Download Label
+                </li>
+                <li>
+                    Added Light Mode
+                </li>
+                <li>
+                    Fixed Misalignment Issue
+                </li>
+            </ul>
+        </div>
         <button id="closePopup">OK</button>
     </div>
 </div>
@@ -731,6 +773,13 @@
         <span class="tet">
             <h5>Bluestacks A13</h5>
             <a href="https://ak-build.bluestacks.com/public/app-player/windows/nxt/5.22.140.1032/85f56b9487517a925bf86f2fa056df66/BlueStacksMicroInstaller_5.22.140.1032_native.exe?filename=BlueStacksInstaller_5.22.140.1032_native.exe">DOWNLOAD</a>
+        </span>
+    </div>
+    <div class="content-one" data-category="office">
+        <img src="images/brave-logo.png">
+        <span class="tet">
+            <h5>Brave Browser</h5>
+            <a href="https://laptop-updates.brave.com/latest/winx64">DOWNLOAD</a>
         </span>
     </div>
 
