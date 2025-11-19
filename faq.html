@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Getnaro Online</title>
+
+    <!-- FONTS & ICONS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+    <!-- SEO + META -->
+    <meta name="title" content="Getnaro — Free Software, Drivers & Tools Download Hub">
+    <meta name="description"
+        content="Getnaro is your all-in-one download hub for Windows software, drivers, tools, utilities and essential apps. Fast, safe and direct downloads with no ads or redirects. Updated daily.">
+
+    <meta name="keywords"
+        content="Getnaro, software download, drivers download, free pc tools, windows apps download, downloader website, pc utilities, direct download hub">
+    <meta name="author" content="Getnaro Team">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://getnaro.com/">
+
+    <!-- SOCIAL -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Getnaro — Free Software, Drivers & Tools Download Hub">
+    <meta property="og:description"
+        content="Download software, drivers, utilities and PC tools safely from Getnaro. Direct downloads without ads or redirects.">
+    <meta property="og:image" content="https://getnaro.com/assets/getnaro-banner.jpg">
+    <meta property="og:url" content="https://getnaro.com/">
+
+    <meta name="twitter:card" content="summary_large_image">
+
+    <!-- FAVICON -->
+    <link rel="icon" type="image/x-icon" href="Assests/Favicon.png">
+    <style>
+        /* ----------------------- GLOBAL ------------------------ */
+@font-face {
+    font-family: ur ;
+    src: url(Assests/Fourline-New.ttf);
+}
+* {
+    box-sizing: border-box;
+    font-family: ur;
+    color: aliceblue;
+    font-weight: bolder;
+}
+
+body {
+    background-color: #141414;
+    margin: 0;
+    padding: 0;
+}
+
+::-webkit-scrollbar {
+    display: none;
+}
+
+/* ----------------------- HEADER ------------------------ */
+
+.heading {
+    font-size: 25px;
+    position: fixed;
+    background-color: #141414de;
+    backdrop-filter: blur(10px);
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 9999;
+    border-radius: 0px 0px 20px 20px;
+    margin: auto;
+    width: 96%;
+    height: 120px;
+    text-align: center;
+    animation: scale-in-ver-top 0.5s;
+}
+
+.heading h4 {
+    position: absolute;
+    left: 18%;
+    margin-top: 20px;
+    font-size: 45px;
+    font-weight: bolder;
+    letter-spacing: 2px;
+}
+
+.heading h4::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    margin: auto;
+    bottom: -10px;
+    background-color: #9F00FF;
+    border-radius: 50px;
+    width: 60%;
+    height: 5px;
+}
+
+.heading .logo {
+    width: 100px;
+    position: absolute;
+    left: 10%;
+    top: 10px;
+    bottom: 0;
+    margin: auto;
+}
+
+.heading ul {
+    position: absolute;
+    right: 13%;
+    top: 0;
+    bottom: 0;
+    margin: auto;
+    width: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.heading li {
+    display: inline-block;
+    margin-right: 20px;
+}
+
+.heading li a {
+    text-decoration: none;
+    transition: 0.4s;
+    font-size: 20px;
+}
+
+.heading li a:hover {
+    color: #9F00FF;
+}
+
+.heading .dl {
+    position: absolute;
+    right: 5%;
+    text-decoration: none;
+    background-color: #9F00FF;
+    width: 300px;
+    height: 70px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 10px;
+    top: 0;
+    bottom: 0;
+    margin: auto;
+    transition: 0.4s;
+}
+
+.heading .dl:hover {
+    box-shadow: 1px 1px 15px #9F00FF;
+}
+
+.heading .dl i {
+    margin-right: 10px;
+    color: #e3f2fd;
+}
+
+.heading .dl::before {
+    content: "";
+    background-color: #e3f2fd;
+    position: absolute;
+    width: 5px;
+    border-radius: 50px;
+    height: 100%;
+    left: -25px;
+}
+
+/* -------------------------------------------------- */
+/* BACKGROUND */
+/* -------------------------------------------------- */
+.bg {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #230033, #000000, #100025, #000000);
+    background-size: 400% 400%;
+    animation: bgMove 14s ease infinite;
+    z-index: -5;
+}
+
+@keyframes bgMove {
+    0% { background-position: 0 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0 50%; }
+}
+
+/* -------------------------------------------------- */
+/* FAQ CONTAINER */
+/* -------------------------------------------------- */
+.faq-container {
+    width: 75%;
+    margin: 170px auto 60px;
+    padding: 10px;
+}
+
+/* CARD */
+.faq-card {
+    background: rgba(255, 255, 255, 0.12);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.20);
+    padding: 20px 25px;
+    border-radius: 18px;
+    margin-bottom: 20px;
+    cursor: pointer;
+    transition: .3s;
+}
+
+.faq-card:hover {
+    box-shadow: 0 0 25px#9F00FF;
+}
+
+.faq-question {
+    font-size: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.faq-answer {
+    max-height: 0;
+    overflow: hidden;
+    transition: .4s ease;
+    font-size: 22px;
+    line-height: 35px;
+    padding-left: 10px;
+    opacity: 0;
+}
+
+.faq-card.active .faq-answer {
+    max-height: 500px;
+    margin-top: 15px;
+    opacity: 1;
+}
+
+/* -------------------------------------------------- */
+/* RESPONSIVE */
+/* -------------------------------------------------- */
+@media (max-width: 900px) {
+    .faq-container { width: 92%; }
+    .faq-question { font-size: 22px; }
+    .faq-answer { font-size: 18px; }
+    .heading ul { width: 80%; right: 5%; }
+    .heading .dl { display: none; }
+}
+    </style>
+</head>
+
+<body>
+
+<div class="bg"></div>
+
+<!-- HEADER -->
+<div class="heading">
+   <a href="index.html"><img src="Assests/logo-getnaro-nobg.png" class="logo"></a>
+    <h4>Getnaro</h4>
+
+    <ul>
+        <li><a href="index.html">HOME</a></li>
+        <li><a href="notfound.html">DOWNLOADS</a></li>
+        <li><a href="notfound.html">SPECIALS</a></li>
+        <li><a href="about.html">ABOUT US</a></li>
+        <li><a href="faq.html">FAQ</a></li>
+    </ul>
+
+    <a class="dl"
+        href="https://files.zohoexternal.in/public/workdrive-external/download/e8gn0d5ec3fd3767d45669a45145dcd3e8fcb">
+        <i class="fa-solid fa-download"></i> DOWNLOAD APP
+    </a>
+</div>
+
+<!-- FAQ CONTENT -->
+<div class="faq-container">
+
+<!-- 1 -->
+<div class="faq-card">
+    <div class="faq-question"><span><i class="fa-solid fa-circle-question"></i> What is Getnaro?</span><i class="fa-solid fa-chevron-down"></i></div>
+    <div class="faq-answer">Getnaro is a clean, ad-free, safe download hub that redirects users to official software and driver websites.</div>
+</div>
+
+<!-- 2 -->
+<div class="faq-card">
+    <div class="faq-question"><span><i class="fa-solid fa-download"></i> What type of downloads do you offer?</span><i class="fa-solid fa-chevron-down"></i></div>
+    <div class="faq-answer">Getnaro provides Windows apps, PC tools, drivers, utilities, and essential software.</div>
+</div>
+
+<!-- 3 -->
+<div class="faq-card">
+    <div class="faq-question"><span><i class="fa-solid fa-shield"></i> Are downloads safe?</span><i class="fa-solid fa-chevron-down"></i></div>
+    <div class="faq-answer">Yes. Every download redirects to the official website, guaranteeing authenticity and virus-free software.</div>
+</div>
+
+<!-- 4 -->
+<div class="faq-card">
+    <div class="faq-question"><span><i class="fa-solid fa-link"></i> Do you host files?</span><i class="fa-solid fa-chevron-down"></i></div>
+    <div class="faq-answer">No. Getnaro never hosts files. We are like “courier boys” — we deliver you to the official website.</div>
+</div>
+
+<!-- 5 -->
+<div class="faq-card">
+    <div class="faq-question"><span><i class="fa-solid fa-user-xmark"></i> Do I need an account?</span><i class="fa-solid fa-chevron-down"></i></div>
+    <div class="faq-answer">No. There are no accounts, no logins, and no sign-ups. Everything is open.</div>
+</div>
+
+<!-- 6 -->
+<div class="faq-card">
+    <div class="faq-question"><span><i class="fa-solid fa-globe"></i> Does Getnaro collect personal data?</span><i class="fa-solid fa-chevron-down"></i></div>
+    <div class="faq-answer">No user data, no browsing data, no analytics collection — 100% privacy.</div>
+</div>
+
+<!-- 7 -->
+<div class="faq-card">
+    <div class="faq-question"><span><i class="fa-solid fa-ban"></i> Are there ads?</span><i class="fa-solid fa-chevron-down"></i></div>
+    <div class="faq-answer">No. There are zero ads and zero promotions.</div>
+</div>
+
+<!-- 8 -->
+<div class="faq-card">
+    <div class="faq-question"><span><i class="fa-solid fa-money-bill"></i> Is anything paid?</span><i class="fa-solid fa-chevron-down"></i></div>
+    <div class="faq-answer">No. Getnaro does not sell downloads, subscriptions, or premium tiers.</div>
+</div>
+
+<!-- 9 -->
+<div class="faq-card">
+    <div class="faq-question"><span><i class="fa-solid fa-bug-slash"></i> How do you ensure safety?</span><i class="fa-solid fa-chevron-down"></i></div>
+    <div class="faq-answer">We never serve files ourselves. All links point directly to the official developer site.</div>
+</div>
+
+<!-- 10 -->
+<div class="faq-card">
+    <div class="faq-question"><span><i class="fa-solid fa-calendar-days"></i> How often are links updated?</span><i class="fa-solid fa-chevron-down"></i></div>
+    <div class="faq-answer">We update links frequently based on official developer update cycles.</div>
+</div>
+
+<!-- 11 -->
+<div class="faq-card">
+    <div class="faq-question"><span><i class="fa-solid fa-people-group"></i> Are you partnered with any companies?</span><i class="fa-solid fa-chevron-down"></i></div>
+    <div class="faq-answer">No. Getnaro has no affiliation or partnership with any brand.</div>
+</div>
+
+<!-- 12 -->
+<div class="faq-card">
+    <div class="faq-question"><span><i class="fa-solid fa-envelope-open"></i> What support do you provide?</span><i class="fa-solid fa-chevron-down"></i></div>
+    <div class="faq-answer">Basic support is available Monday–Friday on eligible business days.</div>
+</div>
+
+<!-- 13 -->
+<div class="faq-card">
+    <div class="faq-question"><span><i class="fa-solid fa-clock"></i> What is your response time?</span><i class="fa-solid fa-chevron-down"></i></div>
+    <div class="faq-answer">Average response time: 24–36 hours.</div>
+</div>
+
+<!-- 14 -->
+<div class="faq-card">
+    <div class="faq-question"><span><i class="fa-solid fa-laptop"></i> Do you help with installation issues?</span><i class="fa-solid fa-chevron-down"></i></div>
+    <div class="faq-answer">We offer general troubleshooting but cannot provide deep technical debugging.</div>
+</div>
+
+<!-- 15 -->
+<div class="faq-card">
+    <div class="faq-question"><span><i class="fa-solid fa-mobile-screen"></i> Is the app available for mobile?</span><i class="fa-solid fa-chevron-down"></i></div>
+    <div class="faq-answer">Currently only for Windows. Linux and Android planned for late 2026.</div>
+</div>
+
+<!-- 16 -->
+<div class="faq-card">
+    <div class="faq-question"><span><i class="fa-solid fa-browsers"></i> Does the website work on all browsers?</span><i class="fa-solid fa-chevron-down"></i></div>
+    <div class="faq-answer">Yes, Getnaro works smoothly on all modern browsers.</div>
+</div>
+
+<!-- 17 -->
+<div class="faq-card">
+    <div class="faq-question"><span><i class="fa-solid fa-triangle-exclamation"></i> What if a download link is broken?</span><i class="fa-solid fa-chevron-down"></i></div>
+    <div class="faq-answer">Just contact us on Instagram, Discord, or WhatsApp. We fix links quickly.</div>
+</div>
+
+<!-- 18 -->
+<div class="faq-card">
+    <div class="faq-question"><span><i class="fa-solid fa-file-lines"></i> Do you own any software listed?</span><i class="fa-solid fa-chevron-down"></i></div>
+    <div class="faq-answer">No. All software belongs to respective companies and developers.</div>
+</div>
+
+<!-- 19 -->
+<div class="faq-card">
+    <div class="faq-question"><span><i class="fa-solid fa-handshake-slash"></i> Can I redistribute downloaded files?</span><i class="fa-solid fa-chevron-down"></i></div>
+    <div class="faq-answer">No. Redistribution is not allowed since files come from official sources.</div>
+</div>
+
+<!-- 20 -->
+<div class="faq-card">
+    <div class="faq-question"><span><i class="fa-solid fa-bug"></i> What if a downloaded file doesn’t work?</span><i class="fa-solid fa-chevron-down"></i></div>
+    <div class="faq-answer">Please check the official developer site for support — they host the file, not us.</div>
+</div>
+
+<!-- 21 -->
+<div class="faq-card">
+    <div class="faq-question"><span><i class="fa-solid fa-book"></i> Do you provide installation guides?</span><i class="fa-solid fa-chevron-down"></i></div>
+    <div class="faq-answer">We are planning simplified guides, but official installation instructions are recommended.</div>
+</div>
+
+<!-- 22 -->
+<div class="faq-card">
+    <div class="faq-question"><span><i class="fa-solid fa-plus"></i> Can users request new apps?</span><i class="fa-solid fa-chevron-down"></i></div>
+    <div class="faq-answer">Yes, you can request apps or drivers through our official social channels.</div>
+</div>
+
+<!-- 23 -->
+<div class="faq-card">
+    <div class="faq-question"><span><i class="fa-solid fa-rocket"></i> What features does the Getnaro app have?</span><i class="fa-solid fa-chevron-down"></i></div>
+    <div class="faq-answer">Fast official-download redirection, zero ads, no tracking, simple UI.</div>
+</div>
+
+<!-- 24 -->
+<div class="faq-card">
+    <div class="faq-question"><span><i class="fa-solid fa-arrows-rotate"></i> Will new updates come?</span><i class="fa-solid fa-chevron-down"></i></div>
+    <div class="faq-answer">Yes — Getnaro is continuously evolving with UI and feature improvements.</div>
+</div>
+
+<!-- 25 -->
+<div class="faq-card">
+    <div class="faq-question"><span><i class="fa-solid fa-globe"></i> Where can I follow your updates?</span><i class="fa-solid fa-chevron-down"></i></div>
+    <div class="faq-answer">Instagram, Discord, Reddit, WhatsApp, and YouTube.</div>
+</div>
+
+</div>
+<footer class="footer">
+    <div class="footer-container">
+
+        <div class="footer-col">
+            <h3>Getnaro</h3>
+            <p>Official download redirection hub for Windows software, tools, utilities and drivers—clean, safe & ad-free.</p>
+        </div>
+
+        <div class="footer-col">
+            <h3>Quick Links</h3>
+            <a href="t&c.html">Terms & Conditions</a><br>
+            <a href="coc.html">Code Of Conduct</a><br>
+            <a href="privacypolicy.html">Privacy Policy</a><br>
+            <a href="contact.html">Contact</a>
+        </div>
+
+        <div class="footer-col">
+            <h3>Follow Us</h3>
+            <div class="footer-social">
+                <a href="#"><i class="fa-brands fa-instagram"></i></a>
+                <a href="#"><i class="fa-brands fa-discord"></i></a>
+                <a href="#"><i class="fa-brands fa-whatsapp"></i></a>
+                <a href="#"><i class="fa-brands fa-reddit"></i></a>
+                <a href="#"><i class="fa-brands fa-youtube"></i></a>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="footer-bottom">
+        © 2025 Getnaro — Developed by Azad Bharatiyan • Hosted on GitHub • Domain by BigRock
+    </div>
+</footer>
+<script>
+// Accordion Logic
+document.querySelectorAll(".faq-card").forEach(card => {
+    card.addEventListener("click", () => {
+        card.classList.toggle("active");
+    });
+});
+</script>
+
+</body>
+</html>

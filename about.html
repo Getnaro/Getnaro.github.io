@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Us — Getnaro Online</title>
+
+    <!-- ICONS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+    <style>
+/* -------------------------------------------------- */
+/* FONT & GLOBAL */
+/* -------------------------------------------------- */
+@font-face {
+    font-family: ur;
+    src: url(Assests/Fourline-New.ttf);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: ur;
+    color: aliceblue;
+}
+
+body {
+    background: #0d0d0d;
+    overflow-x: hidden;
+}
+
+/* -------------------------------------------------- */
+/* HEADER */
+/* -------------------------------------------------- */
+.heading {
+    font-size: 25px;
+    position: fixed;
+    background-color: #141414de;
+    backdrop-filter: blur(10px);
+    left: 0;
+    right: 0;
+    top: 0;
+    height: 120px;
+    width: 96%;
+    margin: auto;
+    border-radius: 0 0 20px 20px;
+    z-index: 99999;
+}
+
+.heading .logo {
+    width: 100px;
+    position: absolute;
+    left: 10%;
+    top: 10px;
+}
+
+.heading h4 {
+    position: absolute;
+    left: 18%;
+    top: 20px;
+    font-size: 45px;
+}
+
+.heading h4::after {
+    content: "";
+    width: 60%;
+    height: 5px;
+    background: #9F00FF;
+    border-radius: 50px;
+    position: absolute;
+    bottom: -10px;
+    left: 0;
+    right: 0;
+    margin: auto;
+}
+
+.heading ul {
+    position: absolute;
+    right: 10%;
+    width: 55%;
+    top: 0;
+    bottom: 0;
+    margin: auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.heading li {
+    list-style: none;
+    margin-right: 20px;
+}
+
+.heading li a {
+    text-decoration: none;
+    font-size: 20px;
+    transition: .3s;
+}
+
+.heading li a:hover {
+    color: #9F00FF;
+}
+
+.heading .dl {
+    position: absolute;
+    right: 5%;
+    text-decoration: none;
+    background: #9F00FF;
+    height: 70px;
+    width: 300px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 10px;
+    top: 0;
+    bottom: 0;
+    margin: auto;
+    transition: .3s;
+}
+
+.heading .dl:hover {
+    box-shadow: 0 0 20px #9F00FF;
+}
+.heading .dl::before {
+    content: "";
+    background-color: #e3f2fd;
+    position: absolute;
+    width: 5px;
+    border-radius: 50px;
+    height: 100%;
+    left: -25px;
+}
+
+/* -------------------------------------------------- */
+/* BG ANIMATION */
+/* -------------------------------------------------- */
+.bg {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #230033, #000000, #160030, #000000);
+    background-size: 400% 400%;
+    animation: bgMove 14s ease infinite;
+    z-index: -5;
+}
+
+@keyframes bgMove {
+    0% { background-position: 0 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0 50%; }
+}
+
+/* -------------------------------------------------- */
+/* ABOUT BOX */
+/* -------------------------------------------------- */
+.about-box {
+    width: 75%;
+    margin: 180px auto 60px;
+    background: #1a1a1a9d;
+    padding: 40px;
+    border-radius: 25px;
+    backdrop-filter: blur(15px);
+    box-shadow: 0 0 30px #9F00FF40;
+    animation: fadeIn 1.3s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(60px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* -------------------------------------------------- */
+/* GLASSY MISSION + VISION COMPARTMENT */
+/* -------------------------------------------------- */
+.glass-box {
+    width: 100%;
+    padding: 35px;
+    background: rgba(255, 255, 255, 0.13);
+    border-radius: 20px;
+    backdrop-filter: blur(25px);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    margin-bottom: 40px;
+    box-shadow: 0 0 25px #ffffff1a;
+    animation: fadeIn 1.4s ease;
+}
+
+.glass-box h3 {
+    font-size: 40px;
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.glass-box p {
+    font-size: 23px;
+    line-height: 38px;
+}
+
+/* -------------------------------------------------- */
+/* ABOUT DETAILS */
+/* -------------------------------------------------- */
+.about-info {
+    font-size: 25px;
+    line-height: 45px;
+}
+
+.about-info span {
+    color: #9F00FF;
+}
+
+/* -------------------------------------------------- */
+/* SOCIAL ICONS */
+/* -------------------------------------------------- */
+.social-icons {
+    margin-top: 25px;
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+}
+
+.social-icons a {
+    font-size: 45px;
+    transition: .4s;
+}
+
+.social-icons a:hover {
+    color: #9F00FF;
+    text-shadow: 0 0 20px #9F00FF;
+}
+
+/* CONTACT BUTTON INSIDE ABOUT BOX */
+.contact-btn {
+    margin: 35px auto;
+    display: block;
+    width: 280px;
+    text-align: center;
+    padding: 20px;
+    background: #9F00FF;
+    border-radius: 15px;
+    font-size: 24px;
+    text-decoration: none;
+    transition: .4s;
+}
+
+.contact-btn:hover {
+    box-shadow: 0 0 25px #9F00FF;
+}
+.vline{
+    position: absolute;
+    background-color: #9F00FF;
+    width: 80%;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    height: 5px;
+    border-radius: 50px;
+    right: 0;
+    margin: auto;
+}
+/* -------------------------------------------------- */
+/* RESPONSIVE */
+/* -------------------------------------------------- */
+@media (max-width: 900px) {
+    .about-box { width: 92%; }
+    .about-info { font-size: 20px; }
+    .glass-box p { font-size: 20px; }
+    .glass-box h3 { font-size: 30px; }
+    .heading ul { width: 80%; right: 5%; }
+    .heading .dl { display: none; }
+}
+    </style>
+</head>
+
+<body>
+
+<!-- Animated Background -->
+<div class="bg"></div>
+
+<!-- Header -->
+<div class="heading">
+   <a href="index.html"><img src="Assests/logo-getnaro-nobg.png" class="logo"></a>
+    <h4>Getnaro</h4>
+
+   <ul>
+        <li><a href="index.html">HOME</a></li>
+        <li><a href="notfound.html">DOWNLOADS</a></li>
+        <li><a href="notfound.html">SPECIALS</a></li>
+        <li><a href="about.html">ABOUT US</a></li>
+        <li><a href="faq.html">FAQ</a></li>
+    </ul>
+
+    <a class="dl"
+        href="https://files.zohoexternal.in/public/workdrive-external/download/e8gn0d5ec3fd3767d45669a45145dcd3e8fcb">
+        <i class="fa-solid fa-download" style="margin-right:10px;"></i> DOWNLOAD APP
+    </a>
+</div>
+
+<!-- ABOUT BOX -->
+<div class="about-box">
+
+    <!-- GLASSY MISSION & VISION SECTION -->
+    <div class="glass-box">
+        <h3><i class="fa-solid fa-bullseye"></i> Our Mission</h3>
+        <p>
+            To create a clean, fast and secure platform for downloading Windows software, essential drivers, tools and utilities — fully free from ads, redirects, or interruptions.
+        </p>
+
+        <br><br> <span class="vline">
+
+        </span>
+
+        <h3><i class="fa-solid fa-eye"></i> Our Vision</h3>
+        <p>
+            To establish Getnaro as one of India’s most trusted indie-built download hubs by offering transparency, speed, a modern UI, and an enjoyable user-first experience.
+        </p>
+    </div>
+
+    <!-- CONTACT BUTTON -->
+    <a href="contact.html" class="contact-btn">Contact Us 📩</a>
+
+    <!-- ALL OTHER DETAILS -->
+    <div class="about-info">
+        <p><span>Category:</span> Sole Proprietorship</p>
+        <p><span>Domain:</span> www.getnaro.online</p>
+        <p><span>Domain Provider:</span> BigRock</p>
+        <p><span>Hosting:</span> GitHub Repository</p>
+        <p><span>Developer:</span> Azad Bharatiyan</p>
+        <p><span>State / UT:</span> Tamil Nadu</p>
+        <p><span>Genre:</span> Indie / Solo Developer Project</p>
+        <p><span>Year Started:</span> 2025</p>
+    </div>
+
+    <br><br>
+
+    <!-- SOCIAL -->
+    <div class="social-icons">
+        <a href="https://instagram.com/yourpage" target="_blank"><i class="fa-brands fa-instagram"></i></a>
+        <a href="https://discord.gg/yourserver" target="_blank"><i class="fa-brands fa-discord"></i></a>
+        <a href="https://wa.me/yourNumber" target="_blank"><i class="fa-brands fa-whatsapp"></i></a>
+        <a href="https://reddit.com/u/yourprofile" target="_blank"><i class="fa-brands fa-reddit"></i></a>
+        <a href="https://youtube.com/yourchannel" target="_blank"><i class="fa-brands fa-youtube"></i></a>
+    </div>
+
+</div>
+<footer class="footer">
+    <div class="footer-container">
+
+        <div class="footer-col">
+            <h3>Getnaro</h3>
+            <p>Official download redirection hub for Windows software, tools, utilities and drivers—clean, safe & ad-free.</p>
+        </div>
+
+        <div class="footer-col">
+            <h3>Quick Links</h3>
+            <a href="t&c.html">Terms & Conditions</a><br>
+            <a href="coc.html">Code Of Conduct</a><br>
+            <a href="privacypolicy.html">Privacy Policy</a><br>
+            <a href="contact.html">Contact</a>
+        </div>
+
+        <div class="footer-col">
+            <h3>Follow Us</h3>
+            <div class="footer-social">
+                <a href="#"><i class="fa-brands fa-instagram"></i></a>
+                <a href="#"><i class="fa-brands fa-discord"></i></a>
+                <a href="#"><i class="fa-brands fa-whatsapp"></i></a>
+                <a href="#"><i class="fa-brands fa-reddit"></i></a>
+                <a href="#"><i class="fa-brands fa-youtube"></i></a>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="footer-bottom">
+        © 2025 Getnaro — Developed by Azad Bharatiyan • Hosted on GitHub • Domain by BigRock
+    </div>
+</footer>
+</body>
+</html>
