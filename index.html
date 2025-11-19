@@ -680,76 +680,6 @@
         });
 
         </script>
-        <script type="module">
-
-</script>
-<script type="module">
-import { getDatabase, ref, onValue, update }
-from "https://www.gstatic.com/firebasejs/9.15.0/firebase-database.js";
-
-const db = getDatabase();
-
-/* -----------------------------
-   1️⃣ AUTO: COUNT AVAILABLE APPS
-------------------------------*/
-function countApps() {
-    const total = document.querySelectorAll(".content-one").length;
-    update(ref(db, "stats"), { apps_available: total });
-}
-countApps();
-
-/* -----------------------------
-   2️⃣ AUTO: LIVE VISITOR TRACKING
-------------------------------*/
-const visitorRef = ref(db, "stats/viewing");
-
-onValue(visitorRef, snap => {
-    const now = snap.val() ?? 0;
-    update(visitorRef, now + 1);
-});
-
-window.addEventListener("beforeunload", () => {
-    onValue(visitorRef, snap => {
-        const now = snap.val() ?? 1;
-        update(visitorRef, now - 1);
-    });
-});
-
-/* -----------------------------
-   3️⃣ AUTO: DOWNLOAD COUNTER
-------------------------------*/
-document.querySelectorAll(".content-one a").forEach(btn => {
-    btn.addEventListener("click", () => {
-        const dlRef = ref(db, "stats/downloads");
-
-        onValue(dlRef, snap => {
-            const count = snap.val() ?? 0;
-            update(dlRef, count + 1);
-        }, { onlyOnce: true });
-    });
-});
-
-/* -----------------------------
-   4️⃣ LIVE DISPLAY VALUES
-------------------------------*/
-function bind(path, elementId) {
-    onValue(ref(db, path), snap => {
-        document.getElementById(elementId).textContent =
-            snap.val() ?? 0;
-    });
-}
-
-// AUTO VALUES
-bind("stats/apps_available", "stat-total-apps");
-bind("stats/downloads", "stat-downloads");
-bind("stats/viewing", "stat-viewing");
-
-// MANUAL VALUES
-bind("stats/apps_up_to_date", "stat-updated");
-bind("stats/apps_need_update", "stat-update-needed");
-</script>
-
-
 
     <script>
     const toggleBtn = document.getElementById("theme-toggle");
@@ -965,6 +895,7 @@ document.addEventListener("DOMContentLoaded", () => {
     draw();
 });
 </script>
+<script type="module" src="stats.js"></script>
 <script src="tod.js"></script>
 <script src="tog.js"></script>
 </body>
