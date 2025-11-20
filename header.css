@@ -301,7 +301,7 @@ body.light-mode #gn-particles {
     left: -25px;
 }
 .footer {
-    background: #000000;
+   background: #000000;
     padding: 40px 0;
     border-top: 2px solid #9F00FF55;
     margin-top: auto; /* THIS MAKES IT STICK AT THE BOTTOM ONLY AFTER SCROLL */
@@ -386,10 +386,6 @@ body.light-mode #gn-particles {
     }
 }
 
-/* Prevent footer overlap using bottom padding */
-body {
-    padding-bottom: 100px;
-}
 @media(max-width: 900px){
     .fixed-footer-container {
         flex-direction: column;
