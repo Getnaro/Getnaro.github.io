@@ -1,94 +1,102 @@
 /* =========================================================
-   FIREBASE STATS ENGINE — Getnaro (Final Optimized Build)
-   Features:
-   ✔ Total Apps Auto Count
-   ✔ Per-App Downloads Tracking
-   ✔ Total Downloads Counter
-   ✔ Live Visitors Counter
+   FIREBASE STATS TRACKING – GETNARO (FINAL VERSION)
 ========================================================= */
 
-import { getDatabase, ref, onValue, get, update, set } 
+import { getDatabase, ref, onValue, get, set, update }
 from "https://www.gstatic.com/firebasejs/9.15.0/firebase-database.js";
 
 const db = getDatabase();
 
 /* =========================================================
    1️⃣ AUTO COUNT TOTAL APPS
-   (Counts all .content-one elements dynamically)
 ========================================================= */
 
 function updateTotalApps() {
-    const appCount = document.querySelectorAll(".content-one").length;
-    update(ref(db, "stats"), { apps_available: appCount });
+    const total = document.querySelectorAll(".content-one").length;
+    set(ref(db, "stats/total_apps"), total);
 }
 updateTotalApps();
 
-
 /* =========================================================
-   2️⃣ PER-APP DOWNLOAD TRACKING + TOTAL DOWNLOADS
+   2️⃣ DOWNLOAD COUNTING (TOTAL + PER APP)
 ========================================================= */
 
-// SELECT ALL DOWNLOAD BUTTONS
 document.querySelectorAll(".content-one a").forEach(btn => {
-    
     btn.addEventListener("click", () => {
-        
+
         const card = btn.closest(".content-one");
         const appName = card.querySelector("h5").innerText.trim();
 
-        const totalDLRef = ref(db, "stats/downloads");
-        const appDLRef = ref(db, "app_downloads/" + appName);
+        const totalDL = ref(db, "stats/total_downloads");
+        const appDL = ref(db, "app_downloads/" + appName);
 
-        /* ---- Update Total Downloads ---- */
-        get(totalDLRef).then(snap => {
-            const current = snap.val() ?? 0;
-            update(totalDLRef, current + 1);
+        // update total downloads
+        get(totalDL).then(s => {
+            const now = s.val() ?? 0;
+            set(totalDL, now + 1);
         });
 
-        /* ---- Update Per-App Downloads ---- */
-        get(appDLRef).then(snap => {
-            const current = snap.val() ?? 0;
-            update(appDLRef, current + 1);
+        // update per-app downloads
+        get(appDL).then(s => {
+            const now = s.val() ?? 0;
+            set(appDL, now + 1);
         });
 
     });
-
 });
-
 
 /* =========================================================
-   3️⃣ LIVE VISITOR COUNTER
+   3️⃣ TOTAL VISITS (EVERY PAGE LOAD)
 ========================================================= */
 
-const viewRef = ref(db, "stats/viewing");
+const visitRef = ref(db, "stats/total_visits");
 
-// Increase by +1 when user enters
-get(viewRef).then(snap => {
-    const current = snap.val() ?? 0;
-    set(viewRef, current + 1);
+get(visitRef).then(snapshot => {
+    const current = snapshot.val() ?? 0;
+    set(visitRef, current + 1);
 });
 
-// Decrease by -1 when user leaves
+/* =========================================================
+   4️⃣ LIVE VISITORS + PEAK VISITORS
+========================================================= */
+
+const liveRef = ref(db, "stats/live_visitors");
+const peakRef = ref(db, "stats/peak_visitors");
+
+// Add new visitor
+get(liveRef).then(s => {
+    const current = s.val() ?? 0;
+    const updated = current + 1;
+
+    set(liveRef, updated);
+
+    // Check peak
+    get(peakRef).then(p => {
+        const peak = p.val() ?? 0;
+        if (updated > peak) set(peakRef, updated);
+    });
+});
+
+// Remove visitor on exit
 window.addEventListener("beforeunload", () => {
-    get(viewRef).then(snap => {
-        const current = snap.val() ?? 1;
-        set(viewRef, Math.max(0, current - 1));
+    get(liveRef).then(s => {
+        const current = s.val() ?? 1;
+        set(liveRef, Math.max(0, current - 1));
     });
 });
 
-
 /* =========================================================
-   4️⃣ LIVE READING INTO UI
+   5️⃣ LIVE REAL-TIME UI UPDATE
 ========================================================= */
 
-function liveRead(path, elementId) {
-    onValue(ref(db, path), snapshot => {
-        document.getElementById(elementId).textContent = snapshot.val() ?? 0;
+function bind(path, htmlId) {
+    onValue(ref(db, path), snap => {
+        document.getElementById(htmlId).textContent = snap.val() ?? 0;
     });
 }
 
-liveRead("stats/apps_available", "stat-total-apps");
-liveRead("stats/apps_up_to_date", "stat-updated");     // you manually update this
-liveRead("stats/apps_need_update", "stat-update-needed"); // manually update this
-liveRead("stats/downloads", "stat-downloads");
-liveRead("stats/viewing", "stat-viewing");
+bind("stats/total_apps",      "stat-total-apps");
+bind("stats/total_visits",    "stat-total-visits");
+bind("stats/peak_visitors",   "stat-peak");
+bind("stats/total_downloads", "stat-downloads");
+bind("stats/live_visitors",   "stat-viewing");
