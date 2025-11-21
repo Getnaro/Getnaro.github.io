@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/stylesheets/header.css">
     <link rel="stylesheet" href="/stylesheets/chat-full.css">
+    <link rel="stylesheet" href="/stylesheets/downloads.css">
     <title>Getnaro Online</title>
     <!-- FONTS & ICONS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
@@ -28,7 +29,7 @@
     <meta property="og:url" content="https://getnaro.com/">
     <meta name="twitter:card" content="summary_large_image">
     <!-- FAVICON -->
-    <link rel="icon" type="image/x-icon" href="Assests/Favicon.png">
+    <link rel="icon" type="image/x-icon" href="/Assests/Favicon.png">
 </head>
 <body>
     <canvas id="gn-particles"></canvas>
@@ -106,19 +107,83 @@
     <div id="gn-search-results" class="gn-search-results"></div>
 </div>
 
+
+
+
+
+
+
+
+
+
+
+
+
 <div class="container" > 
 <!--All the Coded Contents must be here--> 
-</div>
 
-<footer class="footer">
-    <div class="footer-container">
 
-        <div class="footer-col">
-            <h3>Getnaro</h3>
-            <p>Official download redirection hub for Windows software, tools, utilities and drivers—clean, safe & ad-free.</p>
+
+
+
+
+<div class="gn-download-wrapper">
+    
+    <div class="content-one gn-detail-card" data-category="drivers" data-app="asrock-downloads-hub">
+        
+        <div class="gn-card-left">
+            <img src="/images/asrock-logo-png_seeklogo-12146.png" alt="ASRock Downloads Logo">
         </div>
 
-        <div class="footer-col">
+        <div class="gn-card-right">
+            <h1>ASRock Downloads</h1>
+
+            <p class="gn-desc">
+                The ASRock Downloads hub is the essential destination for maintaining the stability and performance of your ASRock motherboards, graphics cards, and mini PCs. It provides direct access to the latest BIOS firmware updates, which are crucial for improving system compatibility with new processors and memory modules. Users can download vital hardware drivers including Realtek Audio, Intel/AMD Chipset, and LAN drivers to ensure seamless connectivity and sound quality. The platform also hosts exclusive utility software like ASRock Polychrome RGB for lighting customization and the A-Tuning utility for system overclocking and monitoring. Regularly updating through this portal helps resolve potential hardware conflicts and patches security vulnerabilities. It offers a user-friendly interface where you can search by model name to find the exact software tailored to your specific hardware revision.
+            </p>
+
+            <div class="gn-meta-grid">
+                <div class="gn-meta-item">
+                    <span class="gn-meta-label">Installed Date</span>
+                    <span id="install-status-asrock-dl">Not Installed</span>
+                </div>
+
+                <div class="gn-meta-item">
+                    <span class="gn-meta-label">Last Updated</span>
+                    <span>2025-10-15</span>
+                </div>
+
+                <div class="gn-meta-item">
+                    <span class="gn-meta-label">Virus / Threats</span>
+                    <span class="gn-verified">
+                        <i class="fa-solid fa-circle-check"></i> Scanned & Verified
+                    </span>
+                </div>
+            </div>
+
+            <a href="https://www.asrock.com/support/index.asp?cat=Drivers" 
+               class="gn-dl-action gn-btn-download" 
+               id="btn-asrock-downloads">
+                <i class="fa-solid fa-download"></i> DOWNLOAD
+            </a>
+
+            <a href="#" class="gn-dl-action gn-btn-update" style="display:none; background: #2196F3;">
+                <i class="fa-solid fa-rotate"></i> UPDATE
+            </a>
+            <a href="#" class="gn-dl-action gn-btn-uninstall" style="display:none; background: #f44336;">
+                <i class="fa-solid fa-trash"></i> UNINSTALL
+            </a>
+
+        </div>
+    </div>
+</div>
+
+
+
+
+</div>
+
+<footer class="footer"><div class="footer-container"><div class="footer-col"><h3>Getnaro</h3><p>Official download redirection hub for Windows software, tools, utilities and drivers—clean, safe & ad-free.</p></div><div class="footer-col">
             <h3>Quick Links</h3>
             <a href="/pages/t&c.html">Terms & Conditions</a><br>
             <a href="/pages/coc.html">Code Of Conduct</a><br>

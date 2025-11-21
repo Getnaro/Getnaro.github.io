@@ -29,110 +29,10 @@
     <meta name="twitter:card" content="summary_large_image">
     <!-- FAVICON -->
     <link rel="icon" type="image/x-icon" href="Assests/Favicon.png">
-    <style>
-              :root {
-        --purple: #9f00ff;
-        --purple-light: #bb33ff;
-        --box-bg: rgba(255,255,255,0.05);
-        }
-
-
-        body {
-        margin: 0;
-        padding: 0;
-        }
-
-
-        .container {
-        margin-top: 100px;
-        width: 100%;
-        padding: 20px;
-        }
-
-
-        /* ------------------- SIDEBAR ------------------- */
-        .dashboard-wrapper {
-        display: flex;
-        gap: 20px;
-        width: 100%;
-        }
-
-
-        .sidebar {
-        width: 260px;
-        background: rgba(0,0,0,0.35);
-        backdrop-filter: blur(12px);
-        border: 1px solid var(--purple);
-        border-radius: 18px;
-        padding: 20px;
-        height: fit-content;
-        }
-
-
-        .side-search input {
-        width: 100%;
-        padding: 12px 16px;
-        border-radius: 14px;
-        border: 1px solid var(--purple);
-        background: rgba(255,255,255,0.06);
-        color: var(--text-color,#fff);
-        outline: none;
-        margin-bottom: 15px;
-        }
-
-
-        .menu-list {
-        padding: 0;
-        margin: 0;
-        }
-
-
-        .menu-list li {
-        list-style: none;
-        padding: 12px;
-        border-radius: 12px;
-        cursor: pointer;
-        margin-top: 10px;
-        border: 1px solid transparent;
-        }
-
-
-        .menu-list li:hover {
-        background: rgba(255,255,255,0.06);
-        border-color: var(--purple-light);
-        }
-
-
-        /* ------------------- CONTENT ------------------- */
-        .dashboard-content {
-        flex: 1;
-        background: rgba(0,0,0,0.25);
-        border: 1px solid var(--purple);
-        border-radius: 18px;
-        padding: 20px;
-        min-height: 600px;
-        }
-
-
-        .view { display: none; }
-        .view.active { display: block; }
-
-
-        /* Item Cards */
-        .dl-item, .inst-item, .result-item {
-        background: rgba(255,255,255,0.05);
-        border: 1px solid var(--purple);
-        padding: 14px;
-        margin-bottom: 12px;
-        border-radius: 14px;
-        }
-
-</style>
 </head>
 <body>
     <canvas id="gn-particles"></canvas>
     <!-- ------------------ HEADER ------------------ -->
-
 <div class="heading">
 
     <a href="/index.html"><img src="/Assests/logo-getnaro-nobg.png" class="logo"></a>
@@ -140,9 +40,7 @@
     <ul>
         <li><a href="/index.html">HOME</a></li>
         <li><a href="/pages/notfound.html">SPECIALS</a></li>
-        <li><a href="/pages/login.html" style="background-color:#9F00FF;  color: white !important;
-        padding: 10px ; 
-        border-radius: 10px;">ACCOUNT</a></li>
+        <li><a href="/pages/login.html">ACCOUNT</a></li>
         <li><a href="/pages/about.html">ABOUT US</a></li>
         <li><a href="/pages/faq.html">FAQ</a></li>
     </ul>
@@ -178,7 +76,7 @@
     </button>
 
     <!-- EXACT UL you provided -->
-   <ul class="gn-mobile-links" role="menu" aria-label="Mobile navigation">
+    <ul class="gn-mobile-links" role="menu" aria-label="Mobile navigation">
       <li role="none"><a role="menuitem" href="/index.html">Home</a></li>
       <li role="none"><a role="menuitem" href="/pages/notfound.html">Specials</a></li>
       <li role="none"><a role="menuitem" href="/pages/login.html">Account</a></li>
@@ -207,60 +105,402 @@
 
     <div id="gn-search-results" class="gn-search-results"></div>
 </div>
-<div class="container">
-    <div class="dashboard-wrapper">
 
-        <aside class="sidebar">
-            <div class="side-search">
-                <input id="sideSearchInput" placeholder="Search..." />
+<div class="container" > 
+<!-- ==========================================
+     START OF PROFILE CONTAINER CONTENT
+     Paste this INSIDE <div class="container">
+========================================== -->
+
+<style>
+    /* --- DASHBOARD LAYOUT --- */
+    *{
+            font-family: ur;
+        }
+        @font-face {
+            font-family: ur;
+            src: url(/Assests/Fourline-New.ttf);
+        }
+        .container{
+    margin-top: 100px;
+    padding: 25px;
+}
+    .gn-dashboard {
+        display: grid;
+        grid-template-columns: 300px 1fr 1fr; 
+        gap: 25px;
+        width: 95%;
+        max-width: 1400px;
+        margin: 40px auto;
+        min-height: 600px;
+        animation: fadeInUp 0.5s ease;
+    }
+
+    /* --- GLASS CARD --- */
+    .gn-card {
+        background: var(--box);
+        border: 1px solid rgba(159, 0, 255, 0.2);
+        border-radius: 20px;
+        padding: 25px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        display: flex;
+        flex-direction: column;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .gn-card:hover {
+        box-shadow: 0 10px 40px rgba(159, 0, 255, 0.15);
+        border-color: rgba(159, 0, 255, 0.5);
+    }
+
+    /* --- LEFT PROFILE COLUMN --- */
+    .profile-col {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        height: 100%;
+    }
+
+    .brand-logo-mini {
+        width: 60px;
+        margin-bottom: 20px;
+        align-self: flex-start;
+        filter: drop-shadow(0 0 5px #9F00FF);
+    }
+
+    /* --- PROFILE PIC --- */
+    .profile-pic-wrapper {
+        position: relative;
+        width: 130px;
+        height: 130px;
+        margin: 20px auto 30px auto;
+        border-radius: 50%;
+        cursor: pointer;
+    }
+
+    .profile-avatar {
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 3px solid #9F00FF;
+        box-shadow: 0 0 20px rgba(159, 0, 255, 0.4);
+    }
+
+    .profile-pic-overlay {
+        position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+        border-radius: 50%;
+        background: rgba(0, 0, 0, 0.6);
+        display: flex; justify-content: center; align-items: center;
+        opacity: 0; transition: 0.3s;
+    }
+    .profile-pic-wrapper:hover .profile-pic-overlay { opacity: 1; }
+    .profile-pic-overlay i { color: white; font-size: 24px; }
+
+    /* Upload Spinner */
+    .profile-pic-wrapper.uploading .profile-avatar { opacity: 0.5; }
+    .profile-pic-wrapper.uploading::after {
+        content: ""; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+        border: 3px solid transparent; border-top-color: #9F00FF;
+        border-radius: 50%; animation: spin 1s linear infinite;
+    }
+
+    /* --- USER DETAILS --- */
+    .user-details { width: 100%; text-align: left; margin-top: 10px; padding: 0 10px; flex: 1; }
+    .user-detail-item { margin-bottom: 15px; padding-bottom: 10px; border-bottom: 1px solid rgba(159, 0, 255, 0.1); }
+    .user-detail-item label { font-size: 11px; color: #9F00FF; font-weight: bold; display: block; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 1px; }
+    .user-detail-item span { font-size: 15px; color: var(--text); font-weight: 500; display: block; word-break: break-all; }
+
+    /* --- LOGOUT BUTTON --- */
+    .gn-btn-logout {
+        width: 100%;
+        margin-top: 20px;
+        background: transparent;
+        border: 2px solid #ff4444;
+        color: #ff4444;
+        padding: 12px;
+        border-radius: 12px;
+        font-size: 15px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: 0.3s;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .gn-btn-logout:hover {
+        background: #ff4444;
+        color: white;
+        box-shadow: 0 5px 20px rgba(255, 68, 68, 0.3);
+    }
+
+    /* --- LISTS --- */
+    .section-header { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; padding-bottom: 15px; border-bottom: 2px solid #9F00FF; }
+    .section-header i { font-size: 24px; color: #9F00FF; }
+    .section-header h3 { font-size: 20px; margin: 0; color: var(--text); font-weight: bold; }
+
+    .scroll-list { flex: 1; overflow-y: auto; padding-right: 10px; display: flex; flex-direction: column; gap: 12px; }
+    .scroll-list::-webkit-scrollbar { width: 6px; }
+    .scroll-list::-webkit-scrollbar-thumb { background: #9F00FF; border-radius: 10px; }
+
+    .list-item {
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 12px;
+        padding: 12px;
+        display: flex; align-items: center; gap: 15px;
+        transition: 0.2s; cursor: pointer;
+    }
+    .light-mode .list-item { background: rgba(0, 0, 0, 0.03); border-color: rgba(0, 0, 0, 0.1); }
+    .list-item:hover { background: rgba(159, 0, 255, 0.1); transform: translateX(5px); border-color: #9F00FF; }
+
+    .item-icon { width: 45px; height: 45px; border-radius: 8px; object-fit: cover; background: #000; }
+    .item-info { flex: 1; }
+    .item-info h4 { margin: 0 0 4px 0; font-size: 16px; color: var(--text); }
+    .item-info p { margin: 0; font-size: 12px; opacity: 0.7; color: var(--text); }
+    .status-badge { font-size: 10px; padding: 4px 8px; border-radius: 20px; background: #9F00FF; color: #fff; }
+
+    .empty-state { text-align: center; margin-top: 50px; opacity: 0.6; }
+    .empty-state i { font-size: 40px; margin-bottom: 10px; color: var(--text); }
+    .empty-state p { color: var(--text); }
+
+    #toast {
+        position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
+        background: #333; color: #fff; padding: 12px 24px; border-radius: 8px;
+        display: none; z-index: 10000; border: 1px solid #9F00FF;
+    }
+
+    @keyframes spin { 100% { transform: rotate(360deg); } }
+    @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    
+    @media (max-width: 992px) {
+        .gn-dashboard { grid-template-columns: 1fr; }
+        .profile-col { flex-direction: row; flex-wrap: wrap; justify-content: space-between; }
+    }
+</style>
+
+<div class="gn-dashboard">
+    
+    <!-- 1. PROFILE COLUMN -->
+    <div class="gn-card profile-col">
+        <img src="/Assests/logo-getnaro-nobg.png" alt="Logo" class="brand-logo-mini" onerror="this.style.display='none'">
+        
+        <div class="profile-pic-wrapper" id="pic-wrapper" title="Click to change photo">
+            <img id="u-avatar" src="https://cdn-icons-png.flaticon.com/512/149/149071.png" class="profile-avatar" alt="Profile">
+            <div class="profile-pic-overlay"><i class="fa-solid fa-camera"></i></div>
+            <input type="file" id="file-input" accept="image/*" style="display: none;">
+        </div>
+
+        <div class="user-details">
+            <div class="user-detail-item">
+                <label>Name</label> <span id="u-name">Loading...</span>
             </div>
-            <ul class="menu-list">
-                <li data-view="dashboard">Dashboard</li>
-                <li data-view="downloads">My Downloads</li>
-                <li data-view="installed">Installed Apps</li>
-                <li data-view="account">Account</li>
-                <li data-view="settings">Settings</li>
-                <li data-view="logout" style="color:#ff4f4f;">Logout</li>
-            </ul>
-        </aside>
+            <div class="user-detail-item">
+                <label>Username</label> <span id="u-username">...</span>
+            </div>
+            <div class="user-detail-item">
+                <label>Email</label> <span id="u-email">Loading...</span>
+            </div>
+            <div class="user-detail-item">
+                <label>Phone</label> <span id="u-phone">...</span>
+            </div>
+        </div>
 
-        <main class="dashboard-content">
-            
-            <section id="dashboardView" class="view active">
-                <h2>Dashboard</h2>
-                <p>Welcome to your dashboard.</p>
-            </section>
-
-            <section id="downloadsView" class="view">
-                <h2>My Downloads</h2>
-                <div id="profile-downloads"></div>
-            </section>
-
-            <section id="installedView" class="view">
-                <h2>Installed Apps</h2>
-                <div id="installedList"></div>
-            </section>
-
-            <section id="accountView" class="view">
-                <h2>Your Account</h2>
-                <div id="accountInfo">
-                    <h3 id="profile-name">User</h3>
-                    <p id="profile-email">Loading...</p>
-                </div>
-            </section>
-
-            <section id="settingsView" class="view">
-                <h2>Settings</h2>
-                <p>Coming soon...</p>
-            </section>
-
-            <section id="searchResultsView" class="view">
-                <h2>Search Results</h2>
-                <div id="searchResults"></div>
-            </section>
-
-        </main>
+        <!-- LOGOUT BUTTON -->
+        <button id="btn-logout" class="gn-btn-logout">
+            <i class="fa-solid fa-power-off"></i> Logout / Change Account
+        </button>
     </div>
+
+    <!-- 2. HISTORY COLUMN -->
+    <div class="gn-card">
+        <div class="section-header">
+            <i class="fa-solid fa-clock-rotate-left"></i> <h3>Download History</h3>
+        </div>
+        <div id="history-list" class="scroll-list">
+            <div class="empty-state"><i class="fa-solid fa-spinner fa-spin"></i><p>Loading...</p></div>
+        </div>
+    </div>
+
+    <!-- 3. FAVOURITES COLUMN -->
+    <div class="gn-card">
+        <div class="section-header">
+            <i class="fa-solid fa-heart"></i> <h3>My Favourites</h3>
+        </div>
+        <div id="fav-list" class="scroll-list">
+            <div class="empty-state"><i class="fa-solid fa-spinner fa-spin"></i><p>Loading...</p></div>
+        </div>
+    </div>
+
+</div>
+
+<div id="toast">Notification</div>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
+    import { getAuth, onAuthStateChanged, updateProfile, signOut } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
+    import { getDatabase, ref, onValue, update as updateDB } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-database.js";
+    import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-storage.js";
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyAJrJnSQI7X1YJHLOfHZkknmoAoiOiGuEo",
+        authDomain: "getnaroapp.firebaseapp.com",
+        databaseURL: "https://getnaroapp-default-rtdb.asia-southeast1.firebasedatabase.app",
+        projectId: "getnaroapp",
+        storageBucket: "getnaroapp.firebasestorage.app",
+        messagingSenderId: "304744138530",
+        appId: "1:304744138530:web:8166344d61cdfa127ec77b",
+        measurementId: "G-FLBX24J98C"
+    };
+
+    try {
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getDatabase(app);
+        const storage = getStorage(app);
+
+        const els = {
+            name: document.getElementById('u-name'),
+            user: document.getElementById('u-username'),
+            email: document.getElementById('u-email'),
+            phone: document.getElementById('u-phone'),
+            avatar: document.getElementById('u-avatar'),
+            history: document.getElementById('history-list'),
+            favs: document.getElementById('fav-list'),
+            wrapper: document.getElementById('pic-wrapper'),
+            fileInput: document.getElementById('file-input'),
+            logoutBtn: document.getElementById('btn-logout')
+        };
+
+        const showToast = (msg) => {
+            const t = document.getElementById('toast');
+            if(t) { t.textContent = msg; t.style.display = 'block'; setTimeout(() => t.style.display = 'none', 3000); }
+        };
+
+        // 1. LOGOUT LOGIC
+        if(els.logoutBtn) {
+            els.logoutBtn.addEventListener('click', () => {
+                if(confirm("Are you sure you want to logout?")) {
+                    signOut(auth).then(() => {
+                        showToast("Logged out successfully!");
+                        setTimeout(() => window.location.href = '/pages/login.html', 1000);
+                    }).catch((error) => {
+                        showToast("Error logging out: " + error.message);
+                    });
+                }
+            });
+        }
+
+        // 2. UPLOAD LOGIC
+        if(els.wrapper && els.fileInput) {
+            els.wrapper.addEventListener('click', () => els.fileInput.click());
+            els.fileInput.addEventListener('change', async (e) => {
+                const file = e.target.files[0];
+                const user = auth.currentUser;
+                if (!file || !user) return;
+                els.wrapper.classList.add('uploading');
+                showToast("Uploading...");
+                try {
+                    const picRef = storageRef(storage, 'profile_pics/' + user.uid);
+                    await uploadBytes(picRef, file);
+                    const url = await getDownloadURL(picRef);
+                    await updateProfile(user, { photoURL: url });
+                    await updateDB(ref(db, 'users/' + user.uid), { photoURL: url });
+                    els.avatar.src = url;
+                    showToast("Success!");
+                } catch (err) {
+                    console.error(err);
+                    showToast("Failed: " + err.message);
+                } finally {
+                    els.wrapper.classList.remove('uploading');
+                }
+            });
+        }
+
+        // 3. AUTH LISTENER WITH TIMEOUT FALLBACK
+        let gotResponse = false;
+
+        onAuthStateChanged(auth, (user) => {
+            gotResponse = true;
+            console.log("Auth State:", user ? "Logged In" : "Logged Out");
+
+            if (user) {
+                // --- LOGGED IN ---
+                if(els.name) els.name.textContent = user.displayName || "User";
+                if(els.email) els.email.textContent = user.email;
+                if(els.avatar && user.photoURL) els.avatar.src = user.photoURL;
+
+                const userRef = ref(db, 'users/' + user.uid);
+                onValue(userRef, (snapshot) => {
+                    const data = snapshot.val() || {};
+                    
+                    if(els.phone) els.phone.textContent = data.phone || user.phoneNumber || "Not Set";
+                    if(els.user) els.user.textContent = data.username ? `@${data.username}` : (user.displayName ? `@${user.displayName}` : "@user");
+                    if(els.avatar && data.photoURL) els.avatar.src = data.photoURL;
+
+                    renderList(data.history || {}, els.history, 'download');
+                    renderList(data.favorites || {}, els.favs, 'heart');
+                });
+
+            } else {
+                // --- GUEST / LOGGED OUT ---
+                setGuestState();
+            }
+        });
+
+        // Force Guest State if Firebase hangs
+        setTimeout(() => {
+            if (!gotResponse) {
+                console.warn("Firebase taking too long. Forcing guest UI.");
+                setGuestState();
+            }
+        }, 2500);
+
+        function setGuestState() {
+            if(els.name) els.name.textContent = "Guest";
+            if(els.email) els.email.textContent = "-";
+            if(els.phone) els.phone.textContent = "-";
+            if(els.user) els.user.textContent = "-";
+            
+            const loginLink = `<div class="empty-state"><p>Please <a href="/pages/login.html" style="color:#9F00FF;font-weight:bold;">Login</a></p></div>`;
+            if(els.history) els.history.innerHTML = loginLink;
+            if(els.favs) els.favs.innerHTML = loginLink;
+        }
+
+        function renderList(dataObj, container, type) {
+            if(!container) return;
+            const items = Object.values(dataObj);
+            if (items.length === 0) {
+                container.innerHTML = `<div class="empty-state"><i class="fa-solid ${type === 'download' ? 'fa-ghost' : 'fa-heart-crack'}"></i><p>No items.</p></div>`;
+                return;
+            }
+            container.innerHTML = '';
+            items.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
+            items.forEach(item => {
+                const icon = item.icon || 'https://cdn-icons-png.flaticon.com/512/3616/3616929.png';
+                const name = item.appName || item.name || 'App';
+                const date = item.timestamp ? new Date(item.timestamp).toLocaleDateString() : '';
+                const div = document.createElement('div');
+                div.className = 'list-item';
+                div.innerHTML = `<img src="${icon}" class="item-icon"><div class="item-info"><h4>${name}</h4><p>${date}</p></div><span class="status-badge">${type === 'download' ? 'Installed' : 'Liked'}</span>`;
+                container.appendChild(div);
+            });
+        }
+
+    } catch (e) {
+        console.error("CRITICAL ERROR:", e);
+        document.getElementById('u-name').textContent = "Script Error";
+    }
+</script>
+<!-- ==========================================
+     END OF PROFILE CONTAINER CONTENT
+========================================== -->
 </div>
 <footer class="footer">
     <div class="footer-container">
@@ -270,7 +510,7 @@
             <p>Official download redirection hub for Windows software, tools, utilities and drivers—clean, safe & ad-free.</p>
         </div>
 
-       <div class="footer-col">
+        <div class="footer-col">
             <h3>Quick Links</h3>
             <a href="/pages/t&c.html">Terms & Conditions</a><br>
             <a href="/pages/coc.html">Code Of Conduct</a><br>
@@ -294,16 +534,33 @@
         © 2025 Getnaro — Developed by Azad Bharatiyan • Hosted on GitHub • Domain by BigRock
     </div>
 </footer>
-<script type="module" src="/scripts/firebase-init.js"></script>
-<script type="module" src="/scripts/profile.js"></script>
-<script type="module" src="/scripts/auth-guard.js"></script>
-<script type="module" src="/scripts/download.js"></script>
-<script type="module" src="/scripts/index.js"></script>
-<script type="module" src="/scripts/app-generator.js"></script>
 <script src="/scripts/tod.js"></script>
 <script src="/scripts/tog.js"></script>
 <script src="/scripts/particles.js"></script>
 <script src="/scripts/theme.js"></script>
 <script src="/scripts/search.js"></script>
 <script src="/scripts/hamburger.js"></script>
+<script type="module" src="/scripts/download-index.js"></script>
+<script type="module" src="/scripts/stats.js"></script>
+<script src="/scripts/caro.js"></script>
+<script type="module">
+/* When clicking download */
+document.querySelectorAll(".gn-btn-download").forEach(btn => {
+    btn.addEventListener("click", e => {
+        const user = auth.currentUser;
+        if (!user) return alert("Please login first.");
+
+        const parent = btn.closest(".content-one");
+        const appId = parent.dataset.app;
+
+        update(ref(db, "users/" + user.uid + "/apps/" + appId), {
+            downloaded: true
+        });
+
+        btn.style.display = "none";
+        parent.querySelector(".gn-btn-update").style.display = "block";
+        parent.querySelector(".gn-btn-uninstall").style.display = "block";
+    });
+});
+</script>
 </body>

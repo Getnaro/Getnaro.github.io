@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/stylesheets/header.css">
     <link rel="stylesheet" href="/stylesheets/chat-full.css">
+    <link rel="stylesheet" href="/stylesheets/downloads.css">
     <title>Getnaro Online</title>
     <!-- FONTS & ICONS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
@@ -28,7 +29,7 @@
     <meta property="og:url" content="https://getnaro.com/">
     <meta name="twitter:card" content="summary_large_image">
     <!-- FAVICON -->
-    <link rel="icon" type="image/x-icon" href="Assests/Favicon.png">
+    <link rel="icon" type="image/x-icon" href="/Assests/Favicon.png">
 </head>
 <body>
     <canvas id="gn-particles"></canvas>
@@ -108,6 +109,56 @@
 
 <div class="container" > 
 <!--All the Coded Contents must be here--> 
+<div class="gn-download-wrapper">
+    
+    <div class="content-one gn-detail-card" data-category="drivers" data-app="gigabyte-driver-pack">
+        
+        <div class="gn-card-left">
+            <img src="/images/gigabyte-logo.png" alt="GIGABYTE Driver Logo">
+        </div>
+
+        <div class="gn-card-right">
+            <h1>GIGABYTE Driver</h1>
+
+            <p class="gn-desc">
+                The GIGABYTE Driver suite provides essential software components to ensure optimal performance and stability for your GIGABYTE hardware, including motherboards, graphics cards, and peripherals. These drivers facilitate seamless communication between your operating system and hardware, unlocking advanced features like RGB Fusion control, overclocking capabilities, and efficient smart fan management. Regular updates are critical for patching security vulnerabilities, improving system compatibility with new software releases, and resolving potential hardware conflicts. Whether for high-end gaming or professional workstations, keeping these drivers current is vital for maintaining peak system efficiency and preventing crashes. The suite includes necessary updates for audio, LAN, chipset, and BIOS firmware to keep your rig running smoothly.
+            </p>
+
+            <div class="gn-meta-grid">
+                <div class="gn-meta-item">
+                    <span class="gn-meta-label">Installed Date</span>
+                    <span id="install-status-gigabyte">Not Installed</span>
+                </div>
+
+                <div class="gn-meta-item">
+                    <span class="gn-meta-label">Last Updated</span>
+                    <span>2025-02-18</span>
+                </div>
+
+                <div class="gn-meta-item">
+                    <span class="gn-meta-label">Virus / Threats</span>
+                    <span class="gn-verified">
+                        <i class="fa-solid fa-circle-check"></i> Scanned & Verified
+                    </span>
+                </div>
+            </div>
+
+            <a href="https://www.gigabyte.com/Support/Consumer/Download" 
+               class="gn-dl-action gn-btn-download" 
+               id="btn-gigabyte-driver">
+                <i class="fa-solid fa-download"></i> DOWNLOAD
+            </a>
+
+            <a href="#" class="gn-dl-action gn-btn-update" style="display:none; background: #2196F3;">
+                <i class="fa-solid fa-rotate"></i> UPDATE
+            </a>
+            <a href="#" class="gn-dl-action gn-btn-uninstall" style="display:none; background: #f44336;">
+                <i class="fa-solid fa-trash"></i> UNINSTALL
+            </a>
+
+        </div>
+    </div>
+</div>
 </div>
 
 <footer class="footer">

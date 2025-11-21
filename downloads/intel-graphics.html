@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/stylesheets/header.css">
     <link rel="stylesheet" href="/stylesheets/chat-full.css">
+    <link rel="stylesheet" href="/stylesheets/downloads.css">
     <title>Getnaro Online</title>
     <!-- FONTS & ICONS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
@@ -28,7 +29,7 @@
     <meta property="og:url" content="https://getnaro.com/">
     <meta name="twitter:card" content="summary_large_image">
     <!-- FAVICON -->
-    <link rel="icon" type="image/x-icon" href="Assests/Favicon.png">
+    <link rel="icon" type="image/x-icon" href="/Assests/Favicon.png">
 </head>
 <body>
     <canvas id="gn-particles"></canvas>
@@ -106,19 +107,83 @@
     <div id="gn-search-results" class="gn-search-results"></div>
 </div>
 
+
+
+
+
+
+
+
+
+
+
+
+
 <div class="container" > 
 <!--All the Coded Contents must be here--> 
-</div>
 
-<footer class="footer">
-    <div class="footer-container">
 
-        <div class="footer-col">
-            <h3>Getnaro</h3>
-            <p>Official download redirection hub for Windows software, tools, utilities and drivers—clean, safe & ad-free.</p>
+
+
+
+
+<div class="gn-download-wrapper">
+    
+    <div class="content-one gn-detail-card" data-category="drivers video" data-app="intel-graphics-driver">
+        
+        <div class="gn-card-left">
+            <img src="/images/interldriver-logo.png" alt="Intel Graphics Logo">
         </div>
 
-        <div class="footer-col">
+        <div class="gn-card-right">
+            <h1>Intel Graphics</h1>
+
+            <p class="gn-desc">
+                The Intel Graphics driver provides the essential software foundation for Intel Arc, Iris Xe, and UHD graphics architectures, ensuring maximum system stability and performance. This package includes the Intel Arc Control interface, allowing users to manage driver updates, tune performance settings, and access real-time hardware monitoring tools. It unlocks advanced features such as Intel Xe Super Sampling (XeSS) for AI-enhanced upscaling and industry-leading AV1 video encoding for content creators. Regular updates are vital for maintaining compatibility with the latest DirectX 12 Ultimate titles and optimizing power efficiency on mobile devices. Whether for gaming, streaming, or productivity, this driver ensures your integrated or discrete Intel GPU delivers the best possible visual experience.
+            </p>
+
+            <div class="gn-meta-grid">
+                <div class="gn-meta-item">
+                    <span class="gn-meta-label">Installed Date</span>
+                    <span id="install-status-intel">Not Installed</span>
+                </div>
+
+                <div class="gn-meta-item">
+                    <span class="gn-meta-label">Last Updated</span>
+                    <span>2025-11-10</span>
+                </div>
+
+                <div class="gn-meta-item">
+                    <span class="gn-meta-label">Virus / Threats</span>
+                    <span class="gn-verified">
+                        <i class="fa-solid fa-circle-check"></i> Scanned & Verified
+                    </span>
+                </div>
+            </div>
+
+            <a href="https://www.intel.com/content/www/us/en/search.html#sortCriteria=@lastmodifieddt%20descending&cf-tabfilter=Downloads&cf-downloadsppth=Graphics" 
+               class="gn-dl-action gn-btn-download" 
+               id="btn-intel-graphics">
+                <i class="fa-solid fa-download"></i> DOWNLOAD
+            </a>
+
+            <a href="#" class="gn-dl-action gn-btn-update" style="display:none; background: #2196F3;">
+                <i class="fa-solid fa-rotate"></i> UPDATE
+            </a>
+            <a href="#" class="gn-dl-action gn-btn-uninstall" style="display:none; background: #f44336;">
+                <i class="fa-solid fa-trash"></i> UNINSTALL
+            </a>
+
+        </div>
+    </div>
+</div>
+
+
+
+
+</div>
+
+<footer class="footer"><div class="footer-container"><div class="footer-col"><h3>Getnaro</h3><p>Official download redirection hub for Windows software, tools, utilities and drivers—clean, safe & ad-free.</p></div><div class="footer-col">
             <h3>Quick Links</h3>
             <a href="/pages/t&c.html">Terms & Conditions</a><br>
             <a href="/pages/coc.html">Code Of Conduct</a><br>

@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/stylesheets/header.css">
     <link rel="stylesheet" href="/stylesheets/chat-full.css">
+    <link rel="stylesheet" href="/stylesheets/downloads.css">
     <title>Getnaro Online</title>
     <!-- FONTS & ICONS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
@@ -28,7 +29,111 @@
     <meta property="og:url" content="https://getnaro.com/">
     <meta name="twitter:card" content="summary_large_image">
     <!-- FAVICON -->
-    <link rel="icon" type="image/x-icon" href="Assests/Favicon.png">
+    <link rel="icon" type="image/x-icon" href="/Assests/Favicon.png">
+    <style>
+        /* ===================== DOWNLOAD PAGE DESIGN ===================== */
+.download-box {
+    width: 90%;
+    max-width: 900px;
+    background: var(--box);
+    margin: 160px auto 80px auto;
+    padding: 35px;
+    border-radius: 20px;
+    display: flex;
+    gap: 25px;
+    align-items: center;
+    box-shadow: 0 0 20px #9F00FF55;
+    transition: 0.3s;
+}
+
+.download-box:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 0 35px #9F00FFAA;
+}
+
+.dl-logo img {
+    width: 150px;
+    height: 150px;
+    object-fit: contain;
+    display: block;
+}
+
+/* Right block */
+.dl-content {
+    flex: 1;
+}
+
+.dl-title {
+    font-size: 32px;
+    margin-bottom: 10px;
+    color: var(--text);
+}
+
+.dl-about {
+    font-size: 18px;
+    line-height: 30px;
+    color: var(--text);
+    margin-bottom: 20px;
+}
+
+.dl-info p {
+    margin: 4px 0;
+    font-size: 17px;
+    color: var(--text);
+}
+
+.dl-safe .tick {
+    background: #00d26a;
+    color: #fff;
+    padding: 2px 8px;
+    border-radius: 50%;
+    margin-left: 6px;
+    font-weight: 900;
+}
+
+/* Download Button */
+.download-btn {
+    display: inline-block;
+    margin-top: 20px;
+    padding: 15px 35px;
+    border-radius: 12px;
+    background: #9F00FF;
+    color: #fff !important;
+    font-size: 20px;
+    font-weight: bold;
+    text-decoration: none;
+    border: 2px solid #9F00FF;
+    transition: 0.3s;
+}
+
+.download-btn:hover {
+    box-shadow: 0 0 20px #9F00FF;
+    transform: scale(1.05);
+}
+
+/* ========== RESPONSIVE (Mobile) ========== */
+@media (max-width: 800px) {
+    .download-box {
+        flex-direction: column;
+        text-align: center;
+        padding: 25px;
+    }
+
+    .dl-logo img {
+        width: 120px;
+        height: 120px;
+    }
+
+    .dl-about {
+        font-size: 16px;
+    }
+
+    .download-btn {
+        width: 100%;
+    }
+}
+
+    </style>
 </head>
 <body>
     <canvas id="gn-particles"></canvas>
@@ -106,9 +211,93 @@
     <div id="gn-search-results" class="gn-search-results"></div>
 </div>
 
+
+
+
+
+
+
+
+
+
+
+
+
 <div class="container" > 
 <!--All the Coded Contents must be here--> 
+
+
+<!-- ===================== DOWNLOAD PAGE BOX ===================== -->
+<div class="download-box" data-category="drivers">
+
+    <!-- Left Logo -->
+    <div class="dl-logo">
+        <img src="images/amd-logo.png" alt="AMD Logo">
+    </div>
+
+    <!-- Right Content -->
+    <div class="dl-content">
+        <h2 class="dl-title">AMD Driver</h2>
+
+        <p class="dl-about">
+            AMD Radeon drivers are essential software packages that optimize graphics performance, 
+            improve hardware stability, enhance gaming experiences, support new technologies, 
+            deliver performance boosts, and ensure overall system compatibility.  
+            Updated regularly, these drivers help keep your system smooth and responsive for 
+            both productivity and high-end gaming performance.
+        </p>
+
+        <div class="dl-info">
+            <p><strong>Installed Date:</strong> Not Installed</p>
+            <p><strong>Last Updated:</strong> January 2025</p>
+            <p class="dl-safe">
+                <strong>Virus/Threats:</strong> Scanned & Verified 
+                <span class="tick">✔️</span>
+            </p>
+        </div>
+
+        <!-- DOWNLOAD BUTTON -->
+        <a 
+            href="https://www.amd.com"
+            class="download-btn"
+            id="downloadDriver"
+            data-app="amd-driver"
+        >
+            DOWNLOAD NOW
+        </a>
+
+    </div>
 </div>
+
+
+
+
+
+
+
+
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 <footer class="footer">
     <div class="footer-container">

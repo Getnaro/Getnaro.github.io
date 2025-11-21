@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/stylesheets/header.css">
     <link rel="stylesheet" href="/stylesheets/chat-full.css">
+    <link rel="stylesheet" href="/stylesheets/downloads.css">
     <title>Getnaro Online</title>
     <!-- FONTS & ICONS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
@@ -28,7 +29,7 @@
     <meta property="og:url" content="https://getnaro.com/">
     <meta name="twitter:card" content="summary_large_image">
     <!-- FAVICON -->
-    <link rel="icon" type="image/x-icon" href="Assests/Favicon.png">
+    <link rel="icon" type="image/x-icon" href="/Assests/Favicon.png">
 </head>
 <body>
     <canvas id="gn-particles"></canvas>
@@ -106,19 +107,83 @@
     <div id="gn-search-results" class="gn-search-results"></div>
 </div>
 
+
+
+
+
+
+
+
+
+
+
+
+
 <div class="container" > 
 <!--All the Coded Contents must be here--> 
-</div>
 
-<footer class="footer">
-    <div class="footer-container">
 
-        <div class="footer-col">
-            <h3>Getnaro</h3>
-            <p>Official download redirection hub for Windows software, tools, utilities and drivers—clean, safe & ad-free.</p>
+
+<div class="gn-download-wrapper">
+    
+    <div class="content-one gn-detail-card" data-category="drivers" data-app="msi-downloads-pack">
+        
+        <div class="gn-card-left">
+            <img src="/images/MSILOGO.PNG" alt="MSI Downloads Logo">
         </div>
 
-        <div class="footer-col">
+        <div class="gn-card-right">
+            <h1>MSI Downloads</h1>
+
+            <p class="gn-desc">
+                The MSI Downloads center is the official hub for obtaining essential drivers, BIOS firmware, and utility software for all MSI hardware products, including motherboards, graphics cards, and laptops. It ensures your system maintains peak stability and compatibility by providing the latest versions of critical tools like MSI Center and Dragon Center. These utilities allow users to control system performance profiles, customize Mystic Light RGB effects, and monitor real-time hardware temperatures. Regular driver updates obtained here are crucial for unlocking new hardware features, patching security vulnerabilities, and optimizing gaming performance. The platform also simplifies the initial setup of new PC builds by automatically detecting and installing missing chipset or LAN drivers. keeping your rig running efficiently.
+            </p>
+
+            <div class="gn-meta-grid">
+                <div class="gn-meta-item">
+                    <span class="gn-meta-label">Installed Date</span>
+                    <span id="install-status-msi">Not Installed</span>
+                </div>
+
+                <div class="gn-meta-item">
+                    <span class="gn-meta-label">Last Updated</span>
+                    <span>2025-01-10</span>
+                </div>
+
+                <div class="gn-meta-item">
+                    <span class="gn-meta-label">Virus / Threats</span>
+                    <span class="gn-verified">
+                        <i class="fa-solid fa-circle-check"></i> Scanned & Verified
+                    </span>
+                </div>
+            </div>
+
+            <a href="https://www.msi.com/support/download" 
+               class="gn-dl-action gn-btn-download" 
+               id="btn-msi-downloads">
+                <i class="fa-solid fa-download"></i> DOWNLOAD
+            </a>
+
+            <a href="#" class="gn-dl-action gn-btn-update" style="display:none; background: #2196F3;">
+                <i class="fa-solid fa-rotate"></i> UPDATE
+            </a>
+            <a href="#" class="gn-dl-action gn-btn-uninstall" style="display:none; background: #f44336;">
+                <i class="fa-solid fa-trash"></i> UNINSTALL
+            </a>
+
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+
+</div>
+
+<footer class="footer"><div class="footer-container"><div class="footer-col"><h3>Getnaro</h3><p>Official download redirection hub for Windows software, tools, utilities and drivers—clean, safe & ad-free.</p></div><div class="footer-col">
             <h3>Quick Links</h3>
             <a href="/pages/t&c.html">Terms & Conditions</a><br>
             <a href="/pages/coc.html">Code Of Conduct</a><br>
