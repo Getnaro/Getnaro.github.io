@@ -1258,6 +1258,130 @@ mark {
     background: transparent;
 }
 /* ========================= FLOATING PARTICLES ========================= */
+/* ---------- SAFE MOBILE HEADER + HAMBURGER (MOBILE/TABLET ONLY) ---------- */
+
+/* hide by default */
+.gn-hamburger, #gn-mobile-nav { display: none; }
+
+/* Mobile / Tablet */
+@media (max-width: 1435px) {
+
+  /* Only hide the desktop nav items that should move into the mobile menu */
+  .heading ul,
+  .heading h4,
+  .heading .dl,    /* top download button */
+  #gn-search-btn,
+  .theme-toggle {
+    display: none !important;
+  }
+
+  /* Keep logo centered */
+  .heading .logo {
+    left: 16px; /* keep original left offset for logo in your design, adjust if needed */
+    top: 8px;
+    width: 72px;
+  }
+
+  /* Hamburger button (fixed right) */
+  .gn-hamburger {
+    display: flex;
+    position: fixed;
+    top: 18px;
+    right: 18px;
+    z-index: 210000;
+    width: 54px;
+    height: 54px;
+    border-radius: 12px;
+    background: #141414;
+    border: 2px solid #9F00FF;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.45);
+  }
+
+  .gn-ham-box { width: 28px; height: 20px; position: relative; }
+  .gn-ham-inner, .gn-ham-inner::before, .gn-ham-inner::after {
+    background: #fff;
+    height: 3px;
+    width: 28px;
+    border-radius: 3px;
+    position: absolute; left: 0;
+    transition: transform .28s cubic-bezier(.2,.8,.2,1), opacity .2s;
+  }
+  .gn-ham-inner { top:50%; transform: translateY(-50%); }
+  .gn-ham-inner::before { content:""; top:-8px; }
+  .gn-ham-inner::after  { content:""; top:8px; }
+
+  .gn-hamburger.open .gn-ham-inner { transform: rotate(45deg); }
+  .gn-hamburger.open .gn-ham-inner::before { opacity: 0; transform: translateX(-6px); }
+  .gn-hamburger.open .gn-ham-inner::after { transform: rotate(-90deg); top:0; }
+
+  /* Mobile nav overlay */
+  #gn-mobile-nav {
+    display: block;
+    position: fixed;
+    inset: 0;
+    z-index: 209000;
+    pointer-events: none;
+  }
+  .gn-mobile-backdrop {
+    position: absolute; inset: 0;
+    background: rgba(0,0,0,0.62);
+    opacity: 0; transition: opacity .28s;
+    pointer-events: none;
+  }
+  .gn-mobile-panel {
+    position: absolute;
+    right: 0;
+    top: 0;
+    height: 100%;
+    width: min(360px, 86%);
+    background: linear-gradient(180deg, rgba(18,18,18,0.99), rgba(12,12,12,0.99));
+    padding: 22px;
+    transform: translateX(110%);
+    transition: transform .33s cubic-bezier(.2,.9,.2,1);
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    pointer-events: auto;
+    border-left: 1px solid rgba(159,0,255,0.06);
+    box-shadow: -12px 0 40px rgba(0,0,0,0.6);
+  }
+  #gn-mobile-nav.open .gn-mobile-backdrop { opacity: 1; pointer-events: auto; }
+  #gn-mobile-nav.open .gn-mobile-panel { transform: translateX(0); }
+
+  /* Mobile menu elements */
+  .gn-mobile-btn {
+    display:flex;gap:12px;align-items:center;
+    padding:12px;border-radius:12px;
+    background: rgba(255,255,255,0.02);
+    border: 2px solid rgba(159,0,255,0.08);
+    color: #fff; font-size:16px;
+  }
+
+  .gn-mobile-links {
+    list-style:none;padding:0;margin:6px 0; display:flex;flex-direction:column; gap:10px;
+  }
+  .gn-mobile-links a {
+    display:block;padding:12px;border-radius:12px;
+    background:#111;border:2px solid rgba(159,0,255,0.06);
+    color:#fff;text-decoration:none;font-size:18px;
+  }
+
+  .gn-mobile-download {
+    margin-top:auto;padding:14px;border-radius:12px;
+    background: linear-gradient(90deg,#9F00FF,#B72BFF);
+    color:white;text-align:center;font-weight:700;text-decoration:none;
+    box-shadow: 0 8px 22px rgba(159,0,255,0.16);
+  }
+
+  /* keep everything responsive in very small screens */
+  @media (max-width: 360px) {
+    .gn-mobile-panel { width: 92%; }
+    .gn-hamburger { right: 12px; width:48px; height:48px; }
+  }
+}
 
 #gn-particles {
     position: fixed;
@@ -1279,5 +1403,276 @@ mark {
 body {
     transition: background 0.3s ease, color 0.3s ease, opacity 0.3s ease;
 }
+@media (max-width: 1435px) {
 
+  /* Hide desktop header elements */
+  .heading ul,
+  .heading h4,
+  .heading .dl,
+  #gn-search-btn,
+  .theme-toggle {
+    display: none !important;
+  }
 
+  /* Center logo */
+  .heading .logo {
+    left: 16px;
+    top: 8px;
+    width: 72px;
+  }
+
+  /* Show hamburger */
+  .gn-hamburger {
+    display: flex;
+    position: fixed;
+    top: 18px;
+    right: 18px;
+    z-index: 210000;
+    width: 54px;
+    height: 54px;
+    border-radius: 12px;
+    background: #141414;
+    border: 2px solid #9F00FF;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* … keep the rest of your mobile hamburger + menu css the same … */
+
+}
+@media (min-width: 1436px) {
+  .gn-hamburger,
+  #gn-mobile-nav {
+    display: none !important;
+  }
+
+  /* All desktop header elements remain visible */
+}
+/* Prevent UL from colliding with icons on desktop */
+@media (max-width: 1600px) {
+
+    /* reduce nav font size */
+    .heading ul li a {
+       font-size: 20px;
+    }
+
+    /* shift logo left */
+    .heading .logo {
+        left: 35px !important;
+        top: 10px !important;
+        transform: none !important;
+
+    }
+    .heading h4{
+        left: 170px;
+    }
+    /* give right-space so nav won't collide */
+    .heading ul {
+        padding-right: 140px !important;
+    }
+}
+@media (min-width: 1601px) and (max-width: 1800px) {
+
+    /* slightly shrink nav */
+    .heading ul li a {
+        font-size: 18px !important;
+        
+    }
+
+    /* small shift of logo */
+    .heading .logo {
+        left: 50px !important;
+        transform: none !important;
+    }
+    .heading h4{
+        left: 170px;
+    }
+    /* moderate spacing for right icons */
+    .heading ul {
+        padding-right: 220px !important;
+    }
+
+}
+/* brand container: logo + text aligned together */
+.heading .brand {
+    position: absolute;
+    top: 10px;          /* adjust as needed */
+    left: 20px;         /* logo hugs the left */
+    display: flex;
+    align-items: center;
+    gap: 12px;          /* space between logo and text */
+}
+
+/* make logo normal inside flex */
+.heading .brand .logo {
+    position: static !important;
+    transform: none !important;
+    margin: 0;
+}
+
+/* make text align with logo */
+.heading .brand h4 {
+    position: static !important;
+    margin: 0;
+    font-size: 26px;     /* adjust to match your style */
+    font-weight: 600;
+}
+/* ------------------- OPTIMIZED CAROUSEL + LAYOUT HELPERS ------------------- */
+/* Add to end of style.css */
+
+/* Use GPU-friendly transforms and hint at expected changes */
+.gn-carousel,
+.gn-carousel * {
+  -webkit-transform: translate3d(0,0,0);
+  transform: translate3d(0,0,0);
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  will-change: transform, opacity;
+}
+
+/* Responsive height using clamp to avoid huge reflows */
+.gn-carousel {
+  height: clamp(420px, 45vh, 850px); /* scales smoothly across viewports */
+  overflow: hidden;
+  position: relative;
+}
+
+/* Use flex-track with hardware-accelerated transforms */
+.gn-carousel-track {
+  display: flex;
+  height: 100%;
+  transition: transform 600ms cubic-bezier(.22,.9,.3,1); /* smooth easing */
+  /* avoid layout reflow by not animating width or left/top */
+  will-change: transform;
+}
+
+/* Slide basis and image style */
+.gn-slide {
+  flex: 0 0 100%;
+  height: 100%;
+  position: relative;
+  pointer-events: auto;
+  user-select: none;
+  overflow: hidden;
+}
+
+/* Images: use cover and lazy-friendly defaults */
+.gn-slide img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+}
+
+/* Light DOM indicators to reduce repaints */
+.gn-prev, .gn-next {
+  will-change: transform, opacity;
+  transition: transform .18s ease, opacity .18s ease;
+}
+
+/* Small interactive improvements */
+.gn-prev:active, .gn-next:active {
+  transform: scale(.96);
+}
+
+/* Reduce repaint area for slide-content; paint on compositor */
+.slide-content {
+  position: absolute;
+  right: 0;
+  bottom: 15%;
+  width: 300px;
+  height: auto;
+  padding: 20px;
+  border-radius: 16px;
+  background: rgba(20,20,20,0.96);
+  box-shadow: 0 20px 40px rgba(0,0,0,0.35);
+  transition: transform 300ms ease, opacity 300ms ease;
+  will-change: transform, opacity;
+}
+
+/* Make the navigation arrows small on very narrow screens */
+@media (max-width: 520px) {
+  .gn-prev, .gn-next {
+    padding: 10px;
+    font-size: 20px;
+  }
+  .slide-content { width: calc(100% - 40px); right: 20px; bottom: 8%; }
+}
+
+/* If user prefers reduced motion, respect that */
+@media (prefers-reduced-motion: reduce) {
+  .gn-carousel-track { transition: none !important; }
+  .gn-prev, .gn-next { transition: none !important; }
+}
+
+/* Performance helper: ensure only visible slide has heavy box-shadow */
+.gn-slide:not(.is-visible) .slide-content {
+  opacity: 0;
+  transform: translateY(8px) scale(.99);
+  pointer-events: none;
+}
+
+/* Minimal layout guard for other divs (stats, features) to avoid reflow */
+.stats-bar, .gn-features {
+  contain: layout style;
+  will-change: auto;
+}
+/* ------------------ OPTIMIZED STATS BOXES ------------------ */
+
+.stats-container {
+    display: flex;
+    gap: 24px;
+    justify-content: center;
+    align-items: stretch;
+    margin: 40px auto;
+    padding: 0 20px;
+    flex-wrap: wrap;
+}
+
+.stat-box {
+    background: #0d0d0d;
+    border: 2px solid rgba(159, 0, 255, 0.75);
+    padding: 32px 36px;
+    border-radius: 22px;
+    width: 180px;
+    text-align: center;
+    box-shadow: 0 0 24px rgba(159, 0, 255, 0.25);
+    transition: transform .25s ease, box-shadow .25s ease;
+    will-change: transform, box-shadow;
+}
+
+.stat-box:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 0 32px rgba(159, 0, 255, 0.45);
+}
+
+.stat-number {
+    font-size: 48px;
+    font-weight: 700;
+    margin-bottom: 8px;
+    background: linear-gradient(90deg, #b720ff, #8f00ff);
+    -webkit-background-clip: text;
+    color: transparent;
+}
+
+.stat-label {
+    font-size: 18px;
+    color: #d4d4d4;
+    opacity: 0.85;
+}
+
+/* smaller screens */
+@media (max-width: 680px) {
+    .stat-box {
+        width: 100%;
+        max-width: 240px;
+        padding: 26px;
+    }
+    .stat-number {
+        font-size: 40px;
+    }
+    .stat-label {
+        font-size: 17px;
+    }
+}

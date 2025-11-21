@@ -42,19 +42,6 @@
     font-family: ur;
     src: url(Assests/Fourline-New.ttf);
 }
-
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: ur;
-        color: --var ;
-    background-color: var(--var);
-}
-
-body {
-    overflow-x: hidden;
-}
 /* -------------------------------------------------- */
 /* BG ANIMATION */
 /* -------------------------------------------------- */
@@ -62,8 +49,8 @@ body {
     position: fixed;
     width: 100%;
     height: 100%;
-        color: --var ;
-    background-color: var(--var);
+    color: var(--text);
+    background-color: var(--bg);
     background-size: 400% 400%;
     animation: bgMove 14s ease infinite;
     z-index: -5;
@@ -81,11 +68,11 @@ body {
 .about-box {
     width: 75%;
     margin: 180px auto 60px;
-    background: #1a1a1a9d;
     padding: 40px;
     border-radius: 25px;
     backdrop-filter: blur(15px);
     box-shadow: 0 0 30px #9F00FF40;
+    background: none;
     animation: fadeIn 1.3s ease;
 }
 
@@ -100,7 +87,6 @@ body {
 .glass-box {
     width: 100%;
     padding: 35px;
-    background: rgba(255, 255, 255, 0.13);
     border-radius: 20px;
     backdrop-filter: blur(25px);
     border: 1px solid rgba(255, 255, 255, 0.25);
@@ -128,10 +114,12 @@ body {
 .about-info {
     font-size: 25px;
     line-height: 45px;
+    color: var(--text);
+    background-color: var(--bg);
 }
 
 .about-info span {
-    color: #9F00FF;
+    color: #9F00FF !important;
 }
 
 /* -------------------------------------------------- */
@@ -164,6 +152,7 @@ body {
     background: #9F00FF;
     border-radius: 15px;
     font-size: 24px;
+    color: white !important;
     text-decoration: none;
     transition: .4s;
 }
