@@ -1312,3 +1312,51 @@ body.dark-mode .search-result-item p {
     flex-shrink: 0 !important;        /* prevent X button from shrinking */
     margin-left: 8px;
 }
+@media (max-width: 600px) {
+    .footer {
+        padding: 30px 0;
+        margin-bottom: -150px !important;
+        border-radius: 0;
+    }
+
+    .footer-container {
+        width: 92%;
+        flex-direction: column;
+        text-align: center;
+        gap: 15px;
+    }
+
+    .footer-col {
+        width: 100% !important;
+        min-width: unset;
+        margin-bottom: 10px;
+    }
+
+    .footer h3 {
+        font-size: 22px;
+        margin-bottom: 10px;
+    }
+
+    .footer p,
+    .footer a {
+        font-size: 16px !important;
+        line-height: 22px !important;
+    }
+
+    .footer-social {
+        justify-content: center;
+        gap: 12px;
+    }
+
+    .footer-social a {
+        width: 45px;
+        height: 45px;
+        font-size: 22px;
+    }
+
+    .footer-bottom {
+        font-size: 14px;
+        margin-top: 10px;
+        padding-top: 15px;
+    }
+}
