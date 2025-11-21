@@ -865,3 +865,346 @@ body {
     transition: background 0.3s ease, color 0.3s ease, opacity 0.3s ease;
 }
 
+/* Scrollbar styling (Firefox + Chrome) */
+#gn-search-results::-webkit-scrollbar {
+    width: 8px;
+}
+#gn-search-results::-webkit-scrollbar-thumb {
+    background: #9F00FF;
+    border-radius: 10px;
+}
+#gn-search-results::-webkit-scrollbar-track {
+    background: transparent;
+}
+/* ========================= FLOATING PARTICLES ========================= */
+/* ---------- SAFE MOBILE HEADER + HAMBURGER (MOBILE/TABLET ONLY) ---------- */
+
+/* hide by default */
+.gn-hamburger, #gn-mobile-nav { display: none; }
+
+/* Mobile / Tablet */
+@media (max-width: 1435px) {
+
+  /* Only hide the desktop nav items that should move into the mobile menu */
+  .heading ul,
+  .heading h4,
+  .heading .dl,    /* top download button */
+  #gn-search-btn,
+  .theme-toggle {
+    display: none !important;
+  }
+
+  /* Keep logo centered */
+  .heading .logo {
+    left: 16px; /* keep original left offset for logo in your design, adjust if needed */
+    top: 8px;
+    width: 72px;
+  }
+
+  /* Hamburger button (fixed right) */
+  .gn-hamburger {
+    display: flex;
+    position: fixed;
+    top: 18px;
+    right: 18px;
+    z-index: 210000;
+    width: 54px;
+    height: 54px;
+    border-radius: 12px;
+    background: #141414;
+    border: 2px solid #9F00FF;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.45);
+  }
+
+  .gn-ham-box { width: 28px; height: 20px; position: relative; }
+  .gn-ham-inner, .gn-ham-inner::before, .gn-ham-inner::after {
+    background: #fff;
+    height: 3px;
+    width: 28px;
+    border-radius: 3px;
+    position: absolute; left: 0;
+    transition: transform .28s cubic-bezier(.2,.8,.2,1), opacity .2s;
+  }
+  .gn-ham-inner { top:50%; transform: translateY(-50%); }
+  .gn-ham-inner::before { content:""; top:-8px; }
+  .gn-ham-inner::after  { content:""; top:8px; }
+
+  .gn-hamburger.open .gn-ham-inner { transform: rotate(45deg); }
+  .gn-hamburger.open .gn-ham-inner::before { opacity: 0; transform: translateX(-6px); }
+  .gn-hamburger.open .gn-ham-inner::after { transform: rotate(-90deg); top:0; }
+
+  /* Mobile nav overlay */
+  #gn-mobile-nav {
+    display: block;
+    position: fixed;
+    inset: 0;
+    z-index: 209000;
+    pointer-events: none;
+  }
+  .gn-mobile-backdrop {
+    position: absolute; inset: 0;
+    background: rgba(0,0,0,0.62);
+    opacity: 0; transition: opacity .28s;
+    pointer-events: none;
+  }
+  .gn-mobile-panel {
+    position: absolute;
+    right: 0;
+    top: 0;
+    height: 100%;
+    width: min(360px, 86%);
+    background: linear-gradient(180deg, rgba(18,18,18,0.99), rgba(12,12,12,0.99));
+    padding: 22px;
+    transform: translateX(110%);
+    transition: transform .33s cubic-bezier(.2,.9,.2,1);
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    pointer-events: auto;
+    border-left: 1px solid rgba(159,0,255,0.06);
+    box-shadow: -12px 0 40px rgba(0,0,0,0.6);
+  }
+  #gn-mobile-nav.open .gn-mobile-backdrop { opacity: 1; pointer-events: auto; }
+  #gn-mobile-nav.open .gn-mobile-panel { transform: translateX(0); }
+
+  /* Mobile menu elements */
+  .gn-mobile-btn {
+    display:flex;gap:12px;align-items:center;
+    padding:12px;border-radius:12px;
+    background: rgba(255,255,255,0.02);
+    border: 2px solid rgba(159,0,255,0.08);
+    color: #fff; font-size:16px;
+  }
+
+  .gn-mobile-links {
+    list-style:none;padding:0;margin:6px 0; display:flex;flex-direction:column; gap:10px;
+  }
+  .gn-mobile-links a {
+    display:block;padding:12px;border-radius:12px;
+    background:#111;border:2px solid rgba(159,0,255,0.06);
+    color:#fff;text-decoration:none;font-size:18px;
+  }
+
+  .gn-mobile-download {
+    margin-top:auto;padding:14px;border-radius:12px;
+    background: linear-gradient(90deg,#9F00FF,#B72BFF);
+    color:white;text-align:center;font-weight:700;text-decoration:none;
+    box-shadow: 0 8px 22px rgba(159,0,255,0.16);
+  }
+
+  /* keep everything responsive in very small screens */
+  @media (max-width: 360px) {
+    .gn-mobile-panel { width: 92%; }
+    .gn-hamburger { right: 12px; width:48px; height:48px; }
+  }
+}
+
+#gn-particles {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 300vw;   /* wide area for smooth floating */
+    height: 300vh;
+    pointer-events: none;
+    z-index: -1;    /* stays behind everything */
+    opacity: 0.45;  /* default for dark mode */
+}
+
+/* Lighter effect in light mode */
+.light-mode #gn-particles {
+    opacity: 0.22;
+}
+
+/* Optional: smoother fade on theme change */
+body {
+    transition: background 0.3s ease, color 0.3s ease, opacity 0.3s ease;
+}
+@media (max-width: 1435px) {
+
+  /* Hide desktop header elements */
+  .heading ul,
+  .heading h4,
+  .heading .dl,
+  #gn-search-btn,
+  .theme-toggle {
+    display: none !important;
+  }
+
+  /* Center logo */
+  .heading .logo {
+    left: 16px;
+    top: 8px;
+    width: 72px;
+  }
+
+  /* Show hamburger */
+  .gn-hamburger {
+    display: flex;
+    position: fixed;
+    top: 18px;
+    right: 18px;
+    z-index: 210000;
+    width: 54px;
+    height: 54px;
+    border-radius: 12px;
+    background: #141414;
+    border: 2px solid #9F00FF;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* … keep the rest of your mobile hamburger + menu css the same … */
+
+}
+@media (min-width: 1436px) {
+  .gn-hamburger,
+  #gn-mobile-nav {
+    display: none !important;
+  }
+
+  /* All desktop header elements remain visible */
+}
+/* Prevent UL from colliding with icons on desktop */
+@media (max-width: 1600px) {
+
+    /* reduce nav font size */
+    .heading ul li a {
+       font-size: 20px;
+    }
+
+    /* shift logo left */
+    .heading .logo {
+        left: 35px !important;
+        top: 10px !important;
+        transform: none !important;
+
+    }
+    .heading h4{
+        left: 170px;
+    }
+    /* give right-space so nav won't collide */
+    .heading ul {
+        padding-right: 140px !important;
+    }
+}
+@media (min-width: 1601px) and (max-width: 1800px) {
+
+    /* slightly shrink nav */
+    .heading ul li a {
+        font-size: 18px !important;
+        
+    }
+
+    /* small shift of logo */
+    .heading .logo {
+        left: 50px !important;
+        transform: none !important;
+    }
+    .heading h4{
+        left: 170px;
+    }
+    /* moderate spacing for right icons */
+    .heading ul {
+        padding-right: 220px !important;
+    }
+
+}
+/* brand container: logo + text aligned together */
+.heading .brand {
+    position: absolute;
+    top: 10px;          /* adjust as needed */
+    left: 20px;         /* logo hugs the left */
+    display: flex;
+    align-items: center;
+    gap: 12px;          /* space between logo and text */
+}
+
+/* make logo normal inside flex */
+.heading .brand .logo {
+    position: static !important;
+    transform: none !important;
+    margin: 0;
+}
+
+/* make text align with logo */
+.heading .brand h4 {
+    position: static !important;
+    margin: 0;
+    font-size: 26px;     /* adjust to match your style */
+    font-weight: 600;
+}
+/* ============================================================
+   REAL LIGHT-MODE FIX (CURATED FOR YOUR VARIABLE SYSTEM)
+   Fixes: search box, theme button, menu links, icons, backdrop.
+   ============================================================ */
+
+.light-mode #gn-mobile-nav .gn-mobile-panel {
+    background: var(--box) !important;
+    border-left: 1px solid rgba(0,0,0,0.15) !important;
+}
+
+.light-mode #gn-mobile-nav .gn-mobile-links a {
+    background: var(--box) !important;
+    color: var(--text) !important;
+    border: 2px solid #9F00FF33 !important;
+}
+
+.light-mode #gn-mobile-nav .gn-mobile-links a:hover {
+    background: #e9e9e9 !important;
+}
+
+.light-mode #gn-mobile-nav .gn-mobile-btn {
+    background: var(--box) !important;
+    color: var(--text) !important;
+    border: 2px solid #9F00FF !important;
+}
+
+.light-mode #gn-mobile-nav .gn-mobile-btn i {
+    color: var(--text) !important;
+}
+
+.light-mode .gn-hamburger {
+    background: var(--box) !important;
+    border-color: #9F00FF !important;
+}
+
+.light-mode .gn-hamburger .gn-ham-line,
+.light-mode .gn-hamburger .gn-ham-line::before,
+.light-mode .gn-hamburger .gn-ham-line::after {
+    background: var(--text) !important;
+}
+
+.light-mode #gn-mobile-nav .gn-mobile-download {
+    background: linear-gradient(90deg, #9F00FF, #B72BFF) !important;
+    color: #fff !important;
+}
+
+.light-mode #gn-mobile-nav .gn-mobile-backdrop {
+    background: rgba(0,0,0,0.40) !important;
+}
+/* ---------------- LIGHT MODE FIX: HAMBURGER ICON ---------------- */
+
+.light-mode .gn-hamburger {
+    background: var(--box) !important;
+    border-color: #9F00FF !important;
+}
+
+/* Make lines black in light mode */
+.light-mode .gn-ham-inner,
+.light-mode .gn-ham-inner::before,
+.light-mode .gn-ham-inner::after {
+    background: #000 !important;
+}
+/* ---- Center Hamburger Vertically inside Header ---- */
+
+@media (max-width: 1435px) {
+    .heading {
+        height: 80px; /* or your actual height */
+    }
+    .gn-hamburger {
+        top: 40px !important; /* half of header height */
+        transform: translateY(-50%) !important;
+    }

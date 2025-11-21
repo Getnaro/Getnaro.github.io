@@ -294,7 +294,42 @@
 
     <div id="gn-search-results" class="gn-search-results"></div>
 </div>
+<!-- ========== GN MOBILE HAMBURGER (SAFE OUTSIDE HEADER) ========== -->
+<button id="gn-hamburger" class="gn-hamburger" aria-expanded="false" aria-label="Open menu">
+  <span class="gn-ham-box"><span class="gn-ham-inner"></span></span>
+</button>
 
+<nav id="gn-mobile-nav" class="gn-mobile-nav" aria-hidden="true">
+  <div class="gn-mobile-backdrop" data-close></div>
+
+  <div class="gn-mobile-panel" role="dialog" aria-modal="true">
+
+    <!-- Mobile Search — triggers existing #gn-search-btn -->
+    <button class="gn-mobile-btn gn-mobile-search" type="button" aria-label="Open search">
+      <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i> <span>Search</span>
+    </button>
+
+    <!-- Theme toggle — triggers existing #theme-toggle -->
+    <button class="gn-mobile-btn gn-mobile-theme" type="button" aria-label="Toggle theme">
+      <i class="fa-solid fa-moon" aria-hidden="true"></i> <span>Theme</span>
+    </button>
+
+    <!-- EXACT UL you provided -->
+    <ul class="gn-mobile-links" role="menu" aria-label="Mobile navigation">
+      <li role="none"><a role="menuitem" href="index.html">Home</a></li>
+      <li role="none"><a role="menuitem" href="notfound.html">Specials</a></li>
+      <li role="none"><a role="menuitem" href="login.html">Account</a></li>
+      <li role="none"><a role="menuitem" href="about.html">About Us</a></li>
+      <li role="none"><a role="menuitem" href="faq.html">FAQ</a></li>
+    </ul>
+
+    <!-- Download App -->
+    <a class="gn-mobile-download" href="https://files.zohoexternal.in/public/workdrive-external/download/e8gn0d5ec3fd3767d45669a45145dcd3e8fcb">
+      <i class="fa-solid fa-download" aria-hidden="true"></i> <span>Download App</span>
+    </a>
+
+  </div>
+</nav>
 <div class="container">
     <!--All the Coded Contents-->
     <!-- ================= GETNARO DISCORD-STYLE LOGIN (SELF-CONTAINED) ================= -->
@@ -851,6 +886,8 @@ confirmOK.onclick = () => {
     window.location.href = "index.html";
 };
 </script>
-
+<script src="tod.js"></script>
+<script src="tog.js"></script>
+<script src="hamburger.js"></script>
 </body>
 </html>

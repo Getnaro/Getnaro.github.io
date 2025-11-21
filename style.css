@@ -1517,6 +1517,81 @@ body {
     font-size: 26px;     /* adjust to match your style */
     font-weight: 600;
 }
+/* ============================================================
+   REAL LIGHT-MODE FIX (CURATED FOR YOUR VARIABLE SYSTEM)
+   Fixes: search box, theme button, menu links, icons, backdrop.
+   ============================================================ */
+
+.light-mode #gn-mobile-nav .gn-mobile-panel {
+    background: var(--box) !important;
+    border-left: 1px solid rgba(0,0,0,0.15) !important;
+}
+
+.light-mode #gn-mobile-nav .gn-mobile-links a {
+    background: var(--box) !important;
+    color: var(--text) !important;
+    border: 2px solid #9F00FF33 !important;
+}
+
+.light-mode #gn-mobile-nav .gn-mobile-links a:hover {
+    background: #e9e9e9 !important;
+}
+
+.light-mode #gn-mobile-nav .gn-mobile-btn {
+    background: var(--box) !important;
+    color: var(--text) !important;
+    border: 2px solid #9F00FF !important;
+}
+
+.light-mode #gn-mobile-nav .gn-mobile-btn i {
+    color: var(--text) !important;
+}
+
+.light-mode .gn-hamburger {
+    background: var(--box) !important;
+    border-color: #9F00FF !important;
+}
+
+.light-mode .gn-hamburger .gn-ham-line,
+.light-mode .gn-hamburger .gn-ham-line::before,
+.light-mode .gn-hamburger .gn-ham-line::after {
+    background: var(--text) !important;
+}
+
+.light-mode #gn-mobile-nav .gn-mobile-download {
+    background: linear-gradient(90deg, #9F00FF, #B72BFF) !important;
+    color: #fff !important;
+}
+
+.light-mode #gn-mobile-nav .gn-mobile-backdrop {
+    background: rgba(0,0,0,0.40) !important;
+}
+/* ---------------- LIGHT MODE FIX: HAMBURGER ICON ---------------- */
+
+.light-mode .gn-hamburger {
+    background: var(--box) !important;
+    border-color: #9F00FF !important;
+}
+
+/* Make lines black in light mode */
+.light-mode .gn-ham-inner,
+.light-mode .gn-ham-inner::before,
+.light-mode .gn-ham-inner::after {
+    background: #000 !important;
+}
+/* ---- Center Hamburger Vertically inside Header ---- */
+
+@media (max-width: 1435px) {
+    .heading {
+        height: 80px; /* or your actual height */
+    }
+    .gn-hamburger {
+        top: 40px !important; /* half of header height */
+        transform: translateY(-50%) !important;
+    }
+    /* ============================================================
+   SEARCH RESULT CARDS FIX (SAFE & MATCHES MOBILE STYLE)
+   ============================================================ */
 /* ------------------- OPTIMIZED CAROUSEL + LAYOUT HELPERS ------------------- */
 /* Add to end of style.css */
 
@@ -1676,3 +1751,199 @@ body {
         font-size: 17px;
     }
 }
+
+
+.gn-search-results .content-one {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    gap: 18px !important;
+    padding: 20px !important;
+color: #111 !important;
+    width: 100% !important;
+    max-width: 360px !important;
+
+    background: #fff !important;
+    border-radius: 16px !important;
+    box-shadow: 0 0 18px #9F00FF55 !important;
+
+    margin: 14px auto !important;
+}
+
+.gn-search-results .content-one img {
+    width: 75px !important;
+    height: 75px !important;
+    object-fit: contain !important;
+}
+
+.gn-search-results .content-one .tet h5 {
+    font-size: 18px !important;
+    margin-bottom: 10px !important;
+    color: #111 !important;
+}
+
+.gn-search-results .content-one .tet a {
+    width: 160px !important;
+    height: 45px !important;
+
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+
+    border-radius: 10px !important;
+    font-size: 15px !important;
+}
+
+}
+/* Move search bar slightly up inside mobile menu */
+#gn-mobile-nav .gn-mobile-panel {
+    padding-top: 14px !important; /* default is probably around 25px */
+}
+/* ================== SEARCH BAR FIXES ================== */
+
+/* Move search bar slightly upward */
+
+/* Keep search close button inside the bar */
+.close-btn {
+    position: absolute !important;
+    right: 15px !important;
+    top: 50% !important;
+    transform: translateY(-50%) !important;
+    width: 38px !important;
+    height: 38px !important;
+    background: rgba(255,255,255,0.25) !important;
+}
+
+/* ==========================================
+   FIX SEARCH RESULTS GETTING CUT OFF
+   ========================================== */
+
+/* Allow results to fully show */
+#gn-search-overlay {
+    overflow-y: auto !important;
+    overflow-x: visible !important;
+}
+
+/* Make results container full-width */
+#gn-search-results {
+    width: 100% !important;
+    padding: 0 16px !important;
+    overflow: visible !important;
+}
+
+/* Make search result cards responsive */
+.gn-search-result-card {
+    width: 100% !important;
+    max-width: 360px !important; /* prevents stretching too wide */
+    margin-left: auto !important;
+    margin-right: auto !important;
+}
+
+/* Prevent clipping inside card container */
+.gn-search-result-card * {
+    overflow: visible !important;
+}
+/* ============================================================
+   MAIN PAGE CONTENT ONE — MOBILE-FRIENDLY FIX
+   (Does NOT affect search results)
+   ============================================================ */
+
+@media (max-width: 780px) {
+
+    .content-one{
+        margin-bottom: -15px;
+    }
+
+    /* Main container card */
+    .container .content-one {
+        display: flex !important;
+        flex-direction: row !important;
+        align-items: center !important;
+
+        height: auto !important;
+        padding: 20px !important;
+        gap: 10px !important;
+
+        width: 92% !important;
+
+        background: #ffffff !important;
+        border-radius: 16px !important;
+        box-shadow: 0 0 16px #9F00FF44 !important;
+    }
+
+    /* Image inside card */
+    .container .content-one img {
+        position: relative !important;
+        left: 0 !important;
+        width: 80px !important;
+        height: 80px !important;
+        object-fit: contain !important;
+        margin: 0 !important;
+    }
+
+    /* Text wrapper */
+    .container .content-one .tet {
+        position: relative !important;
+        margin: 0 !important;
+    }
+
+    /* Title text */
+    .container .content-one .tet h5 {
+        font-size: 25px !important;
+        margin-bottom: 10px !important;
+        color: #111 !important;
+    }
+
+    /* Download button */
+    .container .content-one .tet a {
+        position: relative !important;
+        width: 160px !important;
+        height: 45px !important;
+        bottom: 0px;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        border-radius: 10px !important;
+        font-size: 15px !important;
+    }
+}
+/* --- FIX SEARCH RESULT TITLE DISAPPEARING UNDER 820px --- */
+@media (max-width: 850px) {
+
+    .search-result-item {
+        align-items: center !important;
+        min-height: 90px !important;
+    }
+
+    .search-result-item img {
+        width: 55px !important;
+        height: 55px !important;
+        flex-shrink: 0 !important;
+    }
+
+    .search-info {
+        display: flex !important;
+        flex-direction: column !important;
+        justify-content: center !important;
+        min-height: 55px !important;
+        padding-left: 10px !important;
+        overflow: visible !important;
+    }
+
+    .search-info h4 {
+        margin: 0 !important;
+        padding: 0 !important;
+        font-size: 17px !important;
+        display: block !important;
+        color: var(--text-primary) !important;
+    }
+
+    .search-info p {
+        margin-top: 3px !important;
+        font-size: 13px !important;
+        opacity: 0.8 !important;
+        display: block !important;
+        white-space: nowrap !important;
+    }
+}
+
