@@ -1360,3 +1360,22 @@ body.dark-mode .search-result-item p {
         padding-top: 15px;
     }
 }
+/* =====================================================
+   FINAL FIX: Prevent mobile search text overflowing
+   (X button stays inside, input shrinks correctly)
+===================================================== */
+
+.gn-search-bar {
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+}
+
+.gn-search-bar input {
+    flex: 1 1 auto !important;      /* allow shrinking */
+    min-width: 0 !important;        /* CRITICAL */
+    width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
