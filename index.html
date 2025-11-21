@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="/stylesheets/style.css">
     <link rel="stylesheet" href="chat-full.css">
     <title>Getnaro Online</title>
     <!-- FONTS & ICONS -->
@@ -35,17 +35,17 @@
     <!-- ------------------ HEADER ------------------ -->
 <div class="heading">
 
-    <a href="index.html"><img src="Assests/logo-getnaro-nobg.png" class="logo"></a>
+    <a href="/index.html"><img src="/Assests/logo-getnaro-nobg.png" class="logo"></a>
     <h4>Getnaro</h4>
     <ul>
         <li><a href="index.html" style="background-color:#9F00FF; color: white !important;
         padding: 10px ; 
         border-radius: 10px;"
         >HOME</a></li>
-        <li><a href="notfound.html">SPECIALS</a></li>
-        <li><a href="login.html">ACCOUNT</a></li>
-        <li><a href="about.html">ABOUT US</a></li>
-        <li><a href="faq.html">FAQ</a></li>
+        <li><a href="/pages/notfound.html">SPECIALS</a></li>
+        <li><a href="/pages/login.html">ACCOUNT</a></li>
+        <li><a href="/pages/about.html">ABOUT US</a></li>
+        <li><a href="/pages/faq.html">FAQ</a></li>
     </ul>
 <button id="theme-toggle" class="theme-toggle">
     <i id="theme-icon" class="fa-solid fa-moon"></i>
@@ -81,10 +81,10 @@
     <!-- EXACT UL you provided -->
     <ul class="gn-mobile-links" role="menu" aria-label="Mobile navigation">
       <li role="none"><a role="menuitem" href="index.html">Home</a></li>
-      <li role="none"><a role="menuitem" href="notfound.html">Specials</a></li>
-      <li role="none"><a role="menuitem" href="login.html">Account</a></li>
-      <li role="none"><a role="menuitem" href="about.html">About Us</a></li>
-      <li role="none"><a role="menuitem" href="faq.html">FAQ</a></li>
+      <li role="none"><a role="menuitem" href="/pages/notfound.html">Specials</a></li>
+      <li role="none"><a role="menuitem" href="/pages/login.html">Account</a></li>
+      <li role="none"><a role="menuitem" href="/pages/about.html">About Us</a></li>
+      <li role="none"><a role="menuitem" href="/pages/faq.html">FAQ</a></li>
     </ul>
 
     <!-- Download App -->
@@ -777,50 +777,8 @@
   const db = getDatabase(app);
 
 </script>
-
  <script>
-        document.addEventListener('DOMContentLoaded', () => {
 
-            const track = document.querySelector('.gn-carousel-track');
-            const slides = document.querySelectorAll('.gn-slide');
-            const nextBtn = document.querySelector('.gn-next');
-            const prevBtn = document.querySelector('.gn-prev');
-
-            let index = 0;
-            const total = slides.length;
-            const interval = 10000; // 10 seconds autoplay
-
-            // Move to a specific slide (0%, -100%, -200% ...)
-            function goTo(i) {
-                index = (i + total) % total;
-                track.style.transform = `translateX(-${index * 100}%)`;
-            }
-
-            // Buttons
-            nextBtn.addEventListener('click', () => goTo(index + 1));
-            prevBtn.addEventListener('click', () => goTo(index - 1));
-
-            // Auto-slide
-            let timer = setInterval(() => goTo(index + 1), interval);
-
-            // Pause when hovering
-            const carousel = document.querySelector('.gn-carousel');
-
-            carousel.addEventListener('mouseenter', () => {
-                clearInterval(timer);
-            });
-
-            carousel.addEventListener('mouseleave', () => {
-                clearInterval(timer);
-                timer = setInterval(() => goTo(index + 1), interval);
-            });
-
-            // Keep current slide when resizing window
-            window.addEventListener('resize', () => {
-                goTo(index);
-            });
-
-        });
         </script>
 
         <script>
@@ -867,223 +825,45 @@
         </script>
 
     <script>
-    const toggleBtn = document.getElementById("theme-toggle");
-    const themeIcon = document.getElementById("theme-icon");
 
-    // Load saved theme
-    let currentTheme = localStorage.getItem("theme") || "dark";
-    applyTheme(currentTheme);
-
-    toggleBtn.addEventListener("click", () => {
-        currentTheme = currentTheme === "dark" ? "light" : "dark";
-        applyTheme(currentTheme);
-        localStorage.setItem("theme", currentTheme);
-    });
-
-    function applyTheme(mode) {
-        if (mode === "light") {
-            document.body.classList.remove("dark-mode");
-            document.body.classList.add("light-mode");
-            themeIcon.classList.replace("fa-moon", "fa-sun");
-        } else {
-            document.body.classList.remove("light-mode");
-            document.body.classList.add("dark-mode");
-            themeIcon.classList.replace("fa-sun", "fa-moon");
-        }
-    }
     </script>
     <script>
-// -----------------------------
-// GLOBAL COLLECTION OF ALL APPS
-// -----------------------------
-let aiData = [];
 
-// Collect every .content-one card into searchable AI data
-document.querySelectorAll(".content-one").forEach(card => {
-    const name = card.querySelector("h5")?.innerText.trim() || "";
-    const img = card.querySelector("img")?.src || "";
-    const category = card.dataset.category || "general";
-
-    aiData.push({
-        name,
-        img,
-        category,
-        element: card,
-        keywords: name.toLowerCase().split(" ")  // simple keyword extraction
-    });
-});
-
-console.log("AI Loaded:", aiData.length);
-
-// -----------------------------
-// DOM ELEMENTS
-// -----------------------------
-const overlay = document.getElementById("gn-search-overlay");
-const openBtn = document.getElementById("gn-search-btn");
-const closeBtn = document.getElementById("gn-search-close");
-const input = document.getElementById("gn-search-input");
-const resultsBox = document.getElementById("gn-search-results");
-const popup = document.querySelector(".popup"); // optional
-
-// -----------------------------
-// OPEN SEARCH OVERLAY
-// -----------------------------
-openBtn?.addEventListener("click", () => {
-    if (popup) popup.style.display = "none"; // hide popup if open
-    overlay.style.display = "flex";
-    input.value = "";
-    resultsBox.innerHTML = "";
-    input.focus();
-});
-
-// -----------------------------
-// CLOSE SEARCH OVERLAY
-// -----------------------------
-closeBtn?.addEventListener("click", () => {
-    overlay.style.display = "none";
-    input.value = "";
-    resultsBox.innerHTML = "";
-});
-
-// -----------------------------
-// AI SEARCH FUNCTION
-// -----------------------------
-function aiSearch(query) {
-    const q = query.toLowerCase();
-    let matches = [];
-
-    aiData.forEach(app => {
-        let score = 0;
-        const name = app.name.toLowerCase();
-
-        // Scores
-        if (name.includes(q)) score += 10;         // strong match
-        app.keywords.forEach(k => {                // keyword match
-            if (k.includes(q)) score += 5;
-        });
-        if (app.category.includes(q)) score += 3;  // category match
-        if (name[0] === q[0]) score += 1;          // fuzzy match
-
-        if (score > 0) matches.push({ ...app, score });
-    });
-
-    // Sort by score
-    return matches.sort((a, b) => b.score - a.score);
-}
-
-// -----------------------------
-// INPUT LISTENER
-// -----------------------------
-input.addEventListener("input", () => {
-    const query = input.value.trim();
-    resultsBox.innerHTML = "";
-
-    if (query.length === 0) return;
-
-    const results = aiSearch(query);
-
-    if (results.length === 0) {
-        resultsBox.innerHTML =
-            `<div class="no-result">No results found</div>`;
-        return;
-    }
-
-    // Create result items
-    results.forEach(app => {
-        const item = document.createElement("div");
-        item.classList.add("search-result-item");
-
-        item.innerHTML = `
-            <img src="${app.img}">
-            <div class="search-info">
-                <h4>${app.name}</h4>
-                <p>${app.category.toUpperCase()} • Score ${app.score}</p>
-            </div>
-        `;
-
-        // On click → show full card style
-        item.onclick = () => showFullCard(app);
-        resultsBox.appendChild(item);
-    });
-});
-
-// -----------------------------
-// SHOW ORIGINAL CARD IN OVERLAY
-// -----------------------------
-function showFullCard(app) {
-    resultsBox.innerHTML = "";
-
-    const original = app.element.cloneNode(true);
-    original.style.transform = "scale(1.02)";
-    original.style.background = "white";
-    original.style.color = "black";
-    original.style.padding = "20px";
-    original.style.borderRadius = "12px";
-    original.style.boxShadow = "0 0 25px rgba(0,0,0,0.20)";
-    original.style.marginTop = "20px";
-
-    resultsBox.appendChild(original);
-}
 </script>
 <script>
-document.addEventListener("DOMContentLoaded", () => {
-    const canvas = document.getElementById("gn-particles");
-    const ctx = canvas.getContext("2d");
 
-    function resizeCanvas() {
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-    }
-    resizeCanvas();
-    window.addEventListener("resize", resizeCanvas);
-
-    // FORCE density based on screen size (much better)
-    const PARTICLES = Math.floor((window.innerWidth * window.innerHeight) / 12000);
-    // Example: 1920x1080 → ~172 particles
-
-    console.log("Particles generated:", PARTICLES);
-
-    const dots = [];
-    for (let i = 0; i < PARTICLES; i++) {
-        dots.push({
-            x: Math.random() * canvas.width,
-            y: Math.random() * canvas.height,
-            r: Math.random() * 2 + 1,
-            dx: (Math.random() - 0.5) * 0.5,
-            dy: (Math.random() - 0.5) * 0.5
-        });
-    }
-
-    function draw() {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-        ctx.fillStyle = "rgba(255,255,255,0.35)";
-
-        dots.forEach(p => {
-            ctx.beginPath();
-            ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-            ctx.fill();
-
-            p.x += p.dx;
-            p.y += p.dy;
-
-            // wrap around edges
-            if (p.x < 0) p.x = canvas.width;
-            if (p.x > canvas.width) p.x = 0;
-            if (p.y < 0) p.y = canvas.height;
-            if (p.y > canvas.height) p.y = 0;
-        });
-
-        requestAnimationFrame(draw);
-    }
-
-    draw();
-});
 </script>
 <script type="module" src="stats.js"></script>
 
-<script src="tod.js"></script>
-<script src="tog.js"></script>
-<script src="hamburger.js"></script>
+<script src="/scripts/tod.js"></script>
+<script src="/scripts/tog.js"></script>
+<script src="/scripts/caro.js"></script>
+<script src="/scripts/particles.js"></script>
+<script type="module" src="/scripts/download-index.js"></script>
+<script type="module" src="/scripts/stats.js"></script>
+<script src="/scripts/theme.js"></script>
+<script src="/scripts/search.js"></script>
+<script src="/scripts/hamburger.js"></script>
+<script type="module">
+/* When clicking download */
+document.querySelectorAll(".gn-btn-download").forEach(btn => {
+    btn.addEventListener("click", e => {
+        const user = auth.currentUser;
+        if (!user) return alert("Please login first.");
+
+        const parent = btn.closest(".content-one");
+        const appId = parent.dataset.app;
+
+        update(ref(db, "users/" + user.uid + "/apps/" + appId), {
+            downloaded: true
+        });
+
+        btn.style.display = "none";
+        parent.querySelector(".gn-btn-update").style.display = "block";
+        parent.querySelector(".gn-btn-uninstall").style.display = "block";
+    });
+});
+</script>
+
 </body>
 </html>

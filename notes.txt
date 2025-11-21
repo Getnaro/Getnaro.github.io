@@ -2,71 +2,56 @@
 <html lang="en">
 
 <head>
-       <meta charset="UTF-8">
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/stylesheets/header.css">
+    <link rel="stylesheet" href="/stylesheets/chat-full.css">
     <title>Getnaro Online</title>
-        <link rel="stylesheet" href="header.css">
-    <link rel="stylesheet" href="chat-full.css">
-
     <!-- FONTS & ICONS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-
     <!-- SEO + META -->
     <meta name="title" content="Getnaro — Free Software, Drivers & Tools Download Hub">
     <meta name="description"
         content="Getnaro is your all-in-one download hub for Windows software, drivers, tools, utilities and essential apps. Fast, safe and direct downloads with no ads or redirects. Updated daily.">
-
     <meta name="keywords"
         content="Getnaro, software download, drivers download, free pc tools, windows apps download, downloader website, pc utilities, direct download hub">
     <meta name="author" content="Getnaro Team">
     <meta name="robots" content="index, follow">
     <link rel="canonical" href="https://getnaro.com/">
-
     <!-- SOCIAL -->
+
     <meta property="og:type" content="website">
     <meta property="og:title" content="Getnaro — Free Software, Drivers & Tools Download Hub">
     <meta property="og:description"
         content="Download software, drivers, utilities and PC tools safely from Getnaro. Direct downloads without ads or redirects.">
     <meta property="og:image" content="https://getnaro.com/assets/getnaro-banner.jpg">
     <meta property="og:url" content="https://getnaro.com/">
-
     <meta name="twitter:card" content="summary_large_image">
-
     <!-- FAVICON -->
     <link rel="icon" type="image/x-icon" href="Assests/Favicon.png">
-    <style>
-        body { background:#141414; margin:0; padding:0; }
-        .content-box {
-            width: 90%;
-            margin: 160px auto 40px auto;
-            background: #1a1a1a;
-            padding: 40px;
-            border-radius: 15px;
-            border: 1px solid #9F00FF44;
-            box-shadow: 0 0 20px #9F00FF33;
-        }
-        .content-box h2 { font-size: 45px; color: #9F00FF; margin-bottom: 20px; }
-        .content-box p { font-size: 20px; line-height: 32px; color: #e8e8e8; }
-        .content-box h3 { margin-top: 30px; font-size: 30px; color:#9F00FF; }
-    </style>
 </head>
-
 <body>
-
-<!-- HEADER -->
+    <canvas id="gn-particles"></canvas>
+    <!-- ------------------ HEADER ------------------ -->
 <div class="heading">
-    <a href="index.html"><img src="Assests/logo-getnaro-nobg.png" class="logo"></a>
+
+    <a href="/index.html"><img src="/Assests/logo-getnaro-nobg.png" class="logo"></a>
     <h4>Getnaro</h4>
-
     <ul>
-        <li><a href="index.html">HOME</a></li>
-        <li><a href="notfound.html">SPECIALS</a></li>
-        <li><a href="login.html">ACCOUNT</a></li>
-        <li><a href="about.html">ABOUT US</a></li>
-        <li><a href="faq.html">FAQ</a></li>
+        <li><a href="/index.html">HOME</a></li>
+        <li><a href="/pages/notfound.html">SPECIALS</a></li>
+        <li><a href="/pages/login.html">ACCOUNT</a></li>
+        <li><a href="/pages/about.html">ABOUT US</a></li>
+        <li><a href="/pages/faq.html">FAQ</a></li>
     </ul>
-
-    <a class="dl" href="#">
+<button id="theme-toggle" class="theme-toggle">
+    <i id="theme-icon" class="fa-solid fa-moon"></i>
+</button>
+<div id="gn-search-btn" class="gn-search-btn">
+    <i class="fa-solid fa-magnifying-glass"></i>
+</div>
+    <a class="dl"
+        href="https://files.zohoexternal.in/public/workdrive-external/download/e8gn0d5ec3fd3767d45669a45145dcd3e8fcb">
         <i class="fa-solid fa-download"></i> DOWNLOAD APP
     </a>
 </div>
@@ -93,10 +78,10 @@
     <!-- EXACT UL you provided -->
     <ul class="gn-mobile-links" role="menu" aria-label="Mobile navigation">
       <li role="none"><a role="menuitem" href="index.html">Home</a></li>
-      <li role="none"><a role="menuitem" href="notfound.html">Specials</a></li>
-      <li role="none"><a role="menuitem" href="login.html">Account</a></li>
-      <li role="none"><a role="menuitem" href="about.html">About Us</a></li>
-      <li role="none"><a role="menuitem" href="faq.html">FAQ</a></li>
+      <li role="none"><a role="menuitem" href="/pages/notfound.html">Specials</a></li>
+      <li role="none"><a role="menuitem" href="/pages/login.html">Account</a></li>
+      <li role="none"><a role="menuitem" href="/pages/about.html">About Us</a></li>
+      <li role="none"><a role="menuitem" href="/pages/faq.html">FAQ</a></li>
     </ul>
 
     <!-- Download App -->
@@ -107,50 +92,33 @@
   </div>
 </nav>
 <!-- ========== END GN MOBILE HAMBURGER ========== -->
-<!-- CONTENT -->
-<div class="content-box">
-    <h2>Privacy Policy</h2>
 
-    <p>Getnaro respects your privacy. We operate with a strict no-tracking, no-data-collection philosophy.</p>
+<!-- MODERN FULLSCREEN SEARCH -->
+<div id="gn-search-overlay" class="gn-search-overlay">
+    <div class="gn-search-wrapper">
+        <i class="fa-solid fa-magnifying-glass search-icon"></i>
+        <input type="text" id="gn-search-input" placeholder="Search here" style="overflow-x: hidden;" autocomplete="off">
+        <button id="gn-search-close" class="close-btn">
+            <i class="fa-solid fa-xmark"></i>
+        </button>
+    </div>
 
-    <h3>1. No Data Collection</h3>
-    <p>We do not collect personal data, browser data, analytics, cookies, or device identifiers.</p>
-
-    <h3>2. No Accounts</h3>
-    <p>Getnaro does not require or support user accounts, login systems, or any form of registration.</p>
-
-    <h3>3. No Hosting of Files</h3>
-    <p>Getnaro only redirects users to official websites for downloading apps, tools, drivers, and software.</p>
-
-    <h3>4. Third-Party Websites</h3>
-    <p>All downloads are hosted by official developers. Their own privacy policies may apply once you leave Getnaro.</p>
-
-    <h3>5. No Advertising</h3>
-    <p>We do not run ads, popups, banners, trackers, or affiliate marketing scripts.</p>
-
-    <h3>6. Security</h3>
-    <p>Because downloads come directly from official developers, security is governed by those sources.</p>
-
-    <h3>7. Updates to This Policy</h3>
-    <p>We may revise this privacy policy if needed. Changes will reflect instantly on this page.</p>
-
+    <div id="gn-search-results" class="gn-search-results"></div>
 </div>
-
-<!-- FOOTER -->
 <footer class="footer">
     <div class="footer-container">
 
         <div class="footer-col">
             <h3>Getnaro</h3>
-            <p>Official download redirection hub for Windows software — clean, safe & ad-free.</p>
+            <p>Official download redirection hub for Windows software, tools, utilities and drivers—clean, safe & ad-free.</p>
         </div>
 
         <div class="footer-col">
             <h3>Quick Links</h3>
-            <a href="terms.html">Terms & Conditions</a><br>
-            <a href="coc.html">Code Of Conduct</a><br>
-            <a href="privacypolicy.html">Privacy Policy</a><br>
-            <a href="contact.html">Contact</a>
+            <a href="/pages/t&c.html">Terms & Conditions</a><br>
+            <a href="/pages/coc.html">Code Of Conduct</a><br>
+            <a href="/pages/privacypolicy.html">Privacy Policy</a><br>
+            <a href="/pages/contact.html">Contact</a>
         </div>
 
         <div class="footer-col">
@@ -165,13 +133,37 @@
         </div>
 
     </div>
-
     <div class="footer-bottom">
         © 2025 Getnaro — Developed by Azad Bharatiyan • Hosted on GitHub • Domain by BigRock
     </div>
 </footer>
-<script src="tod.js"></script>
-<script src="tog.js"></script>
-<script src="chat-full.js"></script>
+<script src="/scripts/tod.js"></script>
+<script src="/scripts/tog.js"></script>
+<script src="/scripts/particles.js"></script>
+<script src="/scripts/theme.js"></script>
+<script src="/scripts/search.js"></script>
+<script src="/scripts/hamburger.js"></script>
+<script type="module" src="/scripts/download-index.js"></script>
+<script type="module" src="/scripts/stats.js"></script>
+<script src="/scripts/caro.js"></script>
+<script type="module">
+/* When clicking download */
+document.querySelectorAll(".gn-btn-download").forEach(btn => {
+    btn.addEventListener("click", e => {
+        const user = auth.currentUser;
+        if (!user) return alert("Please login first.");
+
+        const parent = btn.closest(".content-one");
+        const appId = parent.dataset.app;
+
+        update(ref(db, "users/" + user.uid + "/apps/" + appId), {
+            downloaded: true
+        });
+
+        btn.style.display = "none";
+        parent.querySelector(".gn-btn-update").style.display = "block";
+        parent.querySelector(".gn-btn-uninstall").style.display = "block";
+    });
+});
+</script>
 </body>
-</html>
