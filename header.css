@@ -311,6 +311,7 @@ body.light-mode #gn-particles {
     border-top: 2px solid #9F00FF55;
     margin-top: auto; /* THIS MAKES IT STICK AT THE BOTTOM ONLY AFTER SCROLL */
     margin-bottom: -100px;
+    z-index: 9999 !important;
 }
 
 .footer-container {
@@ -1317,6 +1318,7 @@ body.dark-mode .search-result-item p {
         padding: 30px 0;
         margin-bottom: -150px !important;
         border-radius: 0;
+        
     }
 
     .footer-container {

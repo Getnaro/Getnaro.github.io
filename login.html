@@ -341,7 +341,7 @@
 
   /* Reset inherited weirdness only inside wrapper */
   #gn-login-wrapper { all: unset; display:block; font-family: "ur", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial; color: #fff; width:100%; }
-  #gn-login-wrapper .gn-wrap { width:100%; display:flex; justify-content:center; margin-top:180px; padding:0 12px; }
+  #gn-login-wrapper .gn-wrap { width:100%; display:flex; justify-content:center; margin-top: 180px; padding:0 12px; }
   #gn-login-wrapper .gn-card {
     width: 920px; max-width:100%; min-width:320px;
     height:540px; background: linear-gradient(180deg,#161616,#0f0f0f);
@@ -596,6 +596,119 @@
     from { opacity: 0; }
     to   { opacity: 1; }
 }
+/* ============================================================
+   GETNARO — MOBILE VERSION (WON’T AFFECT PC)
+   Applies ONLY below 768px
+   ============================================================ */
+@media (max-width: 768px) {
+
+    /* Main wrapper spacing fix */
+    #gn-login-wrapper {
+        margin-top: 20px !important;      /* fixes “too low” issue */
+        margin-bottom: 40px !important;
+    }
+
+    /* Card adjusts for small screens */
+    #gn-login-wrapper .gn-card {
+        flex-direction: column !important;
+        width: 100% !important;
+        max-width: 92% !important;
+        min-height: 880px !important;     /* keeps both login/signup visible */
+        padding-bottom: 18px !important;
+        border: 2px solid rgba(159,0,255,0.65) !important;
+    }
+
+    /* Left + Right stacking */
+    #gn-login-wrapper .gn-left,
+    #gn-login-wrapper .gn-right {
+        width: 100% !important;
+        padding: 20px !important;
+    }
+
+    #gn-login-wrapper .gn-right {
+        border-left: none !important;
+        border-top: 2px solid rgba(159,0,255,0.65) !important;
+    }
+
+    /* Panels behave normally on mobile */
+    #gn-login-wrapper .gn-panels {
+        overflow: visible !important;
+        height: auto !important;
+    }
+
+    #gn-login-wrapper .gn-panel {
+        position: relative !important;
+        transform: none !important;
+        top: 0 !important;
+        left: 0 !important;
+        bottom: auto !important;
+        padding: 10px 8px !important;
+        overflow: visible !important;
+    }
+
+    /* Headings resize for small screens */
+    #gn-login-wrapper h2 {
+        font-size: 26px !important;
+    }
+
+    .gn-sub {
+        font-size: 14px !important;
+    }
+
+    /* Input fields resize */
+    #gn-login-wrapper input {
+        font-size: 15px !important;
+        padding: 12px !important;
+    }
+
+    /* Buttons for mobile */
+    #gn-login-wrapper .gn-button {
+        padding: 14px !important;
+        font-size: 16px !important;
+    }
+
+    /* Logo resize */
+    #gn-login-wrapper .gn-logo-box img {
+        max-width: 170px !important;
+    }
+
+    /* Fix success message box */
+    #gn-login-wrapper .gn-confirm {
+        width: 90% !important;
+        padding: 18px !important;
+    }
+
+    /* Fix loader overlay */
+    #gn-login-wrapper .gn-inner-loading {
+        padding: 0 !important;
+    }
+}
+@media (max-width: 768px) {
+
+    /* Remove the wrong global override for mobile */
+    #gn-login-wrapper,
+    .login-container,
+    .container {
+        margin-top: -50px !important;
+        min-height: auto !important;
+        max-height: 700px;
+        z-index: 9 !important;
+        overflow: hidden;
+    }
+
+    /* Fix the create account panel position */
+    #gn-login-wrapper .gn-panel.signup {
+        margin-top: -370px !important;
+        padding-top: 0 !important;
+    }
+
+    /* Keep login panel normal */
+    #gn-login-wrapper .gn-panel.login {
+        margin-top: 10px !important;
+    }
+    
+}
+
 
   </style>
 
