@@ -204,7 +204,7 @@ body.light-mode #gn-particles {
 .heading h4 {
     position: absolute;
     left: 16%;
-    margin-top: 20px;
+    margin-top: 15px;
     font-size: 45px;
     font-weight: bolder;
     letter-spacing: 2px;
@@ -230,8 +230,13 @@ body.light-mode #gn-particles {
     top: 0px;
     bottom: 0;
     margin: auto;
+    margin-top: -5px;
 }
-
+@media (min-width:1400px) {
+    .heading .logo{
+        margin-top:  5px !important; 
+    }
+}
 .heading ul {
     position: absolute;
     left: 0 ;
