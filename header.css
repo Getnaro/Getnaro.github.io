@@ -1288,3 +1288,22 @@ body.dark-mode .search-result-item p {
     color: var(--gn-text, #fff) !important;
     opacity: 1 !important;
 }
+.gn-search-bar {
+    display: flex;
+    align-items: center;
+    overflow: hidden !important;
+}
+
+.gn-search-bar input {
+    flex: 1 1 auto !important;        /* allow shrinking */
+    min-width: 0 !important;          /* CRITICAL FIX */
+    width: 100% !important;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;          /* show "..." instead of overflow */
+}
+
+.gn-search-clear {
+    flex-shrink: 0 !important;        /* prevent X button from shrinking */
+    margin-left: 8px;
+}

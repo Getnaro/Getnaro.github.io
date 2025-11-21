@@ -1258,6 +1258,70 @@ mark {
 #gn-search-results::-webkit-scrollbar-track {
     background: transparent;
 }
+/* Minimal layout guard for other divs (stats, features) to avoid reflow */
+.stats-bar, .gn-features {
+  contain: layout style;
+  will-change: auto;
+}
+/* ------------------ OPTIMIZED STATS BOXES ------------------ */
+
+.stats-container {
+    display: flex;
+    gap: 24px;
+    justify-content: center;
+    align-items: stretch;
+    margin: 40px auto;
+    padding: 0 20px;
+    flex-wrap: wrap;
+}
+
+.stat-box {
+    background: #0d0d0d;
+    border: 2px solid rgba(159, 0, 255, 0.75);
+    padding: 32px 36px;
+    border-radius: 22px;
+    width: 180px;
+    text-align: center;
+    box-shadow: 0 0 24px rgba(159, 0, 255, 0.25);
+    transition: transform .25s ease, box-shadow .25s ease;
+    will-change: transform, box-shadow;
+}
+
+.stat-box:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 0 32px rgba(159, 0, 255, 0.45);
+}
+
+.stat-number {
+    font-size: 48px;
+    font-weight: 700;
+    margin-bottom: 8px;
+    background: linear-gradient(90deg, #b720ff, #8f00ff);
+    -webkit-background-clip: text;
+    color: transparent;
+}
+
+.stat-label {
+    font-size: 18px;
+    color: #d4d4d4;
+    opacity: 0.85;
+}
+
+/* smaller screens */
+@media (max-width: 680px) {
+    .stat-box {
+        width: 100%;
+        max-width: 240px;
+        padding: 26px;
+    }
+    .stat-number {
+        font-size: 40px;
+    }
+    .stat-label {
+        font-size: 17px;
+    }
+}
+
 /* ========================= FLOATING PARTICLES ========================= */
 /* ---------- SAFE MOBILE HEADER + HAMBURGER (MOBILE/TABLET ONLY) ---------- */
 
@@ -1689,69 +1753,6 @@ body {
   pointer-events: none;
 }
 
-/* Minimal layout guard for other divs (stats, features) to avoid reflow */
-.stats-bar, .gn-features {
-  contain: layout style;
-  will-change: auto;
-}
-/* ------------------ OPTIMIZED STATS BOXES ------------------ */
-
-.stats-container {
-    display: flex;
-    gap: 24px;
-    justify-content: center;
-    align-items: stretch;
-    margin: 40px auto;
-    padding: 0 20px;
-    flex-wrap: wrap;
-}
-
-.stat-box {
-    background: #0d0d0d;
-    border: 2px solid rgba(159, 0, 255, 0.75);
-    padding: 32px 36px;
-    border-radius: 22px;
-    width: 180px;
-    text-align: center;
-    box-shadow: 0 0 24px rgba(159, 0, 255, 0.25);
-    transition: transform .25s ease, box-shadow .25s ease;
-    will-change: transform, box-shadow;
-}
-
-.stat-box:hover {
-    transform: translateY(-6px);
-    box-shadow: 0 0 32px rgba(159, 0, 255, 0.45);
-}
-
-.stat-number {
-    font-size: 48px;
-    font-weight: 700;
-    margin-bottom: 8px;
-    background: linear-gradient(90deg, #b720ff, #8f00ff);
-    -webkit-background-clip: text;
-    color: transparent;
-}
-
-.stat-label {
-    font-size: 18px;
-    color: #d4d4d4;
-    opacity: 0.85;
-}
-
-/* smaller screens */
-@media (max-width: 680px) {
-    .stat-box {
-        width: 100%;
-        max-width: 240px;
-        padding: 26px;
-    }
-    .stat-number {
-        font-size: 40px;
-    }
-    .stat-label {
-        font-size: 17px;
-    }
-}
 
 
 .gn-search-results .content-one {
@@ -1961,4 +1962,27 @@ body.dark-mode .search-result-item h4,
 body.dark-mode .search-result-item p {
     color: var(--gn-text, #fff) !important;
     opacity: 1 !important;
+}
+/* ---------------------------------------------------
+   FIX: Mobile Search Input Overflow / Text Going Out
+---------------------------------------------------- */
+
+.gn-search-bar {
+    display: flex;
+    align-items: center;
+    overflow: hidden !important;
+}
+
+.gn-search-bar input {
+    flex: 1 1 auto !important;        /* allow shrinking */
+    min-width: 0 !important;          /* CRITICAL FIX */
+    width: 100% !important;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;          /* show "..." instead of overflow */
+}
+
+.gn-search-clear {
+    flex-shrink: 0 !important;        /* prevent X button from shrinking */
+    margin-left: 8px;
 }
