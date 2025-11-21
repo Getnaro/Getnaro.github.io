@@ -4,7 +4,6 @@
     font-family: ur ;
     src: url(Assests/Fourline-New.ttf);
 }
-
 /* ================= DARK / LIGHT MODE TOGGLE ================= */
 .theme-toggle {
     position: absolute;
@@ -302,7 +301,7 @@ body.light-mode #gn-particles {
     left: -25px;
 }
 .footer {
-   background: #000000;
+    background: #000000;
     padding: 40px 0;
     border-top: 2px solid #9F00FF55;
     margin-top: auto; /* THIS MAKES IT STICK AT THE BOTTOM ONLY AFTER SCROLL */
@@ -387,6 +386,10 @@ body.light-mode #gn-particles {
     }
 }
 
+/* Prevent footer overlap using bottom padding */
+body {
+    padding-bottom: 100px;
+}
 @media(max-width: 900px){
     .fixed-footer-container {
         flex-direction: column;
@@ -396,28 +399,6 @@ body.light-mode #gn-particles {
     .fixed-footer-links a {
         margin: 10px;
         display: inline-block;
-    }
-}
-@media (max-width: 1300px){
-    .heading ul, h4 { display: none; 
-    
-    
-
-    }
-    .logo{
-        left: 150px;
-    }
-}
-@keyframes scale-in-ver-top {
-    0% {
-        transform: scaleY(0);
-        transform-origin: 100% 0%;
-        opacity: 1;
-    }
-    100% {
-        transform: scaleY(1);
-        transform-origin: 100% 0%;
-        opacity: 1;
     }
 }
 /* ===================== FULLSCREEN SEARCH ===================== */
@@ -496,6 +477,7 @@ body.light-mode #gn-particles {
     padding: 10px 5px;
     background: transparent;
     border: none;
+    overflow: hidden;
     outline: none;
     font-size: 22px;
     color: white !important;
@@ -843,40 +825,6 @@ mark {
     background: transparent;
 }
 /* ========================= FLOATING PARTICLES ========================= */
-
-#gn-particles {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 300vw;   /* wide area for smooth floating */
-    height: 300vh;
-    pointer-events: none;
-    z-index: -1;    /* stays behind everything */
-    opacity: 0.45;  /* default for dark mode */
-}
-
-/* Lighter effect in light mode */
-.light-mode #gn-particles {
-    opacity: 0.22;
-}
-
-/* Optional: smoother fade on theme change */
-body {
-    transition: background 0.3s ease, color 0.3s ease, opacity 0.3s ease;
-}
-
-/* Scrollbar styling (Firefox + Chrome) */
-#gn-search-results::-webkit-scrollbar {
-    width: 8px;
-}
-#gn-search-results::-webkit-scrollbar-thumb {
-    background: #9F00FF;
-    border-radius: 10px;
-}
-#gn-search-results::-webkit-scrollbar-track {
-    background: transparent;
-}
-/* ========================= FLOATING PARTICLES ========================= */
 /* ---------- SAFE MOBILE HEADER + HAMBURGER (MOBILE/TABLET ONLY) ---------- */
 
 /* hide by default */
@@ -1198,13 +1146,145 @@ body {
 .light-mode .gn-ham-inner::after {
     background: #000 !important;
 }
-/* ---- Center Hamburger Vertically inside Header ---- */
+.gn-search-results .content-one {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    gap: 18px !important;
+    padding: 20px !important;
+color: #111 !important;
+    width: 100% !important;
+    max-width: 360px !important;
 
-@media (max-width: 1435px) {
-    .heading {
-        height: 80px; /* or your actual height */
+    background: #fff !important;
+    border-radius: 16px !important;
+    box-shadow: 0 0 18px #9F00FF55 !important;
+
+    margin: 14px auto !important;
+}
+
+.gn-search-results .content-one img {
+    width: 75px !important;
+    height: 75px !important;
+    object-fit: contain !important;
+}
+
+.gn-search-results .content-one .tet h5 {
+    font-size: 18px !important;
+    margin-bottom: 10px !important;
+    color: #111 !important;
+}
+
+.gn-search-results .content-one .tet a {
+    width: 160px !important;
+    height: 45px !important;
+
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+
+    border-radius: 10px !important;
+    font-size: 15px !important;
+}
+/* Move search bar slightly up inside mobile menu */
+#gn-mobile-nav .gn-mobile-panel {
+    padding-top: 14px !important; /* default is probably around 25px */
+}
+/* ================== SEARCH BAR FIXES ================== */
+
+/* Move search bar slightly upward */
+
+/* Keep search close button inside the bar */
+.close-btn {
+    position: absolute !important;
+    right: 15px !important;
+    top: 50% !important;
+    transform: translateY(-50%) !important;
+    width: 38px !important;
+    height: 38px !important;
+    background: rgba(255,255,255,0.25) !important;
+}
+
+/* ==========================================
+   FIX SEARCH RESULTS GETTING CUT OFF
+   ========================================== */
+
+/* Allow results to fully show */
+#gn-search-overlay {
+    overflow-y: auto !important;
+}
+
+/* Make results container full-width */
+#gn-search-results {
+    width: 100% !important;
+    padding: 0 16px !important;
+    overflow: visible !important;
+}
+
+/* Make search result cards responsive */
+.gn-search-result-card {
+    width: 100% !important;
+    max-width: 360px !important; /* prevents stretching too wide */
+    margin-left: auto !important;
+    margin-right: auto !important;
+}
+
+/* Prevent clipping inside card container */
+.gn-search-result-card * {
+    overflow: visible !important;
+}
+/* --- FIX SEARCH RESULT TITLE DISAPPEARING UNDER 820px --- */
+@media (max-width: 850px) {
+
+    .search-result-item {
+        align-items: center !important;
+        min-height: 90px !important;
     }
-    .gn-hamburger {
-        top: 40px !important; /* half of header height */
-        transform: translateY(-50%) !important;
+
+    .search-result-item img {
+        width: 55px !important;
+        height: 55px !important;
+        flex-shrink: 0 !important;
     }
+
+    .search-info {
+        display: flex !important;
+        flex-direction: column !important;
+        justify-content: center !important;
+        min-height: 55px !important;
+        padding-left: 10px !important;
+        overflow: visible !important;
+    }
+
+    .search-info h4 {
+        margin: 0 !important;
+        padding: 0 !important;
+        font-size: 17px !important;
+        display: block !important;
+        color: var(--text-primary) !important;
+    }
+
+    .search-info p {
+        margin-top: 3px !important;
+        font-size: 13px !important;
+        opacity: 0.8 !important;
+        display: block !important;
+        white-space: nowrap !important;
+    }
+} 
+/* ----------------------------------------------
+   DARK MODE: FIX WHITE SEARCH RESULT CARDS
+---------------------------------------------- */
+
+body.dark-mode .search-result-item {
+    background: var(--gn-bg-alt, #1a1a1a) !important;
+    /* Fallback if var missing => #1a1a1a */
+    color: var(--gn-text, #fff) !important;
+}
+
+/* Make sure text stays readable */
+body.dark-mode .search-result-item h4,
+body.dark-mode .search-result-item p {
+    color: var(--gn-text, #fff) !important;
+    opacity: 1 !important;
+}
