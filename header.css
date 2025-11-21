@@ -1381,3 +1381,8 @@ body.dark-mode .search-result-item p {
     text-overflow: ellipsis;
     white-space: nowrap;
 }
+@media (max-width:900px) {
+    .heading{
+        max-height: 85px !important;
+    }
+}
