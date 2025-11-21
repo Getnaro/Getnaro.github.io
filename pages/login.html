@@ -232,7 +232,8 @@
 
     .gn-input {
         width: 100%;
-        padding: 16px 45px 16px 50px; /* Left pad for icon, Right for eye */
+        /* FIXED: Increased right padding from 45px to 65px to prevent overlap with eye icon */
+        padding: 16px 65px 16px 50px; 
         background: rgba(255, 255, 255, 0.03);
         border: 2px solid rgba(159, 0, 255, 0.15);
         border-radius: 14px;
@@ -263,15 +264,16 @@
     /* Password Toggle Icon */
     .toggle-pass {
         position: absolute;
-        right: 18px;
+        right: 20px; /* Adjusted position */
         top: 50%;
         transform: translateY(-50%);
         color: var(--text);
         opacity: 0.5;
         cursor: pointer;
-        font-size: 16px;
+        font-size: 18px; /* Slightly larger for easier clicking */
         transition: 0.3s;
         z-index: 10;
+        padding: 5px; /* Adds click area */
     }
     .toggle-pass:hover {
         opacity: 1;
@@ -430,7 +432,7 @@
                 <i class="fa-solid fa-lock icon-left"></i>
                 <input type="password" id="l-pass" class="gn-input" placeholder="Password" autocomplete="current-password">
                 <!-- Password Reveal Icon -->
-                <i class="fa-solid fa-eye toggle-pass" id="toggle-pass-btn" title="Show Password"></i>
+                <i class="fa-solid fa-eye toggle-pass" id="toggle-pass-btn" style="visibility: hidden;" title="Show Password"></i>
             </div>
 
             <button type="submit" id="btn-login" class="gn-btn-login">
@@ -489,8 +491,8 @@
     // 1. Password Visibility Toggle
     togglePassBtn.addEventListener('click', () => {
         // Toggle logic
-        const isPassword = passInput.type === 'password';
-        passInput.type = isPassword ? 'text' : 'password';
+        const isPassword = passInput.getAttribute('type') === 'password';
+        passInput.setAttribute('type', isPassword ? 'text' : 'password');
         
         // Icon toggle
         togglePassBtn.classList.toggle('fa-eye');
