@@ -1,42 +1,36 @@
 /* --- WIDGET CONTAINER & BUTTON --- */
 #gn-ai-root {
     font-family: 'ur', sans-serif;
-    z-index: 999999;
+    z-index: 99999;
     position: fixed;
 }
-@media (max-width: 768px) {
-    .gn-ai-fab {
-        bottom: 95px !important; /* Moved up to avoid overlap */
-        right: 20px !important;
-        padding: 12px 30px !important;
-        width: 317px !important; 
-        border-radius: 10px !important; 
-    }
-    .gn-ai-fab span {
-        font-size: 16px !important;
-    }
-}
+
 /* Floating Action Button */
 .gn-ai-fab {
     position: fixed;
     bottom: 30px;
-    right: 80px;
-    background-color: #9F00FF;
+    right: 70px;
+    background: linear-gradient(135deg, #9F00FF, #7B00C7);
     color: white;
-    width: 200px;
-    text-align: center;
-    justify-content: center;
     padding: 15px 30px;
     border-radius: 50px;
     cursor: pointer;
+    box-shadow: 0 10px 25px rgba(159, 0, 255, 0.4);
     display: flex;
     align-items: center;
     gap: 12px;
     transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     z-index: 10000;
+    border: 2px solid rgba(255, 255, 255, 0.2);
 }
-.gn-ai-fab i { font-size: 22px; color: white !important;}
-.gn-ai-fab span { font-size: 18px; font-weight: bold; letter-spacing: 0.5px; color: white !important;}
+
+.gn-ai-fab:hover {
+    transform: scale(1.05) translateY(-5px);
+    box-shadow: 0 15px 35px rgba(159, 0, 255, 0.6);
+}
+
+.gn-ai-fab i { font-size: 22px; }
+.gn-ai-fab span { font-size: 18px; font-weight: bold; letter-spacing: 0.5px; }
 
 /* --- FULL SCREEN CHAT OVERLAY --- */
 .gn-ai-overlay {
@@ -63,7 +57,8 @@
     width: 90%;
     max-width: 1000px;
     height: 85vh;
-    background: #121212;
+    max-height: 800px;
+    background: #121212 !important; /* Force Dark BG */
     border: 1px solid rgba(159, 0, 255, 0.3);
     border-radius: 25px;
     display: flex;
@@ -86,6 +81,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+    flex-shrink: 0;
 }
 
 .gn-ai-title {
@@ -103,8 +99,8 @@
     box-shadow: 0 0 15px #9F00FF;
 }
 
-.gn-ai-info h3 { margin: 0; color: white; font-size: 22px; }
-.gn-ai-info p { margin: 0; color: #aaa; font-size: 14px; }
+.gn-ai-info h3 { margin: 0; color: white !important; font-size: 22px; }
+.gn-ai-info p { margin: 0; color: #aaa !important; font-size: 14px; }
 
 .gn-ai-close {
     background: none; border: none; color: #aaa;
@@ -120,11 +116,11 @@
     display: flex;
     flex-direction: column;
     gap: 20px;
-    background: #0e0e0e;
+    background: #0e0e0e !important; /* Force Dark BG */
 }
 
 .msg {
-    max-width: 80%;
+    max-width: 85%;
     padding: 15px 20px;
     border-radius: 18px;
     font-size: 16px;
@@ -137,16 +133,63 @@
     align-self: flex-start;
     background: #252525;
     border: 1px solid #333;
-    color: #eee;
+    color: #eee !important;
     border-bottom-left-radius: 2px;
 }
 
 .msg.user {
     align-self: flex-end;
     background: #9F00FF;
-    color: white;
+    color: white !important;
     border-bottom-right-radius: 2px;
     box-shadow: 0 5px 15px rgba(159, 0, 255, 0.3);
+}
+
+/* --- MANUAL MODE MENU (REPAIRED COLORS & GLOSSY LOOK) --- */
+.gn-ai-options {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    width: 90%;
+    max-width: 400px;
+    background: transparent !important; 
+    border: none !important;
+    padding: 0 !important;
+    margin-top: 5px;
+}
+
+.gn-ai-option-btn {
+    width: 100%;
+    padding: 16px 22px;
+    
+    /* FORCE DARK BACKGROUND IN DEFAULT MODE */
+    background: linear-gradient(145deg, #2b2b2b, #1a1a1a) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    border-left: 4px solid #9F00FF !important; /* Purple Accent */
+    border-radius: 16px;
+    
+    /* FORCE WHITE TEXT to be visible against Dark Button */
+    color: #ffffff !important; 
+    
+    font-size: 16px;
+    font-weight: 600;
+    text-align: left;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    
+    /* Glossy Shadow */
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.05);
+}
+
+.gn-ai-option-btn:hover {
+    background: #9F00FF !important;
+    border-color: #9F00FF !important;
+    color: #ffffff !important;
+    transform: translateX(6px);
+    box-shadow: 0 6px 20px rgba(159, 0, 255, 0.3);
 }
 
 /* --- INPUT AREA --- */
@@ -157,7 +200,7 @@
     display: flex;
     align-items: center;
     gap: 12px;
-    
+    flex-shrink: 0;
 }
 
 .gn-ai-input {
@@ -166,13 +209,12 @@
     border: 2px solid #fff;
     padding: 12px 20px;
     border-radius: 30px;
-    color: #000000;
+    color: #000000 !important; /* Force Black Text */
     font-size: 16px;
     font-weight: 500;
     outline: none;
     transition: 0.3s;
     height: 50px;
-    padding: 20px ;
     box-sizing: border-box;
 }
 .gn-ai-input::placeholder { color: #666; }
@@ -193,13 +235,13 @@
     color: #ddd !important;
     flex-shrink: 0;
 }
-.gn-ai-btn:hover { background: #3a3a3a; color: #fff; transform: scale(1.05); }
-.gn-ai-btn.active { background: #ff4444; color: white; animation: pulse 1.5s infinite; }
-.gn-ai-btn.speak-active { color: #00e676; border: 1px solid #00e676; }
+.gn-ai-btn:hover { background: #3a3a3a; color: #fff !important; transform: scale(1.05); }
+.gn-ai-btn.active { background: #ff4444; color: white !important; animation: pulse 1.5s infinite; }
+.gn-ai-btn.speak-active { color: #00e676 !important; border: 1px solid #00e676; }
 
 #btn-send { 
     background: #aa00ff; 
-    color: white; 
+    color: white !important; 
     width: 50px; height: 50px;
     font-size: 20px;
     box-shadow: 0 4px 12px rgba(170, 0, 255, 0.4);
@@ -220,100 +262,57 @@
 
 /* ============================================================
    LIGHT MODE OVERRIDES
-   Matches your site's light theme and fixes the black text issue
+   Using body.light-mode to strictly override default dark styles
 ============================================================ */
 
 body.light-mode .gn-ai-box {
-    background: #ffffff !important;
+    background: #f5f5f5 !important;
     border-color: #9F00FF33 !important;
     box-shadow: 0 0 50px rgba(0,0,0,0.15) !important;
 }
 
 body.light-mode .gn-ai-header {
-    background: #f9f9f9 !important;
+    background: #ffffff !important;
     border-bottom-color: #eee !important;
 }
 
-/* Fix black text on light background */
 body.light-mode .gn-ai-info h3 { color: #111 !important; }
 body.light-mode .gn-ai-info p { color: #666 !important; }
 body.light-mode .gn-ai-close { color: #444 !important; }
 
 body.light-mode .gn-ai-messages {
-    background: #f4f4f4 !important;
-}
-
-/* Bot message in Light Mode: Light Grey bubble, Dark Text */
-body.light-mode .msg.bot {
-    background: #e0e0e0 !important;
-    border: 1px solid #dcdcdc !important;
-    color: #111 !important;
-}
-
-/* User message in Light Mode: Purple bubble, WHITE Text (Overrides global black rule) */
-body.light-mode .msg.user {
-    background: #9F00FF !important;
-    color: #ffffff !important;
-    box-shadow: 0 5px 15px rgba(159, 0, 255, 0.2) !important;
-}
-
-body.light-mode .gn-ai-input-area {
     background: #ffffff !important;
-    border-top-color: #eee !important;
 }
 
-body.light-mode .gn-ai-input {
+body.light-mode .msg.bot {
     background: #f0f0f0 !important;
-    border: 1px solid #ccc !important;
-    color: #000 !important;
-}
-
-body.light-mode .gn-ai-btn {
-    background: #e0e0e0 !important;
-    color: #555 !important;
-}
-body.light-mode .gn-ai-btn:hover {
-    background: #d0d0d0 !important;
-    color: #000 !important;
-}
-
-/* Ensure Send button stays Purple/White */
-body.light-mode #btn-send {
-    background: #aa00ff !important;
-    color: #ffffff !important;
-}
-
-/* Bot message: Light Grey bubble, Dark Text */
-body.light-mode .msg.bot {
-    background: #ffffff !important;
-    border: 1px solid #dcdcdc !important;
+    border: 1px solid #e0e0e0 !important;
     color: #111 !important;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.05) !important;
 }
 
-/* User message: Purple bubble, WHITE Text */
 body.light-mode .msg.user {
     background: #9F00FF !important;
     color: #ffffff !important;
     box-shadow: 0 5px 15px rgba(159, 0, 255, 0.2) !important;
 }
 
-/* MANUAL MODE BUTTONS IN LIGHT MODE */
+/* Manual Mode Buttons in LIGHT Mode */
 body.light-mode .gn-ai-option-btn {
     background: linear-gradient(145deg, #ffffff, #f0f0f0) !important;
     border: 1px solid rgba(0,0,0,0.08) !important;
-    color: #333 !important; /* Dark text for visibility */
-    box-shadow: 0 4px 12px rgba(0,0,0,0.05), inset 0 1px 0 white !important;
+    
+    /* FORCE BLACK TEXT - This fixes the visibility issue in Light Mode */
+    color: #333333 !important; 
+    
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05) !important;
 }
 
 body.light-mode .gn-ai-option-btn:hover {
-    background: linear-gradient(145deg, #9F00FF, #7B00C7) !important;
+    background: #9F00FF !important;
+    color: #ffffff !important; /* Turns White on Hover */
     border-color: #9F00FF !important;
-    color: #fff !important;
-    box-shadow: 0 8px 20px rgba(159, 0, 255, 0.3) !important;
 }
 
-/* Input Area */
 body.light-mode .gn-ai-input-area {
     background: #ffffff !important;
     border-top-color: #eee !important;
@@ -322,7 +321,7 @@ body.light-mode .gn-ai-input-area {
 body.light-mode .gn-ai-input {
     background: #f0f0f0 !important;
     border: 1px solid #ccc !important;
-    color: #000 !important;
+    color: #000000 !important;
 }
 
 body.light-mode .gn-ai-btn {
@@ -337,4 +336,23 @@ body.light-mode .gn-ai-btn:hover {
 body.light-mode #btn-send {
     background: #aa00ff !important;
     color: #ffffff !important;
+}
+
+/* ============================================================
+   MOBILE RESPONSIVENESS
+============================================================ */
+@media (max-width: 768px) {
+    .gn-ai-fab {
+        bottom: 95px !important; 
+        right: 20px !important;
+        padding: 12px 25px !important;
+    }
+    .gn-ai-fab span {
+        font-size: 16px !important;
+    }
+    .gn-ai-box {
+        width: 100% !important;
+        height: 100% !important;
+        border-radius: 0 !important;
+    }
 }

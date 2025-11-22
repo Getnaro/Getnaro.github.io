@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/stylesheets/header.css">
-    <link rel="stylesheet" href="/stylesheets/chat-full.css">
+        <link rel="stylesheet" href="/stylesheets/ai_assistant.css">
     <title>Getnaro Online</title>
     <!-- FONTS & ICONS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
@@ -31,16 +31,19 @@
     <link rel="icon" type="image/x-icon" href="Assests/Favicon.png">
 </head>
 <body>
-    <canvas id="gn-particles"></canvas>
+ <canvas id="gn-particles"></canvas>
     <!-- ------------------ HEADER ------------------ -->
 <div class="heading">
 
     <a href="/index.html"><img src="/Assests/logo-getnaro-nobg.png" class="logo"></a>
     <h4>Getnaro</h4>
     <ul>
-        <li><a href="/index.html">HOME</a></li>
-        <li><a href="/pages/notfound.html">SPECIALS</a></li>
-        <li><a href="/pages/login.html">ACCOUNT</a></li>
+        <li><a href="index.html" 
+        >HOME</a></li>
+        <li><a href="/pages/community.html">COMMUNITY</a></li>
+        <li><a href="/pages/login.html" style="background-color:#9F00FF; color: white !important;
+        padding: 10px ; 
+        border-radius: 10px;">ACCOUNT</a></li>
         <li><a href="/pages/about.html">ABOUT US</a></li>
         <li><a href="/pages/faq.html">FAQ</a></li>
     </ul>
@@ -77,8 +80,8 @@
 
     <!-- EXACT UL you provided -->
     <ul class="gn-mobile-links" role="menu" aria-label="Mobile navigation">
-      <li role="none"><a role="menuitem" href="/index.html">Home</a></li>
-      <li role="none"><a role="menuitem" href="/pages/notfound.html">Specials</a></li>
+      <li role="none"><a role="menuitem" href="index.html">Home</a></li>
+      <li role="none"><a role="menuitem" href="/pages/community.html">Community</a></li>
       <li role="none"><a role="menuitem" href="/pages/login.html">Account</a></li>
       <li role="none"><a role="menuitem" href="/pages/about.html">About Us</a></li>
       <li role="none"><a role="menuitem" href="/pages/faq.html">FAQ</a></li>
@@ -104,6 +107,50 @@
     </div>
 
     <div id="gn-search-results" class="gn-search-results"></div>
+</div>
+<div id="gn-ai-root">
+    <!-- Floating Button -->
+    <div class="gn-ai-fab" id="gn-ai-trigger">
+        <i class="fa-solid fa-robot" style="color: white !important;"></i>
+        <span style="color: white !important;">Chat Now</span>
+    </div>
+
+    <div class="gn-ai-overlay" id="gn-ai-overlay">
+        <div class="gn-ai-box">
+            
+            <!-- Header -->
+            <div class="gn-ai-header">
+                <div class="gn-ai-title">
+                    <div class="gn-bot-avatar">
+                        <i class="fa-solid fa-brain" style="color: aliceblue !important;"></i>
+                    </div>
+                    <div class="gn-ai-info">
+                        <h3>Getnaro Assistant</h3>
+                        <p>AI Powered • Voice Enabled</p>
+                    </div>
+                </div>
+                <button class="gn-ai-close" id="gn-ai-close"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+
+            <!-- Chat Area -->
+            <div class="gn-ai-messages" id="gn-ai-chat">
+                <!-- Intro Message -->
+                <div class="msg bot">
+                    Hello! I'm your Getnaro Assistant. I can help you find software, answer FAQs, or navigate the site.<br><br>
+                    Try saying <b>"Install AMD Drivers"</b> or <b>"Open Profile"</b>.
+                </div>
+            </div>
+
+            <!-- Input Area -->
+            <div class="gn-ai-input-area">
+                <button class="gn-ai-btn" id="btn-mic" title="Speak"><i class="fa-solid fa-microphone"></i></button>
+                <button class="gn-ai-btn" id="btn-speaker" title="Text-to-Speech Toggle"><i class="fa-solid fa-volume-high"></i></button>
+                <input type="text" class="gn-ai-input" id="gn-ai-input" placeholder="Type a message or ask a question..">
+                <button class="gn-ai-btn" id="btn-send"><i class="fa-solid fa-paper-plane" style="color: aliceblue !important;"></i></button>
+            </div>
+
+        </div>
+    </div>
 </div>
 
 <div class="container" > 
@@ -560,13 +607,15 @@
 </footer>
 <script src="/scripts/tod.js"></script>
 <script src="/scripts/tog.js"></script>
+<script src="/scripts/caro.js"></script>
 <script src="/scripts/particles.js"></script>
+<script type="module" src="/scripts/download-index.js"></script>
+<script type="module" src="/scripts/ai_assistant.js"></script>
+<script type="module" src="/scripts/stats.js"></script>
 <script src="/scripts/theme.js"></script>
 <script src="/scripts/search.js"></script>
 <script src="/scripts/hamburger.js"></script>
-<script type="module" src="/scripts/download-index.js"></script>
-<script type="module" src="/scripts/stats.js"></script>
-<script src="/scripts/caro.js"></script>
+<script type="module" src="/scripts/header_auth.js"></script>
 <script type="module">
 /* When clicking download */
 document.querySelectorAll(".gn-btn-download").forEach(btn => {

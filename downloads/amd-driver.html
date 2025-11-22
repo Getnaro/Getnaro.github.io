@@ -110,64 +110,262 @@
 <div class="container" > 
 <!--All the Coded Contents must be here--> 
 <style>
+    /* --- RESET & BASICS --- */
+    .fs-page-wrapper {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background-color: #0a0a0a;
+        font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        color: white;
+        z-index: 20000; /* Ensures it sits on top of everything */
+        display: flex;
+        overflow: hidden;
+    }
 
+    /* --- LEFT SIDE: VISUALS --- */
+    .fs-visual-side {
+        flex: 1;
+        position: relative;
+        background: radial-gradient(circle at center, #2a0e3d 0%, #000000 100%);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        overflow: hidden;
+    }
+
+    /* Animated Background blobs */
+    .fs-blob {
+        position: absolute;
+        border-radius: 50%;
+        filter: blur(80px);
+        opacity: 0.6;
+        animation: floatBlob 10s infinite alternate;
+    }
+    .blob-1 { width: 300px; height: 300px; background: #9F00FF; top: 10%; left: 10%; }
+    .blob-2 { width: 400px; height: 400px; background: #540086; bottom: 10%; right: 10%; animation-delay: -5s; }
+
+    @keyframes floatBlob {
+        0% { transform: translate(0, 0) scale(1); }
+        100% { transform: translate(20px, -20px) scale(1.1); }
+    }
+
+    /* The Logo */
+    .fs-logo-container {
+        z-index: 2;
+        width: 280px;
+        height: 280px;
+        background: rgba(255, 255, 255, 0.03);
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 40px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+        animation: popIn 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .fs-logo-container img {
+        width: 180px;
+        height: 180px;
+        object-fit: contain;
+        filter: drop-shadow(0 10px 20px rgba(0,0,0,0.5));
+    }
+
+    /* --- RIGHT SIDE: CONTENT --- */
+    .fs-content-side {
+        flex: 1.2;
+        background: #121212;
+        padding: 60px 80px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        position: relative;
+    }
+
+    /* Diagonal divider */
+    .fs-content-side::before {
+        content: '';
+        position: absolute;
+        left: -50px;
+        top: 0;
+        bottom: 0;
+        width: 100px;
+        background: #121212;
+        transform: skewX(-5deg);
+        z-index: 1;
+    }
+    
+    .fs-inner-content {
+        position: relative;
+        z-index: 2;
+        max-width: 700px;
+    }
+
+    /* Text Styling */
+    .fs-category {
+        color: #9F00FF;
+        font-weight: 700;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+        font-size: 0.9rem;
+        margin-bottom: 10px;
+        display: inline-block;
+        background: rgba(159, 0, 255, 0.1);
+        padding: 5px 15px;
+        border-radius: 20px;
+    }
+
+    .fs-title {
+        font-size: 4rem;
+        font-weight: 800;
+        margin: 0 0 20px 0;
+        line-height: 1.1;
+        background: linear-gradient(90deg, #fff, #a0a0a0);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .fs-desc {
+        color: #ccc;
+        font-size: 1.1rem;
+        line-height: 1.7;
+        margin-bottom: 40px;
+        font-weight: 300;
+        border-left: 3px solid #333;
+        padding-left: 20px;
+    }
+
+    /* Stats Grid */
+    .fs-stats {
+        display: flex;
+        gap: 40px;
+        margin-bottom: 40px;
+        border-top: 1px solid #333;
+        padding-top: 30px;
+    }
+
+    .fs-stat-item h6 {
+        margin: 0 0 5px 0;
+        color: #888;
+        font-size: 0.85rem;
+        text-transform: uppercase;
+    }
+
+    .fs-stat-item p {
+        margin: 0;
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: white;
+    }
+
+    .fs-verified {
+        color: #00ff88 !important;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    /* Action Buttons */
+    .fs-actions {
+        display: flex;
+        gap: 20px;
+    }
+
+    .fs-btn {
+        padding: 20px 50px;
+        font-size: 1.2rem;
+        font-weight: 700;
+        text-decoration: none;
+        border-radius: 12px;
+        transition: 0.3s;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        cursor: pointer;
+    }
+
+    .fs-btn-primary {
+        background: #9F00FF;
+        color: white;
+        box-shadow: 0 10px 30px rgba(159, 0, 255, 0.3);
+        border: 2px solid #9F00FF;
+    }
+
+    .fs-btn-primary:hover {
+        background: transparent;
+        color: #9F00FF;
+        transform: translateY(-3px);
+        box-shadow: 0 15px 40px rgba(159, 0, 255, 0.2);
+    }
+
+    /* Animations */
+    @keyframes popIn {
+        0% { opacity: 0; transform: scale(0.8); }
+        100% { opacity: 1; transform: scale(1); }
+    }
+
+    /* Responsive */
+    @media (max-width: 1000px) {
+        .fs-page-wrapper { flex-direction: column; height: auto; position: relative; overflow-y: auto; }
+        .fs-visual-side { height: 40vh; flex: none; }
+        .fs-content-side { flex: none; padding: 40px 20px; }
+        .fs-content-side::before { display: none; }
+        .fs-title { font-size: 2.5rem; }
+        .fs-blob { width: 200px; height: 200px; }
+        .fs-actions { flex-direction: column; }
+        .fs-btn { justify-content: center; width: 100%; }
+        .fs-logo-container { width: 180px; height: 180px; }
+        .fs-logo-container img { width: 100px; height: 100px; }
+    }
 </style>
 
-<div class="gn-download-wrapper">
-    
-    <div class="content-one gn-detail-card" data-category="drivers" data-app="amd-driver-pack">
-        
-        <div class="gn-card-left">
-            <img src="/images/AMD-logo.png" alt="AMD Driver Logo">
+<div class="fs-page-wrapper">
+    <div class="fs-visual-side">
+        <div class="fs-blob blob-1"></div>
+        <div class="fs-blob blob-2"></div>
+        <div class="fs-logo-container">
+            <img src="/images/lively-wallpaper.jpg" alt="Lively Wallpaper Logo">
         </div>
+    </div>
 
-        <div class="gn-card-right">
-            <h1>AMD Software: Adrenalin Edition</h1>
+    <div class="fs-content-side">
+        <div class="fs-inner-content">
+            <span class="fs-category">Customization Tools</span>
+            
+            <h1 class="fs-title">Lively Wallpaper</h1>
 
-            <p class="gn-desc">
-                AMD Software: Adrenalin Edition is the definitive utility for managing AMD Radeon GPUs and Ryzen processors. 
-                It unlocks maximum gaming performance, delivering higher frames per second and reduced input latency through 
-                features like Radeon Anti-Lag and Boost. The suite offers robust tools for real-time hardware monitoring, 
-                overclocking, and capturing gameplay highlights. With integrated support for FidelityFX Super Resolution (FSR), 
-                gamers can experience next-gen visuals without sacrificing speed. This certified driver ensures critical system 
-                stability while keeping your hardware optimized for the latest game releases.
+            <p class="fs-desc">
+                Lively Wallpaper is a powerful open-source application that transforms your static desktop into a dynamic, interactive canvas. It supports a wide variety of animated wallpapers, including videos, GIFs, web pages, and real-time 3D simulations. The software is highly optimized to pause playback when full-screen applications or games are running, ensuring zero performance impact on your system. Users can customize every aspect of their wallpapers, from speed and brightness to audio reactivity. With support for multi-monitor setups and ultra-wide resolutions, it brings your workspace to life. Lively also includes a built-in creator tool, allowing you to turn your own media files into stunning desktop backgrounds instantly.
             </p>
 
-            <div class="gn-meta-grid">
-                <div class="gn-meta-item">
-                    <span class="gn-meta-label">Installed Date</span>
-                    <span id="install-status">Not Installed</span>
+            <div class="fs-stats">
+                <div class="fs-stat-item">
+                    <h6>Version</h6>
+                    <p>v2.2.1.0</p>
                 </div>
-
-                <div class="gn-meta-item">
-                    <span class="gn-meta-label">Last Updated</span>
-                    <span>2025-02-15</span>
+                <div class="fs-stat-item">
+                    <h6>Updated</h6>
+                    <p>2025-11-15</p>
                 </div>
-
-                <div class="gn-meta-item">
-                    <span class="gn-meta-label">Virus / Threats</span>
-                    <span class="gn-verified">
-                        <i class="fa-solid fa-circle-check"></i> Scanned & Verified
-                    </span>
+                <div class="fs-stat-item">
+                    <h6>Status</h6>
+                    <p class="fs-verified"><i class="fa-solid fa-shield-halved"></i> Safe & Verified</p>
                 </div>
             </div>
 
-            <a href="https://www.amd.com/en/support/download/drivers.html" 
-               class="gn-dl-action gn-btn-download" 
-               id="btn-amd-driver">
-                <i class="fa-solid fa-download"></i> DOWNLOAD DRIVER
-            </a>
-
-            <a href="#" class="gn-dl-action gn-btn-update" style="display:none; background: #2196F3;">
-                <i class="fa-solid fa-rotate"></i> UPDATE
-            </a>
-            <a href="#" class="gn-dl-action gn-btn-uninstall" style="display:none; background: #f44336;">
-                <i class="fa-solid fa-trash"></i> UNINSTALL
-            </a>
-
+            <div class="fs-actions">
+                <a href="https://github.com/rocksdanister/lively/releases/download/v2.2.1.0/lively_setup_x86_full_v2210.exe" 
+                   class="fs-btn fs-btn-primary gn-btn-download"
+                   id="btn-lively-wallpaper">
+                   <i class="fa-solid fa-download"></i> DOWNLOAD NOW
+                </a>
+            </div>
         </div>
     </div>
-</div>
 </div>
 
 <footer class="footer">
