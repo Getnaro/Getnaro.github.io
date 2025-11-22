@@ -41,6 +41,7 @@ document.addEventListener("DOMContentLoaded", () => {
     let cachedFirebaseData = {};
 
     // --- NEW: App Info Retrieval Hook (Requirement 3) ---
+    // Exposed globally via window.appAPI in preload.js for renderer to call
     if (window.appAPI && window.appAPI.getAppInfo) {
         window.appAPI.getAppInfo = async () => {
             const detectedPath = await window.appAPI.findAppPath(appName);
@@ -75,6 +76,7 @@ document.addEventListener("DOMContentLoaded", () => {
             if (user) {
                 saveToHistory(user.uid, appId, appName, appIcon, "Downloading...");
             } else {
+                // Bug 2 Fix: Rely on local showToast for feedback
                 if(window.showToast) window.showToast("Download started. Login for history tracking.");
             }
         });
@@ -119,7 +121,6 @@ document.addEventListener("DOMContentLoaded", () => {
         if (btnUninstall) {
             btnUninstall.onclick = (e) => {
                 e.preventDefault();
-                // Bug 2 Fix: Removed confirm(), sending signal directly
                 window.appAPI.uninstallApp(appName);
                 
                 // Optimistic update to Firebase
