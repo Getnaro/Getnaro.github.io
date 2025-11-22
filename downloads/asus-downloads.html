@@ -1,13 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="/stylesheets/header.css">
-    <link rel="stylesheet" href="/stylesheets/chat-full.css">
-    <link rel="stylesheet" href="/stylesheets/downloads.css">
     <title>Getnaro Online</title>
+        <!-- External CSS Links (Do Not Alter) -->
+        <link rel="stylesheet" href="/stylesheets/header.css">
+        <link rel="stylesheet" href="/stylesheets/ai_assistant.css">
+        <link rel="stylesheet" href="/stylesheets/downloads.css">
     <!-- FONTS & ICONS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <!-- SEO + META -->
@@ -19,8 +19,8 @@
     <meta name="author" content="Getnaro Team">
     <meta name="robots" content="index, follow">
     <link rel="canonical" href="https://getnaro.com/">
-    <!-- SOCIAL -->
 
+    <!-- SOCIAL -->
     <meta property="og:type" content="website">
     <meta property="og:title" content="Getnaro — Free Software, Drivers & Tools Download Hub">
     <meta property="og:description"
@@ -32,208 +32,277 @@
     <link rel="icon" type="image/x-icon" href="/Assests/Favicon.png">
 </head>
 <body>
-    <canvas id="gn-particles"></canvas>
     <!-- ------------------ HEADER ------------------ -->
-<div class="heading">
-
-    <a href="/index.html"><img src="/Assests/logo-getnaro-nobg.png" class="logo"></a>
-    <h4>Getnaro</h4>
-    <ul>
-        <li><a href="/index.html">HOME</a></li>
-        <li><a href="/pages/notfound.html">SPECIALS</a></li>
-        <li><a href="/pages/login.html">ACCOUNT</a></li>
-        <li><a href="/pages/about.html">ABOUT US</a></li>
-        <li><a href="/pages/faq.html">FAQ</a></li>
-    </ul>
-<button id="theme-toggle" class="theme-toggle">
-    <i id="theme-icon" class="fa-solid fa-moon"></i>
-</button>
-<div id="gn-search-btn" class="gn-search-btn">
-    <i class="fa-solid fa-magnifying-glass"></i>
-</div>
-    <a class="dl"
-        href="https://files.zohoexternal.in/public/workdrive-external/download/e8gn0d5ec3fd3767d45669a45145dcd3e8fcb">
-        <i class="fa-solid fa-download"></i> DOWNLOAD APP
-    </a>
-</div>
-<!-- ========== GN MOBILE HAMBURGER (SAFE OUTSIDE HEADER) ========== -->
-<button id="gn-hamburger" class="gn-hamburger" aria-expanded="false" aria-label="Open menu">
-  <span class="gn-ham-box"><span class="gn-ham-inner"></span></span>
-</button>
-
-<nav id="gn-mobile-nav" class="gn-mobile-nav" aria-hidden="true">
-  <div class="gn-mobile-backdrop" data-close></div>
-
-  <div class="gn-mobile-panel" role="dialog" aria-modal="true">
-
-    <!-- Mobile Search — triggers existing #gn-search-btn -->
-    <button class="gn-mobile-btn gn-mobile-search" type="button" aria-label="Open search">
-      <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i> <span>Search</span>
-    </button>
-
-    <!-- Theme toggle — triggers existing #theme-toggle -->
-    <button class="gn-mobile-btn gn-mobile-theme" type="button" aria-label="Toggle theme">
-      <i class="fa-solid fa-moon" aria-hidden="true"></i> <span>Theme</span>
-    </button>
-
-    <!-- EXACT UL you provided -->
-    <ul class="gn-mobile-links" role="menu" aria-label="Mobile navigation">
-      <li role="none"><a role="menuitem" href="/index.html">Home</a></li>
-      <li role="none"><a role="menuitem" href="/pages/notfound.html">Specials</a></li>
-      <li role="none"><a role="menuitem" href="/pages/login.html">Account</a></li>
-      <li role="none"><a role="menuitem" href="/pages/about.html">About Us</a></li>
-      <li role="none"><a role="menuitem" href="/pages/faq.html">FAQ</a></li>
-    </ul>
-
-    <!-- Download App -->
-    <a class="gn-mobile-download" href="https://files.zohoexternal.in/public/workdrive-external/download/e8gn0d5ec3fd3767d45669a45145dcd3e8fcb">
-      <i class="fa-solid fa-download" aria-hidden="true"></i> <span>Download App</span>
-    </a>
-
-  </div>
-</nav>
-<!-- ========== END GN MOBILE HAMBURGER ========== -->
-
-<!-- MODERN FULLSCREEN SEARCH -->
-<div id="gn-search-overlay" class="gn-search-overlay">
-    <div class="gn-search-wrapper">
-        <i class="fa-solid fa-magnifying-glass search-icon"></i>
-        <input type="text" id="gn-search-input" placeholder="Search here" style="overflow-x: hidden;" autocomplete="off">
-        <button id="gn-search-close" class="close-btn">
-            <i class="fa-solid fa-xmark"></i>
+    <div class="heading">
+        <a href="/index.html"><img src="/Assests/logo-getnaro-nobg.png" class="logo"></a>
+        <h4>Getnaro</h4>
+        <ul>
+            <li><a href="index.html">HOME</a></li>
+            <li><a href="/pages/community.html">COMMUNITY</a></li>
+            <li><a href="/pages/login.html">ACCOUNT</a></li>
+            <li><a href="/pages/about.html">ABOUT US</a></li>
+            <li><a href="/pages/faq.html">FAQ</a></li>
+        </ul>
+        <button id="theme-toggle" class="theme-toggle">
+            <i id="theme-icon" class="fa-solid fa-moon"></i>
         </button>
+        <div id="gn-search-btn" class="gn-search-btn">
+            <i class="fa-solid fa-magnifying-glass"></i>
+        </div>
+        <a class="dl"
+            href="https://files.zohoexternal.in/public/workdrive-external/download/e8gn0d5ec3fd3767d45669a45145dcd3e8fcb">
+            <i class="fa-solid fa-download"></i> DOWNLOAD APP
+        </a>
     </div>
+    <!-- ========== GN MOBILE HAMBURGER ========== -->
+    <button id="gn-hamburger" class="gn-hamburger" aria-expanded="false" aria-label="Open menu">
+      <span class="gn-ham-box"><span class="gn-ham-inner"></span></span>
+    </button>
 
-    <div id="gn-search-results" class="gn-search-results"></div>
-</div>
+    <nav id="gn-mobile-nav" aria-hidden="true">
+      <div class="gn-mobile-backdrop" data-close></div>
 
+      <div class="gn-mobile-panel" role="dialog" aria-modal="true">
 
+        <button class="gn-mobile-btn gn-mobile-search" type="button" aria-label="Open search">
+          <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i> <span>Search</span>
+        </button>
 
+        <button class="gn-mobile-btn gn-mobile-theme" type="button" aria-label="Toggle theme">
+          <i class="fa-solid fa-moon" aria-hidden="true"></i> <span>Theme</span>
+        </button>
 
+        <ul class="gn-mobile-links" role="menu" aria-label="Mobile navigation">
+          <li role="none"><a role="menuitem" href="index.html">Home</a></li>
+          <li role="none"><a role="menuitem" href="/pages/community.html">Community</a></li>
+          <li role="none"><a role="menuitem" href="/pages/login.html">Account</a></li>
+          <li role="none"><a role="menuitem" href="/pages/about.html">About Us</a></li>
+          <li role="none"><a role="menuitem" href="/pages/faq.html">FAQ</a></li>
+        </ul>
 
+        <a class="gn-mobile-download" href="https://files.zohoexternal.in/public/workdrive-external/download/e8gn0d5ec3fd3767d45669a45145dcd3e8fcb">
+          <i class="fa-solid fa-download" aria-hidden="true"></i> <span>Download App</span>
+        </a>
 
+      </div>
+    </nav>
+    <!-- MODERN FULLSCREEN SEARCH -->
+    <div id="gn-search-overlay" class="gn-search-overlay">
+        <div class="gn-search-wrapper">
+            <i class="fa-solid fa-magnifying-glass search-icon"></i>
+            <input type="text" id="gn-search-input" placeholder="Search here" style="overflow-x: hidden;" autocomplete="off">
+            <button id="gn-search-close" class="close-btn">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
 
+        <div id="gn-search-results" class="gn-search-results"></div>
+    </div>
+    <!-- AI ASSISTANT START -->
+    <div id="gn-ai-root">
+        <div class="gn-ai-fab" id="gn-ai-trigger">
+            <i class="fa-solid fa-robot" style="color: white !important;"></i>
+            <span style="color: white !important;">Chat Now</span>
+        </div>
 
+        <div class="gn-ai-overlay" id="gn-ai-overlay">
+            <div class="gn-ai-box">
+                
+                <div class="gn-ai-header">
+                    <div class="gn-ai-title">
+                        <div class="gn-bot-avatar">
+                            <i class="fa-solid fa-brain" style="color: aliceblue !important;"></i>
+                        </div>
+                        <div class="gn-ai-info">
+                            <h3>Getnaro Assistant</h3>
+                            <p>AI Powered • Voice Enabled</p>
+                        </div>
+                    </div>
+                    <button class="gn-ai-close" id="gn-ai-close"><i class="fa-solid fa-xmark"></i></button>
+                </div>
 
+                <div class="gn-ai-messages" id="gn-ai-chat">
+                    <div class="msg bot">
+                        Hello! I'm your Getnaro Assistant. I can help you find software, answer FAQs, or navigate the site.<br><br>
+                        Try saying <b>"Install AMD Drivers"</b> or <b>"Open Profile"</b>.
+                    </div>
+                </div>
 
+                <div class="gn-ai-input-area">
+                    <button class="gn-ai-btn" id="btn-mic" title="Speak"><i class="fa-solid fa-microphone"></i></button>
+                    <button class="gn-ai-btn" id="btn-speaker" title="Text-to-Speech Toggle"><i class="fa-solid fa-volume-high"></i></button>
+                    <input type="text" class="gn-ai-input" id="gn-ai-input" placeholder="Type a message or ask a question..">
+                    <button class="gn-ai-btn" id="btn-send"><i class="fa-solid fa-paper-plane" style="color: aliceblue !important;"></i></button>
+                </div>
 
+            </div>
+        </div>
+    </div>
+    <!-- AI ASSISTANT END -->
 
+    <div class="container">
+        <!-- APP CARD HTML GOES HERE (ASUS Downloads) -->
+        <div class="fs-page-wrapper content-one" data-app="asus-downloads" data-category="drivers utilities">
+            
+            <div class="fs-visual-side">
+                <div class="fs-blob blob-1"></div>
+                <div class="fs-blob blob-2"></div>
+                
+                <div class="fs-logo-container gn-card-left">
+                    <img src="/images/asus-logo-png_seeklogo-500532.png" alt="ASUS Downloads Logo">
+                </div>
+            </div>
 
-<div class="container" > 
-<!--All the Coded Contents must be here--> 
+            <div class="fs-content-side">
+                <div class="fs-inner-content">
+                    <span class="fs-category">System Utilities & Firmware</span>
+                    
+                    <h1 class="fs-title">ASUS Downloads</h1>
 
+                    <p class="fs-desc">
+                        The ASUS Download Center is the official centralized resource for securing the latest drivers, BIOS firmware, and software manuals for all ASUS products. It integrates seamlessly with utilities like MyASUS and Armoury Crate to provide easy system optimization, allowing users to automatically detect missing drivers and perform one-click updates. Access critical patches for motherboards, graphics cards, and laptops to ensure system stability, and utilize exclusive tools like AI Suite and Aura Sync for advanced hardware control and customization.
+                    </p>
 
+                    <div class="fs-stats">
+                        <div class="fs-stat-item">
+                            <h6>Version</h6>
+                            <p>Latest Stable</p>
+                        </div>
+                        <div class="fs-stat-item">
+                            <h6>Updated</h6>
+                            <p>2025-11-20</p>
+                        </div>
+                        <div class="fs-stat-item">
+                            <h6>Status</h6>
+                            <p class="fs-verified"><i class="fa-solid fa-shield-halved"></i> Scanned & Verified</p>
+                        </div>
+                    </div>
 
-<div class="gn-download-wrapper">
+                    <div class="fs-glossy-box">
+                        <div class="fs-glossy-col">
+                            <h6>Installed Date</h6>
+                            <p id="install-status-asus">Not Installed</p>
+                        </div>
+
+                        <div class="fs-glossy-col" style="flex-grow: 1;">
+                            <h6>Location</h6>
+                            <div class="fs-loc-wrapper">
+                                <i class="fa-regular fa-folder-open" style="font-size: 0.9rem; opacity: 0.7;"></i>
+                                <a href="#" class="fs-loc-link" id="loc-path-asus" title="Open Location">
+                                    —
+                                </a>
+                                <button class="fs-copy-btn" onclick="copyToClipboard('loc-path-asus')" title="Copy Path">
+                                    <i class="fa-regular fa-copy"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="fs-actions">
+                        <a href="https://www.asus.com/in/support/download-center/" 
+                           class="fs-btn gn-btn-download"
+                           id="btn-asus-downloads">
+                           <i class="fa-solid fa-download"></i> DOWNLOAD NOW
+                        </a>
+
+                        <a href="https://www.asus.com/in/support/download-center/" 
+                           class="fs-btn gn-btn-update"
+                           style="display: none;">
+                           <i class="fa-solid fa-rotate"></i> UPDATE
+                        </a>
+
+                        <a href="#" 
+                           class="fs-btn gn-btn-uninstall"
+                           style="display: none;">
+                           <i class="fa-solid fa-trash"></i> UNINSTALL
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div id="gn-toast" class="gn-custom-toast">
+                <i class="fa-solid fa-check-circle"></i>
+                <span id="gn-toast-msg">Path copied to clipboard!</span>
+            </div>
+        </div>
+    </div>
     
-    <div class="content-one gn-detail-card" data-category="drivers utilities" data-app="asus-download-center">
+    <footer class="footer">
+        <div class="footer-container">
+
+            <div class="footer-col">
+                <h3>Getnaro</h3>
+                <p>Official download redirection hub for Windows software, tools, utilities and drivers—clean, safe & ad-free.</p>
+            </div>
+
+           <div class="footer-col">
+                <h3>Quick Links</h3>
+                <a href="/pages/t&c.html">Terms & Conditions</a><br>
+                <a href="/pages/coc.html">Code Of Conduct</a><br>
+                <a href="/pages/privacypolicy.html">Privacy Policy</a><br>
+                <a href="/pages/contact.html">Contact</a>
+            </div>
+
+            <div class="footer-col">
+                <h3>Follow Us</h3>
+                <div class="footer-social">
+                    <a href="#"><i class="fa-brands fa-instagram"></i></a>
+                    <a href="#"><i class="fa-brands fa-discord"></i></a>
+                    <a href="#"><i class="fa-brands fa-whatsapp"></i></a>
+                    <a href="#"><i class="fa-brands fa-reddit"></i></a>
+                    <a href="#"><i class="fa-brands fa-youtube"></i></a>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="footer-bottom">
+            © 2025 Getnaro — Developed by Azad Bharatiyan • Hosted on GitHub • Domain by BigRock
+        </div>
+
+    </footer>
+    <!-- External JS Scripts (Do Not Alter) -->
+    <script src="/scripts/tod.js"></script>
+    <script src="/scripts/tog.js"></script>
+    <script type="module" src="/scripts/app_tracking.js"></script>
+    <script type="module" src="/scripts/download-index.js"></script>
+    <script type="module" src="/scripts/ai_assistant.js"></script>
+    <script type="module" src="/scripts/stats.js"></script>
+    <script src="/scripts/theme.js"></script>
+    <script src="/scripts/search.js"></script>
+    <script src="/scripts/hamburger.js"></script>
+    <script type="module" src="/scripts/header_auth.js"></script>
+    <script>
+        // Toast Display Function (Required for Copy Button)
+    function showToast(message) {
+        const toast = document.getElementById("gn-toast");
+        const toastMsg = document.getElementById("gn-toast-msg");
         
-        <div class="gn-card-left">
-            <img src="/images/asus-logo-png_seeklogo-500532.png" alt="ASUS Downloads Logo">
-        </div>
+        if (toast && toastMsg) {
+            toastMsg.innerText = message;
+            toast.className = "gn-custom-toast show";
+            
+            // Hide after 3 seconds
+            setTimeout(function(){ 
+                toast.className = toast.className.replace("show", ""); 
+            }, 3000);
+        }
+    }
 
-        <div class="gn-card-right">
-            <h1>ASUS Downloads</h1>
-
-            <p class="gn-desc">
-                The ASUS Download Center is the centralized resource for securing the latest drivers, BIOS firmware, and software manuals for all ASUS products. It integrates with tools like MyASUS and Armoury Crate to provide seamless system optimization, allowing users to automatically detect missing drivers and perform one-click updates. Users can access critical patches for motherboards, graphics cards, and laptops to ensure hardware stability and address security vulnerabilities. The platform offers detailed release notes and compatibility lists, ensuring you install the correct software for your specific OS version. Whether you need audio drivers, LAN updates, or overclocking utilities, this hub keeps your ROG, TUF, or Prime rig performing at its peak. It also provides access to essential utilities like AI Suite and Aura Sync for advanced hardware control.
-            </p>
-
-            <div class="gn-meta-grid">
-                <div class="gn-meta-item">
-                    <span class="gn-meta-label">Installed Date</span>
-                    <span id="install-status-asus">Not Installed</span>
-                </div>
-
-                <div class="gn-meta-item">
-                    <span class="gn-meta-label">Last Updated</span>
-                    <span>2025-11-20</span>
-                </div>
-
-                <div class="gn-meta-item">
-                    <span class="gn-meta-label">Virus / Threats</span>
-                    <span class="gn-verified">
-                        <i class="fa-solid fa-circle-check"></i> Scanned & Verified
-                    </span>
-                </div>
-            </div>
-
-            <a href="https://www.asus.com/in/support/download-center/" 
-               class="gn-dl-action gn-btn-download" 
-               id="btn-asus-downloads">
-                <i class="fa-solid fa-download"></i> DOWNLOAD
-            </a>
-
-            <a href="#" class="gn-dl-action gn-btn-update" style="display:none; background: #2196F3;">
-                <i class="fa-solid fa-rotate"></i> UPDATE
-            </a>
-            <a href="#" class="gn-dl-action gn-btn-uninstall" style="display:none; background: #f44336;">
-                <i class="fa-solid fa-trash"></i> UNINSTALL
-            </a>
-
-        </div>
-    </div>
-</div>
-
-
-
-
-
-
-
-</div>
-
-<footer class="footer"><div class="footer-container"><div class="footer-col"><h3>Getnaro</h3><p>Official download redirection hub for Windows software, tools, utilities and drivers—clean, safe & ad-free.</p></div><div class="footer-col">
-            <h3>Quick Links</h3>
-            <a href="/pages/t&c.html">Terms & Conditions</a><br>
-            <a href="/pages/coc.html">Code Of Conduct</a><br>
-            <a href="/pages/privacypolicy.html">Privacy Policy</a><br>
-            <a href="/pages/contact.html">Contact</a>
-        </div>
-
-        <div class="footer-col">
-            <h3>Follow Us</h3>
-            <div class="footer-social">
-                <a href="#"><i class="fa-brands fa-instagram"></i></a>
-                <a href="#"><i class="fa-brands fa-discord"></i></a>
-                <a href="#"><i class="fa-brands fa-whatsapp"></i></a>
-                <a href="#"><i class="fa-brands fa-reddit"></i></a>
-                <a href="#"><i class="fa-brands fa-youtube"></i></a>
-            </div>
-        </div>
-
-    </div>
-    <div class="footer-bottom">
-        © 2025 Getnaro — Developed by Azad Bharatiyan • Hosted on GitHub • Domain by BigRock
-    </div>
-</footer>
-<script src="/scripts/tod.js"></script>
-<script src="/scripts/tog.js"></script>
-<script src="/scripts/particles.js"></script>
-<script src="/scripts/theme.js"></script>
-<script src="/scripts/search.js"></script>
-<script src="/scripts/hamburger.js"></script>
-<script type="module" src="/scripts/download-index.js"></script>
-<script type="module" src="/scripts/stats.js"></script>
-<script src="/scripts/caro.js"></script>
-<script type="module">
-/* When clicking download */
-document.querySelectorAll(".gn-btn-download").forEach(btn => {
-    btn.addEventListener("click", e => {
-        const user = auth.currentUser;
-        if (!user) return alert("Please login first.");
-
-        const parent = btn.closest(".content-one");
-        const appId = parent.dataset.app;
-
-        update(ref(db, "users/" + user.uid + "/apps/" + appId), {
-            downloaded: true
+    // Updated Copy Function (Required for Copy Button)
+    function copyToClipboard(elementId) {
+        const element = document.getElementById(elementId);
+        if (!element) return;
+        
+        const text = element.innerText;
+        
+        navigator.clipboard.writeText(text).then(() => {
+            showToast("Path copied to clipboard!");
+        }).catch(err => {
+            console.error('Failed to copy: ', err);
+            showToast("Failed to copy path.");
         });
-
-        btn.style.display = "none";
-        parent.querySelector(".gn-btn-update").style.display = "block";
-        parent.querySelector(".gn-btn-uninstall").style.display = "block";
-    });
-});
-</script>
+    }
+    </script>
 </body>
+</html>

@@ -1,4 +1,0 @@
-User-agent: *
-Allow: /
-
-Sitemap: https://getnaro.github.io/sitemap.xml
