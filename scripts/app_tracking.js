@@ -2,6 +2,7 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebas
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
 import { getDatabase, ref, update, onValue } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-database.js";
 
+// FIX: Correct Firebase Configuration
 const firebaseConfig = {
     apiKey: "AIzaSyAJrJnSQI7X1YJHLOfHZkknmoAoiOiGuEo",
     authDomain: "getnaroapp.firebaseapp.com",
@@ -32,27 +33,46 @@ document.addEventListener("DOMContentLoaded", () => {
     const btnUpdate = appCard.querySelector('.gn-btn-update');
     const btnUninstall = appCard.querySelector('.gn-btn-uninstall');
     
-    const statusText = document.getElementById(`install-status-${appId.split('-')[0]}`) || appCard.querySelector('[id^="install-status"]');
-    const locLink = document.getElementById(`loc-path-${appId.split('-')[0]}`) || appCard.querySelector('.fs-loc-link');
+    // UI elements on the download card
+    const statusText = appCard.querySelector('[id^="install-status"]');
+    const locLink = appCard.querySelector('.fs-loc-link');
     
     let isMonitoring = false;
+    let cachedFirebaseData = {};
+
+    // --- NEW: App Info Retrieval Hook (Requirement 3) ---
+    if (window.appAPI && window.appAPI.getAppInfo) {
+        window.appAPI.getAppInfo = async () => {
+            const detectedPath = await window.appAPI.findAppPath(appName);
+            const status = detectedPath ? "Installed" : "Not Installed";
+            
+            return {
+                appName: appName,
+                publisher: "Getnaro Team", 
+                version: appCard.querySelector('.fs-stats p')?.innerText || "N/A", 
+                platform: "Windows Desktop", 
+                accountStatus: auth.currentUser ? "Logged In" : "Logged Out",
+                installedDate: cachedFirebaseData.installedDate || status,
+                storageSpace: "Unknown", 
+            };
+        };
+    }
 
     // --- NEW: Listen for INSTALL START signal from parent renderer ---
     if (window.appAPI && window.appAPI.onInstallStartSignal) {
         window.appAPI.onInstallStartSignal((data) => {
             // Check if the received appName matches the app on this page
-            if (data.appName && data.appName.toLowerCase().includes(appName.toLowerCase().split(/\W/)[0])) {
+            if (data.appName && appName.toLowerCase().includes(data.appName.toLowerCase().split(/\W/)[0])) {
                 startInstallMonitoring(appName, appId);
             }
         });
     }
 
-    // --- 1. HANDLE DOWNLOAD CLICK (ALLOWS DOWNLOAD, TRACKS IF LOGGED IN) ---
+    // --- 1. HANDLE DOWNLOAD CLICK ---
     if (btnDownload) {
         btnDownload.addEventListener("click", () => {
             const user = auth.currentUser;
             if (user) {
-                // Initial tracking for download start
                 saveToHistory(user.uid, appId, appName, appIcon, "Downloading...");
             } else {
                 if(window.showToast) window.showToast("Download started. Login for history tracking.");
@@ -65,28 +85,26 @@ document.addEventListener("DOMContentLoaded", () => {
         if (user) {
             syncAppStatus(user, appId, appName, appIcon);
         } else {
-            // Anonymous check on load
             checkLocalOnly(appName);
         }
     });
 
-    // --- CORE STATUS CHECK AND SYNC ---
+    // --- CORE STATUS CHECK AND SYNC (Firebase Listener) ---
 
     async function syncAppStatus(user, appId, appName, appIcon) {
         const appRef = ref(db, `users/${user.uid}/history/${appId}`);
 
-        // A. Realtime Listener for Firebase data
         onValue(appRef, async (snapshot) => {
+            cachedFirebaseData = snapshot.val() || {};
             
-            // The UI state is always governed by the local system check
+            // Get current path from OS
             const detectedPath = await window.appAPI.findAppPath(appName);
 
             if (detectedPath) {
                 // Case 1: Installed on Device
                 updateUIInstalled(detectedPath);
                 
-                // FINAL STEP: Update Firebase with confirmed installed state and location
-                // Only write if we have new data to save or status is incorrect
+                // Final verification write to Firebase
                 const dbData = snapshot.val();
                 if (!dbData || dbData.status !== 'installed' || dbData.installLocation !== detectedPath) {
                     saveFinalInstallState(user.uid, appId, detectedPath);
@@ -97,20 +115,25 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         });
         
-        // B. Handle Uninstall Click
+        // B. Handle Uninstall Click (Requirement 2)
         if (btnUninstall) {
             btnUninstall.onclick = (e) => {
                 e.preventDefault();
-                if (window.appAPI && window.appAPI.openUninstallSettings) {
-                    window.appAPI.openUninstallSettings();
-                } else if(window.showToast) {
-                    window.showToast("Please use Windows Settings to uninstall this app.");
-                }
+                // Bug 2 Fix: Removed confirm(), sending signal directly
+                window.appAPI.uninstallApp(appName);
+                
+                // Optimistic update to Firebase
+                update(ref(db, `users/${user.uid}/history/${appId}`), {
+                    status: 'uninstalled',
+                    installLocation: null,
+                    lastChecked: Date.now()
+                });
+                if (window.showToast) window.showToast(`Uninstall signal sent for ${appName}.`);
             };
         }
     }
 
-    // Polling function: CRITICAL FOR INSTALL VERIFICATION
+    // Polling function: CRITICAL FOR INSTALL VERIFICATION (Requirement 1/Bug 4/7 Fix)
     async function startInstallMonitoring(appName, appId) {
         if (isMonitoring) return;
         isMonitoring = true;
@@ -125,11 +148,11 @@ document.addEventListener("DOMContentLoaded", () => {
             const detectedPath = await window.appAPI.findAppPath(appName);
 
             if (detectedPath) {
-                console.log(`Installation found after ${attempts} attempts.`);
+                // Installation found!
                 updateUIInstalled(detectedPath);
                 
-                // If logged in, save the definitive status to the server immediately
                 if (user) {
+                    // Send data to server IMMEDIATELY after installation is verified
                     saveFinalInstallState(user.uid, appId, detectedPath);
                 }
                 isMonitoring = false; // Stop monitoring
@@ -137,9 +160,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 attempts++;
                 setTimeout(poll, delay);
             } else {
-                console.log("Monitoring stopped. App not found after 1 minute.");
                 isMonitoring = false;
-                if (window.showToast) window.showToast(`${appName} not found. Check if installation was successful.`);
+                if (window.showToast) window.showToast(`${appName} installation verification timed out.`);
             }
         };
 
@@ -179,7 +201,6 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
     
-    // NEW: Save the final, confirmed install state
     function saveFinalInstallState(uid, id, location) {
         const timestamp = Date.now();
         const dateString = new Date(timestamp).toLocaleDateString('en-US', {
@@ -193,7 +214,6 @@ document.addEventListener("DOMContentLoaded", () => {
             installedDate: dateString,
             lastChecked: Date.now()
         });
-        console.log("Firebase updated: App installed with location.");
         if (window.showToast) window.showToast("Installation verified and saved to history!");
     }
 
@@ -206,7 +226,8 @@ document.addEventListener("DOMContentLoaded", () => {
         if (btnUninstall) btnUninstall.style.display = "inline-flex";
 
         if (statusText) {
-            statusText.innerHTML = `<span style="color:#00e676; font-weight:bold;"><i class="fa-solid fa-check-circle"></i> Installed</span>`;
+            const date = cachedFirebaseData.installedDate || "Verified";
+            statusText.innerHTML = `<span style="color:#00e676; font-weight:bold;">${date}</span>`;
         }
 
         if (locLink) {
