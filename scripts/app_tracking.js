@@ -1,8 +1,8 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
-import { getDatabase, ref, update, onValue } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-database.js";
+import { getDatabase, ref, update, onValue } from "https://www.gstatic.com/firebasejs/9.9.0/firebase-database.js";
 
-// FIX: Correct Firebase Configuration
+// --- Configuration ---
 const firebaseConfig = {
     apiKey: "AIzaSyAJrJnSQI7X1YJHLOfHZkknmoAoiOiGuEo",
     authDomain: "getnaroapp.firebaseapp.com",
@@ -18,13 +18,23 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getDatabase(app);
 
+// Use a fallback for showToast (ensuring it works if the custom function is defined in index.html)
+const showToast = (message) => {
+    if (typeof window.showToast === 'function') {
+        window.showToast(message);
+    } else {
+        console.log(`[TOAST]: ${message}`);
+    }
+};
+
+
 document.addEventListener("DOMContentLoaded", () => {
     // --- APP CARD SETUP ---
     const appCard = document.querySelector('.content-one');
     if (!appCard) return;
 
     const appId = appCard.dataset.app;
-    // The canonical name for registry searching, taken from H1
+    // CRITICAL: Get app name for registry search
     const appName = appCard.querySelector('h1') ? appCard.querySelector('h1').textContent.trim() : "Unknown App";
     const appIconImg = appCard.querySelector('.gn-card-left img');
     const appIcon = appIconImg ? appIconImg.src : "";
@@ -40,10 +50,10 @@ document.addEventListener("DOMContentLoaded", () => {
     let isMonitoring = false;
     let cachedFirebaseData = {};
 
-    // --- NEW: App Info Retrieval Hook (Requirement 3) ---
-    // Exposed globally via window.appAPI in preload.js for renderer to call
+    // --- NEW: App Info Retrieval Hook (For App Info Modal) ---
     if (window.appAPI && window.appAPI.getAppInfo) {
         window.appAPI.getAppInfo = async () => {
+            // This is called by the renderer process via executeJavaScript, returns the data blob.
             const detectedPath = await window.appAPI.findAppPath(appName);
             const status = detectedPath ? "Installed" : "Not Installed";
             
@@ -59,7 +69,7 @@ document.addEventListener("DOMContentLoaded", () => {
         };
     }
 
-    // --- NEW: Listen for INSTALL START signal from parent renderer ---
+    // --- NEW: Listen for INSTALL START signal (From Renderer/Modal) ---
     if (window.appAPI && window.appAPI.onInstallStartSignal) {
         window.appAPI.onInstallStartSignal((data) => {
             // Check if the received appName matches the app on this page
@@ -76,8 +86,7 @@ document.addEventListener("DOMContentLoaded", () => {
             if (user) {
                 saveToHistory(user.uid, appId, appName, appIcon, "Downloading...");
             } else {
-                // Bug 2 Fix: Rely on local showToast for feedback
-                if(window.showToast) window.showToast("Download started. Login for history tracking.");
+                showToast("Download started. Login for history tracking.");
             }
         });
     }
@@ -92,18 +101,18 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     // --- CORE STATUS CHECK AND SYNC (Firebase Listener) ---
-
     async function syncAppStatus(user, appId, appName, appIcon) {
         const appRef = ref(db, `users/${user.uid}/history/${appId}`);
 
+        // Realtime Listener
         onValue(appRef, async (snapshot) => {
             cachedFirebaseData = snapshot.val() || {};
             
-            // Get current path from OS
+            // Critical: Check system installed status immediately
             const detectedPath = await window.appAPI.findAppPath(appName);
 
             if (detectedPath) {
-                // Case 1: Installed on Device
+                // Case 1: Installed on Device (Fixes Bug: Download button still visible)
                 updateUIInstalled(detectedPath);
                 
                 // Final verification write to Firebase
@@ -117,24 +126,23 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         });
         
-        // B. Handle Uninstall Click (Requirement 2)
+        // B. Handle Uninstall Click
         if (btnUninstall) {
             btnUninstall.onclick = (e) => {
                 e.preventDefault();
                 window.appAPI.uninstallApp(appName);
                 
-                // Optimistic update to Firebase
                 update(ref(db, `users/${user.uid}/history/${appId}`), {
                     status: 'uninstalled',
                     installLocation: null,
                     lastChecked: Date.now()
                 });
-                if (window.showToast) window.showToast(`Uninstall signal sent for ${appName}.`);
+                showToast(`Uninstall signal sent for ${appName}.`);
             };
         }
     }
 
-    // Polling function: CRITICAL FOR INSTALL VERIFICATION (Requirement 1/Bug 4/7 Fix)
+    // Polling function: CRITICAL FOR INSTALL VERIFICATION
     async function startInstallMonitoring(appName, appId) {
         if (isMonitoring) return;
         isMonitoring = true;
@@ -143,17 +151,15 @@ document.addEventListener("DOMContentLoaded", () => {
         const delay = 2000;
         const user = auth.currentUser;
 
-        if (window.showToast) window.showToast(`Monitoring system for ${appName} installation...`);
+        showToast(`Monitoring system for ${appName} installation...`);
 
         const poll = async () => {
             const detectedPath = await window.appAPI.findAppPath(appName);
 
             if (detectedPath) {
-                // Installation found!
                 updateUIInstalled(detectedPath);
                 
                 if (user) {
-                    // Send data to server IMMEDIATELY after installation is verified
                     saveFinalInstallState(user.uid, appId, detectedPath);
                 }
                 isMonitoring = false; // Stop monitoring
@@ -162,7 +168,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 setTimeout(poll, delay);
             } else {
                 isMonitoring = false;
-                if (window.showToast) window.showToast(`${appName} installation verification timed out.`);
+                showToast(`${appName} installation verification timed out.`);
             }
         };
 
@@ -215,18 +221,19 @@ document.addEventListener("DOMContentLoaded", () => {
             installedDate: dateString,
             lastChecked: Date.now()
         });
-        if (window.showToast) window.showToast("Installation verified and saved to history!");
+        showToast("Installation verified and saved to history!");
     }
 
 
     // --- UI UPDATERS (Only runs if confirmed by findAppPath) ---
-
+    // Fixes Bug 5 (Installed Status Date)
     function updateUIInstalled(location) {
         if (btnDownload) btnDownload.style.display = "none";
         if (btnUpdate) btnUpdate.style.display = "inline-flex"; 
         if (btnUninstall) btnUninstall.style.display = "inline-flex";
 
         if (statusText) {
+            // Use date from Firebase if available, otherwise show 'Verified'
             const date = cachedFirebaseData.installedDate || "Verified";
             statusText.innerHTML = `<span style="color:#00e676; font-weight:bold;">${date}</span>`;
         }
