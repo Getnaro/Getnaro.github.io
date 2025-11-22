@@ -57,7 +57,8 @@
     width: 90%;
     max-width: 1000px;
     height: 85vh;
-    background: #121212; /* Dark Background */
+    background: #1a1a1a; /* Fallback */
+    background: linear-gradient(145deg, rgba(26, 26, 26, 0.9), rgba(10, 10, 10, 0.95));
     border: 1px solid rgba(159, 0, 255, 0.3);
     border-radius: 25px;
     display: flex;
@@ -75,8 +76,8 @@
 /* Header */
 .gn-ai-header {
     padding: 20px 30px;
-    background: rgba(255, 255, 255, 0.03);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    background: rgba(159, 0, 255, 0.1);
+    border-bottom: 1px solid rgba(159, 0, 255, 0.2);
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -114,7 +115,6 @@
     display: flex;
     flex-direction: column;
     gap: 20px;
-    background: #0e0e0e; /* Very Dark Inner BG */
 }
 
 .msg {
@@ -129,9 +129,9 @@
 
 .msg.bot {
     align-self: flex-start;
-    background: #252525;
-    border: 1px solid #333;
-    color: #eee;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: #ddd;
     border-bottom-left-radius: 2px;
 }
 
@@ -143,38 +143,29 @@
     box-shadow: 0 5px 15px rgba(159, 0, 255, 0.3);
 }
 
-/* --- INPUT AREA (MATCHING YOUR IMAGE) --- */
+/* Input Area */
 .gn-ai-input-area {
-    padding: 15px 20px;
-    background: #121212; /* Match Chat Box BG */
-    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    padding: 20px;
+    background: rgba(0, 0, 0, 0.3);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
     display: flex;
-    align-items: center; 
-    gap: 12px;
+    align-items: center;
+    gap: 15px;
 }
 
-/* Input Field: White Pill with Dark Text */
 .gn-ai-input {
     flex: 1;
-    background: #ffffff;
-    border: 2px solid #fff;
-    padding: 12px 20px;
-    border-radius: 30px; /* Pill Shape */
-    color: #000000;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 15px 20px;
+    border-radius: 30px;
+    color: white;
     font-size: 16px;
-    font-weight: 500;
     outline: none;
     transition: 0.3s;
-    height: 50px; /* Consistent Height */
-    box-sizing: border-box;
 }
-.gn-ai-input::placeholder { color: #666; }
-.gn-ai-input:focus { 
-    border-color: #9F00FF; 
-    box-shadow: 0 0 0 3px rgba(159, 0, 255, 0.3);
-}
+.gn-ai-input:focus { border-color: #9F00FF; background: rgba(255, 255, 255, 0.08); }
 
-/* Utility Buttons (Mic/Speaker) - Dark Circles */
 .gn-ai-btn {
     width: 50px; height: 50px;
     border-radius: 50%;
@@ -183,31 +174,19 @@
     display: flex; justify-content: center; align-items: center;
     font-size: 20px;
     transition: 0.2s;
-    background: #2a2a2a; /* Dark Grey */
-    color: #ddd;
-    flex-shrink: 0;
+    background: rgba(255, 255, 255, 0.1);
+    color: #aaa;
 }
-.gn-ai-btn:hover { background: #3a3a3a; color: #fff; transform: scale(1.05); }
+.gn-ai-btn:hover { background: rgba(159, 0, 255, 0.2); color: #fff; }
 .gn-ai-btn.active { background: #ff4444; color: white; animation: pulse 1.5s infinite; }
-.gn-ai-btn.speak-active { color: #00e676; border: 1px solid #00e676; }
+.gn-ai-btn.speak-active { color: #00e676; text-shadow: 0 0 10px #00e676; }
 
-/* Send Button - Vibrant Purple Circle */
-#btn-send { 
-    background: #aa00ff; /* Bright Purple */
-    color: white; 
-    width: 50px; height: 50px;
-    font-size: 20px;
-    box-shadow: 0 4px 12px rgba(170, 0, 255, 0.4);
-}
-#btn-send:hover { 
-    background: #bf33ff; 
-    transform: scale(1.1) rotate(-10deg); 
-    box-shadow: 0 6px 15px rgba(170, 0, 255, 0.6);
-}
+#btn-send { background: #9F00FF; color: white; }
+#btn-send:hover { background: #b02eff; transform: scale(1.1); }
 
 @keyframes msgPop { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
 
 /* Scrollbar */
 .gn-ai-messages::-webkit-scrollbar { width: 8px; }
-.gn-ai-messages::-webkit-scrollbar-thumb { background: #333; border-radius: 4px; }
+.gn-ai-messages::-webkit-scrollbar-thumb { background: #444; border-radius: 4px; }
