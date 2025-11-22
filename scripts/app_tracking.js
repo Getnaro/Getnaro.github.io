@@ -18,7 +18,7 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getDatabase(app);
 
-// Use a fallback for showToast (ensuring it works if the custom function is defined in index.html)
+// Use a fallback for showToast 
 const showToast = (message) => {
     if (typeof window.showToast === 'function') {
         window.showToast(message);
@@ -69,17 +69,22 @@ document.addEventListener("DOMContentLoaded", () => {
         };
     }
 
-    // --- NEW: Listen for INSTALL START signal (From Renderer/Modal) ---
+    // --- FIX: Listen for INSTALL START signal (From Renderer/Modal) ---
     if (window.appAPI && window.appAPI.onInstallStartSignal) {
         window.appAPI.onInstallStartSignal((data) => {
             // Check if the received appName matches the app on this page
-            if (data.appName && appName.toLowerCase().includes(data.appName.toLowerCase().split(/\W/)[0])) {
+            // Use a clean version of the app name for comparison
+            const pageAppNameClean = appName.toLowerCase().split(/\W/).filter(Boolean)[0];
+            const signalAppNameClean = data.appName ? data.appName.toLowerCase().split(/\W/).filter(Boolean)[0] : null;
+
+            if (signalAppNameClean && pageAppNameClean === signalAppNameClean) {
+                console.log(`[AppTracking] Starting monitoring for ${appName}`);
                 startInstallMonitoring(appName, appId);
             }
         });
     }
 
-    // --- 1. HANDLE DOWNLOAD CLICK ---
+    // --- 1. HANDLE DOWNLOAD CLICK (Unchanged) ---
     if (btnDownload) {
         btnDownload.addEventListener("click", () => {
             const user = auth.currentUser;
@@ -91,7 +96,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // --- 2. LISTEN FOR AUTH & SYNC ---
+    // --- 2. LISTEN FOR AUTH & SYNC (Unchanged) ---
     onAuthStateChanged(auth, (user) => {
         if (user) {
             syncAppStatus(user, appId, appName, appIcon);
@@ -108,14 +113,14 @@ document.addEventListener("DOMContentLoaded", () => {
         onValue(appRef, async (snapshot) => {
             cachedFirebaseData = snapshot.val() || {};
             
-            // Critical: Check system installed status immediately
+            // Critical: Check system installed status immediately (Fixes Issue 2)
             const detectedPath = await window.appAPI.findAppPath(appName);
 
             if (detectedPath) {
-                // Case 1: Installed on Device (Fixes Bug: Download button still visible)
-                updateUIInstalled(detectedPath);
+                // Case 1: Installed on Device
+                updateUIInstalled(detectedPath); // Fixes Issue 4: Hide download, show update/uninstall
                 
-                // Final verification write to Firebase
+                // Final verification write to Firebase (Fixes Issue 1 & 3)
                 const dbData = snapshot.val();
                 if (!dbData || dbData.status !== 'installed' || dbData.installLocation !== detectedPath) {
                     saveFinalInstallState(user.uid, appId, detectedPath);
@@ -142,25 +147,32 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    // Polling function: CRITICAL FOR INSTALL VERIFICATION
+    // Polling function: CRITICAL FOR INSTALL VERIFICATION (Fixes Issues 1, 2, 3, 4)
     async function startInstallMonitoring(appName, appId) {
         if (isMonitoring) return;
         isMonitoring = true;
         let attempts = 0;
-        const maxAttempts = 30; // Check every 2 seconds for 1 minute
+        const maxAttempts = 30; // Check every 2 seconds for 1 minute (Total 1 minute monitoring)
         const delay = 2000;
         const user = auth.currentUser;
 
         showToast(`Monitoring system for ${appName} installation...`);
 
         const poll = async () => {
+            // Ensure API is ready
+            if (!window.appAPI || !window.appAPI.findAppPath) {
+                isMonitoring = false;
+                return showToast("System API not available. Cannot verify install.");
+            }
+            
             const detectedPath = await window.appAPI.findAppPath(appName);
 
             if (detectedPath) {
+                // Installation confirmed!
                 updateUIInstalled(detectedPath);
                 
                 if (user) {
-                    saveFinalInstallState(user.uid, appId, detectedPath);
+                    saveFinalInstallState(user.uid, appId, detectedPath); // Fixes Issue 1 & 3
                 }
                 isMonitoring = false; // Stop monitoring
             } else if (attempts < maxAttempts) {
@@ -172,9 +184,7 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         };
 
-        if (window.appAPI && window.appAPI.findAppPath) {
-            poll();
-        }
+        poll();
     }
 
 
@@ -208,6 +218,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
     
+    // CRITICAL FIX: Ensures installation location and status are written
     function saveFinalInstallState(uid, id, location) {
         const timestamp = Date.now();
         const dateString = new Date(timestamp).toLocaleDateString('en-US', {
@@ -216,9 +227,9 @@ document.addEventListener("DOMContentLoaded", () => {
         
         update(ref(db, `users/${uid}/history/${id}`), {
             status: 'installed',
-            installLocation: location,
+            installLocation: location, // Fixes Issue 1 & 3
             timestamp: timestamp, 
-            installedDate: dateString,
+            installedDate: dateString, // Fixes status date
             lastChecked: Date.now()
         });
         showToast("Installation verified and saved to history!");
@@ -226,7 +237,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     // --- UI UPDATERS (Only runs if confirmed by findAppPath) ---
-    // Fixes Bug 5 (Installed Status Date)
+    // Fixes Bug 4 (UI buttons)
     function updateUIInstalled(location) {
         if (btnDownload) btnDownload.style.display = "none";
         if (btnUpdate) btnUpdate.style.display = "inline-flex"; 
@@ -235,6 +246,7 @@ document.addEventListener("DOMContentLoaded", () => {
         if (statusText) {
             // Use date from Firebase if available, otherwise show 'Verified'
             const date = cachedFirebaseData.installedDate || "Verified";
+            // Fixes Issue 2: Display correct installed date
             statusText.innerHTML = `<span style="color:#00e676; font-weight:bold;">${date}</span>`;
         }
 
