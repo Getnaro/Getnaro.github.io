@@ -1,21 +1,63 @@
 // --- CONFIGURATION ---
 const FAQ_DB = {
-    "what is getnaro": "Getnaro is your all-in-one hub for downloading verified Windows software, drivers, and tools safely.",
-    "is it safe": "Yes! All files are scanned for viruses and threats before being listed.",
-    "how to download": "Simply search for an app, click the card, and hit the Download button.",
-    "create account": "Go to the Account page and sign up to track your downloads and sync history.",
-    "forgot password": "You can reset your password on the Login page using your email.",
-    "contact support": "You can reach us via the Contact page or email support@getnaro.com."
+    "what is getnaro": "Getnaro is your all-in-one hub for downloading verified Windows software.",
+    "is it safe": "Yes! All files are scanned for viruses.",
+    "contact support": "Email support@getnaro.com."
 };
 
-// UPDATED REDIRECTION LINKS TO /downloads/
+// WEB LINKS
 const APP_KEYWORDS = {
     "amd": { name: "AMD Software", url: "/downloads/amd-driver.html" },
     "asrock": { name: "ASRock Downloads", url: "/downloads/asrock-downloads.html" },
     "pro": { name: "AMD Pro Edition", url: "/downloads/amd-pro.html" },
-    "driver": { name: "Drivers Section", url: "/index.html" },
-    "nvidia": { name: "NVIDIA Drivers", url: "/downloads/nvidia-drivers.html" }, // Example
-    "intel": { name: "Intel DSA", url: "/downloads/intel-dsa.html" } // Example
+    "nvidia": { name: "NVIDIA Drivers", url: "/downloads/nvidia-drivers.html" },
+    "intel": { name: "Intel DSA", url: "/downloads/intel-dsa.html" }
+};
+
+// MANUAL MODE DATA TREE
+const MANUAL_MENU = {
+    "root": {
+        text: "How can I help you today?",
+        options: [
+            { label: "🤖 AI Assistant", action: "set_mode_ai" },
+            { label: "📂 Manual Selection", action: "goto_manual_cat" }
+        ]
+    },
+    "manual_cat": {
+        text: "Select a category:",
+        options: [
+            { label: "💾 Drivers", action: "goto_drivers" },
+            { label: "🛠️ Utilities", action: "goto_utils" },
+            { label: "👤 Account Help", action: "goto_account" },
+            { label: "⬅️ Back", action: "goto_root" }
+        ]
+    },
+    "drivers": {
+        text: "Which driver do you need?",
+        options: [
+            { label: "AMD Adrenalin", url: "/downloads/amd-driver.html" },
+            { label: "AMD Pro", url: "/downloads/amd-pro.html" },
+            { label: "ASRock", url: "/downloads/asrock-downloads.html" },
+            { label: "⬅️ Back", action: "goto_manual_cat" }
+        ]
+    },
+    "utils": {
+        text: "Useful Tools:",
+        options: [
+            { label: "DirectX", url: "#" }, 
+            { label: "C++ Runtimes", url: "#" },
+            { label: "⬅️ Back", action: "goto_manual_cat" }
+        ]
+    },
+    "account": {
+        text: "Account Options:",
+        options: [
+            { label: "Login", url: "/pages/login.html" },
+            { label: "Sign Up", url: "/pages/signup.html" },
+            { label: "My Profile", url: "/pages/profile.html" },
+            { label: "⬅️ Back", action: "goto_manual_cat" }
+        ]
+    }
 };
 
 // --- DOM ELEMENTS ---
@@ -27,28 +69,89 @@ const inputField = document.getElementById('gn-ai-input');
 const sendBtn = document.getElementById('btn-send');
 const micBtn = document.getElementById('btn-mic');
 const speakerBtn = document.getElementById('btn-speaker');
+const inputArea = document.querySelector('.gn-ai-input-area');
 
 // --- STATE ---
 let isSpeakingEnabled = true;
-let recognition;
+let currentMode = 'menu'; 
 
 // --- 1. TOGGLE UI ---
 if (trigger && overlay && closeBtn) {
-    trigger.addEventListener('click', () => overlay.classList.add('active'));
+    trigger.addEventListener('click', () => {
+        overlay.classList.add('active');
+        if (chatBox.children.length <= 1) {
+            initChat();
+        }
+    });
     closeBtn.addEventListener('click', () => overlay.classList.remove('active'));
 }
 
-// --- 2. INTELLIGENCE: FUZZY SEARCH (TYPO FIXER) ---
-// Calculates similarity between two words (Levenshtein Distance)
+// --- 2. INITIALIZATION ---
+function initChat() {
+    chatBox.innerHTML = ''; 
+    showMenu("root");
+}
+
+function showMenu(menuKey) {
+    currentMode = 'manual'; 
+    disableInput(true); 
+
+    const data = MANUAL_MENU[menuKey] || MANUAL_MENU["root"];
+    
+    addMessage(data.text, 'bot');
+
+    // Create Options Container
+    const optionsDiv = document.createElement('div');
+    optionsDiv.className = 'msg bot gn-ai-options'; // Use new class instead of inline styles
+
+    data.options.forEach(opt => {
+        const btn = document.createElement('button');
+        btn.textContent = opt.label;
+        btn.className = 'gn-ai-option-btn'; // Use new class
+        btn.onclick = () => handleMenuSelection(opt);
+        optionsDiv.appendChild(btn);
+    });
+
+    chatBox.appendChild(optionsDiv);
+    chatBox.scrollTop = chatBox.scrollHeight;
+}
+
+function handleMenuSelection(option) {
+    addMessage(option.label, 'user');
+
+    if (option.action === "set_mode_ai") {
+        currentMode = 'ai';
+        disableInput(false);
+        addMessage("AI Mode Activated. You can type or speak now!", 'bot');
+        return;
+    }
+
+    if (option.action && option.action.startsWith("goto_")) {
+        const nextKey = option.action.replace("goto_", "");
+        setTimeout(() => showMenu(nextKey), 500);
+        return;
+    }
+
+    if (option.url) {
+        addMessage(`Navigating to <b>${option.label}</b>...`, 'bot');
+        setTimeout(() => window.location.href = option.url, 1000);
+    }
+}
+
+function disableInput(disable) {
+    if (inputArea) {
+        inputArea.style.display = disable ? 'none' : 'flex';
+    }
+}
+
+// --- 3. INTELLIGENCE (Fuzzy Search) ---
 function getSimilarity(s1, s2) {
-    let longer = s1;
-    let shorter = s2;
+    let longer = s1; let shorter = s2;
     if (s1.length < s2.length) { longer = s2; shorter = s1; }
     let longerLength = longer.length;
     if (longerLength == 0) { return 1.0; }
     return (longerLength - editDistance(longer, shorter)) / parseFloat(longerLength);
 }
-
 function editDistance(s1, s2) {
     s1 = s1.toLowerCase(); s2 = s2.toLowerCase();
     let costs = new Array();
@@ -69,25 +172,16 @@ function editDistance(s1, s2) {
     }
     return costs[s2.length];
 }
-
-// Finds best match for a word in our keywords
 function findBestMatch(inputWord) {
-    let bestMatch = null;
-    let highestScore = 0;
-
+    let bestMatch = null; let highestScore = 0;
     for (let key in APP_KEYWORDS) {
         let score = getSimilarity(inputWord, key);
-        if (score > highestScore) {
-            highestScore = score;
-            bestMatch = APP_KEYWORDS[key];
-        }
+        if (score > highestScore) { highestScore = score; bestMatch = APP_KEYWORDS[key]; }
     }
-    
-    // Only return if similarity is > 60% to avoid random guessing
     return highestScore > 0.6 ? bestMatch : null;
 }
 
-// --- 3. CHAT LOGIC ---
+// --- 4. CHAT LOGIC ---
 function addMessage(text, sender) {
     if (!chatBox) return;
     const div = document.createElement('div');
@@ -96,75 +190,49 @@ function addMessage(text, sender) {
     chatBox.appendChild(div);
     chatBox.scrollTop = chatBox.scrollHeight;
 
-    if (sender === 'bot' && isSpeakingEnabled) {
+    if (sender === 'bot' && isSpeakingEnabled && currentMode === 'ai') {
         speak(text.replace(/<[^>]*>?/gm, '')); 
     }
 }
 
 function processQuery(query) {
+    if (currentMode !== 'ai') return;
+
     query = query.toLowerCase().trim();
     if (!query) return;
 
     addMessage(query, 'user');
     if (inputField) inputField.value = '';
 
-    // -- AI RULES ENGINE --
-    
-    // 1. Install/Download Commands (With Intelligent Matching)
     if (query.includes("install") || query.includes("download") || query.includes("get")) {
-        // Split query into words to check each for a match
         const words = query.split(" ");
         let foundApp = null;
-
         for (let word of words) {
-            // Check exact match first, then fuzzy match
-            if (APP_KEYWORDS[word]) {
-                foundApp = APP_KEYWORDS[word];
-                break;
-            }
+            if (APP_KEYWORDS[word]) { foundApp = APP_KEYWORDS[word]; break; }
             let fuzzy = findBestMatch(word);
-            if (fuzzy) {
-                foundApp = fuzzy;
-                break;
-            }
+            if (fuzzy) { foundApp = fuzzy; break; }
         }
-
         if (foundApp) {
-            addMessage(`Found it! Opening <b>${foundApp.name}</b> for you...`, 'bot');
+            addMessage(`Found it! Opening <b>${foundApp.name}</b>...`, 'bot');
             setTimeout(() => window.location.href = foundApp.url, 1500);
-            return;
-        } else {
-            addMessage("I couldn't identify the app. Try asking 'Install AMD' or 'Get ASRock'.", 'bot');
             return;
         }
     }
 
-    // 2. Direct Navigation
     if (query.includes("home")) { window.location.href = "/index.html"; return; }
-    if (query.includes("login") || query.includes("sign in")) { window.location.href = "/pages/login.html"; return; }
-    if (query.includes("profile") || query.includes("account")) { window.location.href = "/pages/profile.html"; return; }
+    if (query.includes("login")) { window.location.href = "/pages/login.html"; return; }
+    if (query.includes("profile")) { window.location.href = "/pages/profile.html"; return; }
 
-    // 3. FAQ Search
     let bestMatch = "";
     for (let q in FAQ_DB) {
         if (query.includes(q)) bestMatch = FAQ_DB[q];
     }
+    if (bestMatch) { addMessage(bestMatch, 'bot'); return; }
 
-    if (bestMatch) {
-        addMessage(bestMatch, 'bot');
-        return;
-    }
-
-    // 4. Default Fallback
-    const fallbacks = [
-        "I can help you install apps, navigate the site, or answer questions about Getnaro.",
-        "Try asking 'Is it safe?' or 'How to download'.",
-        "I didn't quite catch that. Could you rephrase?"
-    ];
-    addMessage(fallbacks[Math.floor(Math.random() * fallbacks.length)], 'bot');
+    addMessage("I didn't quite catch that. Try asking 'Install AMD' or switch to Manual Mode by reloading.", 'bot');
 }
 
-// --- 4. EVENT LISTENERS ---
+// --- 5. EVENT LISTENERS ---
 if (sendBtn) sendBtn.addEventListener('click', () => processQuery(inputField.value));
 if (inputField) {
     inputField.addEventListener('keypress', (e) => {
@@ -172,42 +240,33 @@ if (inputField) {
     });
 }
 
-// --- 5. SPEECH RECOGNITION (HEAR) ---
+// --- 6. SPEECH ---
 if (micBtn) {
     if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
         const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
         recognition = new SpeechRecognition();
         recognition.continuous = false;
         recognition.lang = 'en-US';
-
-        recognition.onstart = () => {
-            micBtn.classList.add('active');
-            inputField.placeholder = "Listening...";
-        };
-
-        recognition.onend = () => {
-            micBtn.classList.remove('active');
-            inputField.placeholder = "Type a message...";
-        };
-
-        recognition.onresult = (event) => {
-            const transcript = event.results[0][0].transcript;
-            processQuery(transcript);
-        };
-
-        micBtn.addEventListener('click', () => recognition.start());
+        recognition.onstart = () => { micBtn.classList.add('active'); inputField.placeholder = "Listening..."; };
+        recognition.onend = () => { micBtn.classList.remove('active'); inputField.placeholder = "Type a message..."; };
+        recognition.onresult = (event) => { processQuery(event.results[0][0].transcript); };
+        micBtn.addEventListener('click', () => {
+            if (currentMode !== 'ai') {
+                alert("Switch to AI Mode first!");
+                return;
+            }
+            recognition.start();
+        });
     } else {
         micBtn.style.display = 'none';
     }
 }
 
-// --- 6. SPEECH SYNTHESIS (SPEAK) ---
 function speak(text) {
     if (!window.speechSynthesis) return;
     window.speechSynthesis.cancel();
     const utterance = new SpeechSynthesisUtterance(text);
     utterance.lang = 'en-US';
-    utterance.pitch = 1;
     utterance.rate = 1;
     window.speechSynthesis.speak(utterance);
 }

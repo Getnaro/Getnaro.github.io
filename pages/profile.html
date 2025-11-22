@@ -113,8 +113,7 @@
 ========================================== -->
 
 <style>
-    /* --- DASHBOARD LAYOUT --- */
-    *{
+    /* --- DASHBOARD LAYOUT --- */*{
             font-family: ur;
         }
         @font-face {
@@ -292,6 +291,7 @@
         <img src="/Assests/logo-getnaro-nobg.png" alt="Logo" class="brand-logo-mini" onerror="this.style.display='none'">
         
         <div class="profile-pic-wrapper" id="pic-wrapper" title="Click to change photo">
+            <!-- Default Avatar -->
             <img id="u-avatar" src="https://cdn-icons-png.flaticon.com/512/149/149071.png" class="profile-avatar" alt="Profile">
             <div class="profile-pic-overlay"><i class="fa-solid fa-camera"></i></div>
             <input type="file" id="file-input" accept="image/*" style="display: none;">
@@ -397,44 +397,69 @@
             });
         }
 
-        // 2. UPLOAD LOGIC
+        // 2. UPLOAD LOGIC (With Cache Busting)
         if(els.wrapper && els.fileInput) {
             els.wrapper.addEventListener('click', () => els.fileInput.click());
+            
             els.fileInput.addEventListener('change', async (e) => {
                 const file = e.target.files[0];
                 const user = auth.currentUser;
+                
                 if (!file || !user) return;
+                
                 els.wrapper.classList.add('uploading');
                 showToast("Uploading...");
+                
                 try {
+                    // Create ref (overwrite existing)
                     const picRef = storageRef(storage, 'profile_pics/' + user.uid);
+                    
+                    // Upload
                     await uploadBytes(picRef, file);
+                    
+                    // Get URL
                     const url = await getDownloadURL(picRef);
+                    
+                    // Update Auth & DB
                     await updateProfile(user, { photoURL: url });
                     await updateDB(ref(db, 'users/' + user.uid), { photoURL: url });
-                    els.avatar.src = url;
-                    showToast("Success!");
+                    
+                    // FORCE UPDATE UI with Timestamp (Bypasses Browser Cache)
+                    const cacheBuster = "?t=" + new Date().getTime();
+                    els.avatar.src = url + cacheBuster;
+                    
+                    showToast("Profile picture updated!");
+                    
                 } catch (err) {
                     console.error(err);
-                    showToast("Failed: " + err.message);
+                    if(err.code === 'storage/unauthorized') {
+                        showToast("Error: Enable Storage in Firebase Console!");
+                    } else {
+                        showToast("Failed: " + err.message);
+                    }
                 } finally {
                     els.wrapper.classList.remove('uploading');
                 }
             });
         }
 
-        // 3. AUTH LISTENER WITH TIMEOUT FALLBACK
+        // 3. AUTH LISTENER
         let gotResponse = false;
 
         onAuthStateChanged(auth, (user) => {
             gotResponse = true;
-            console.log("Auth State:", user ? "Logged In" : "Logged Out");
 
             if (user) {
                 // --- LOGGED IN ---
                 if(els.name) els.name.textContent = user.displayName || "User";
                 if(els.email) els.email.textContent = user.email;
-                if(els.avatar && user.photoURL) els.avatar.src = user.photoURL;
+                
+                // Load Photo (Use cache busting if possible, otherwise simple URL)
+                if(els.avatar && user.photoURL) {
+                    // If URL already has params (Firebase ones do), append with &
+                    const separator = user.photoURL.includes('?') ? '&' : '?';
+                    els.avatar.src = user.photoURL + separator + "v=" + Math.random(); 
+                }
 
                 const userRef = ref(db, 'users/' + user.uid);
                 onValue(userRef, (snapshot) => {
@@ -442,24 +467,24 @@
                     
                     if(els.phone) els.phone.textContent = data.phone || user.phoneNumber || "Not Set";
                     if(els.user) els.user.textContent = data.username ? `@${data.username}` : (user.displayName ? `@${user.displayName}` : "@user");
-                    if(els.avatar && data.photoURL) els.avatar.src = data.photoURL;
+                    
+                    // Also update from DB to be sure
+                    if(els.avatar && data.photoURL) {
+                         const separator = data.photoURL.includes('?') ? '&' : '?';
+                         els.avatar.src = data.photoURL + separator + "db=" + Math.random(); 
+                    }
 
                     renderList(data.history || {}, els.history, 'download');
                     renderList(data.favorites || {}, els.favs, 'heart');
                 });
 
             } else {
-                // --- GUEST / LOGGED OUT ---
                 setGuestState();
             }
         });
 
-        // Force Guest State if Firebase hangs
         setTimeout(() => {
-            if (!gotResponse) {
-                console.warn("Firebase taking too long. Forcing guest UI.");
-                setGuestState();
-            }
+            if (!gotResponse) setGuestState();
         }, 2500);
 
         function setGuestState() {
@@ -467,7 +492,6 @@
             if(els.email) els.email.textContent = "-";
             if(els.phone) els.phone.textContent = "-";
             if(els.user) els.user.textContent = "-";
-            
             const loginLink = `<div class="empty-state"><p>Please <a href="/pages/login.html" style="color:#9F00FF;font-weight:bold;">Login</a></p></div>`;
             if(els.history) els.history.innerHTML = loginLink;
             if(els.favs) els.favs.innerHTML = loginLink;

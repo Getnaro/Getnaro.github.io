@@ -293,7 +293,7 @@ body.light-mode #gn-particles {
 
 .heading .dl i {
     margin-right: 10px;
-    color: #e3f2fd;
+    color: #e3f2fd !important;
 }
 
 .heading .dl::before {
@@ -861,7 +861,7 @@ mark {
     position: fixed;
     top: 18px;
     right: 18px;
-    z-index: 210000;
+    z-index: 99999;
     width: 54px;
     height: 54px;
     border-radius: 12px;
