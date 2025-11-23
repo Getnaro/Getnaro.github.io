@@ -1,0 +1,149 @@
+*{
+            font-family: Getnaro;
+        }
+        @font-face {
+            font-family: Getnaro;
+            src: url(/Assests/Getnaro-medium.ttf);
+        }
+        .container{
+    margin-top: 100px;
+    padding: 25px;
+}
+.gn-auth-wrapper {
+        width: 100%;
+        max-width: 500px;
+        margin: 40px auto;
+        animation: fadeInUp 0.5s ease;
+    }
+
+    .gn-auth-card {
+        background: var(--box);
+        border: 1px solid rgba(159, 0, 255, 0.2);
+        border-radius: 24px;
+        padding: 40px 30px;
+        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+        backdrop-filter: blur(15px);
+        -webkit-backdrop-filter: blur(15px);
+        transition: 0.3s;
+    }
+
+    .gn-auth-card:hover {
+        box-shadow: 0 15px 50px rgba(159, 0, 255, 0.15);
+        border-color: rgba(159, 0, 255, 0.5);
+    }
+
+    .auth-header {
+        text-align: center;
+        margin-bottom: 30px;
+    }
+
+    .auth-header h2 {
+        color: var(--text);
+        margin: 0;
+        font-size: 28px;
+    }
+
+    .input-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr; /* 2 columns for name/user */
+        gap: 15px;
+    }
+
+    .input-group {
+        position: relative;
+        margin-bottom: 15px;
+    }
+
+    .input-group i {
+        position: absolute;
+        left: 15px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #9F00FF;
+        font-size: 16px;
+    }
+
+    .gn-input {
+        width: 100%;
+        padding: 14px 14px 14px 45px;
+        background: rgba(255, 255, 255, 0.05);
+        border: 2px solid rgba(159, 0, 255, 0.2);
+        border-radius: 12px;
+        color: var(--text);
+        font-size: 15px;
+        outline: none;
+        transition: 0.3s;
+    }
+
+    .light-mode .gn-input {
+        background: rgba(0, 0, 0, 0.05);
+        color: #000;
+    }
+
+    .gn-input:focus {
+        border-color: #9F00FF;
+        background: rgba(159, 0, 255, 0.05);
+    }
+
+    /* --- CHECKBOXES --- */
+    .check-group {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 10px;
+        font-size: 14px;
+        color: var(--text);
+    }
+    
+    .check-group input[type="checkbox"] {
+        accent-color: #9F00FF;
+        width: 18px;
+        height: 18px;
+        cursor: pointer;
+    }
+
+    .check-group a {
+        color: #9F00FF;
+        text-decoration: none;
+        font-weight: bold;
+    }
+
+    .gn-btn-primary {
+        width: 100%;
+        background: linear-gradient(90deg, #9F00FF, #B72BFF);
+        color: white;
+        border: none;
+        padding: 16px;
+        font-size: 18px;
+        font-weight: bold;
+        border-radius: 12px;
+        cursor: pointer;
+        transition: 0.3s;
+        margin-top: 10px;
+        box-shadow: 0 5px 20px rgba(159, 0, 255, 0.3);
+    }
+
+    .gn-btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(159, 0, 255, 0.5);
+    }
+
+    .form-footer {
+        text-align: center;
+        margin-top: 20px;
+        font-size: 14px;
+        color: var(--text);
+    }
+    .form-footer a { color: #9F00FF; text-decoration: none; font-weight: bold; }
+
+    .status-msg { text-align: center; font-size: 14px; margin-bottom: 15px; min-height: 20px; font-weight: bold; }
+    .error { color: #ff4444; }
+    .success { color: #00c851; }
+
+    @media(max-width: 500px) {
+        .input-grid { grid-template-columns: 1fr; }
+    }
+    @keyframes fadeInUp {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
