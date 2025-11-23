@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+       <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Getnaro Online</title>
+        <link rel="stylesheet" href="/stylesheets/header.css">
+        <link rel="stylesheet" href="/stylesheets/ai_assistant.css">
+
+    <!-- FONTS & ICONS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+    <!-- SEO + META -->
+    <meta name="title" content="Getnaro — Free Software, Drivers & Tools Download Hub">
+    <meta name="description"
+        content="Getnaro is your all-in-one download hub for Windows software, drivers, tools, utilities and essential apps. Fast, safe and direct downloads with no ads or redirects. Updated daily.">
+
+    <meta name="keywords"
+        content="Getnaro, software download, drivers download, free pc tools, windows apps download, downloader website, pc utilities, direct download hub">
+    <meta name="author" content="Getnaro Team">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://getnaro.com/">
+
+    <!-- SOCIAL -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Getnaro — Free Software, Drivers & Tools Download Hub">
+    <meta property="og:description"
+        content="Download software, drivers, utilities and PC tools safely from Getnaro. Direct downloads without ads or redirects.">
+    <meta property="og:image" content="https://getnaro.com/assets/getnaro-banner.jpg">
+    <meta property="og:url" content="https://getnaro.com/">
+
+    <meta name="twitter:card" content="summary_large_image">
+
+    <!-- FAVICON -->
+    <link rel="icon" type="image/x-icon" href="Assests/Favicon.png">
+    <style>
+        body { background:#141414; margin:0; padding:0; }
+        .content-box {
+            width: 90%;
+            margin: 160px auto 40px auto;
+            background: #1a1a1a;
+            padding: 40px;
+            border-radius: 15px;
+            border: 1px solid #9F00FF44;
+            box-shadow: 0 0 20px #9F00FF33;
+        }
+        .content-box h2 { font-size: 45px; color: #9F00FF; margin-bottom: 20px; }
+        .content-box p { font-size: 20px; line-height: 32px; color: #e8e8e8; }
+        .content-box h3 { margin-top: 30px; font-size: 30px; color:#9F00FF; }
+    </style>
+</head>
+
+<body>
+
+ <canvas id="gn-particles"></canvas>
+    <!-- ------------------ HEADER ------------------ -->
+<div class="heading">
+
+    <a href="/index.html"><img src="/Assests/logo-getnaro-nobg.png" class="logo"></a>
+    <h4>Getnaro</h4>
+    <ul>
+        <li><a href="/index.html"
+        >HOME</a></li>
+        <li><a href="/pages/community.html">COMMUNITY</a></li>
+        <li><a href="/pages/login.html">ACCOUNT</a></li>
+        <li><a href="/pages/about.html">ABOUT US</a></li>
+        <li><a href="/pages/faq.html">FAQ</a></li>
+    </ul>
+<button id="theme-toggle" class="theme-toggle">
+    <i id="theme-icon" class="fa-solid fa-moon"></i>
+</button>
+<div id="gn-search-btn" class="gn-search-btn">
+    <i class="fa-solid fa-magnifying-glass"></i>
+</div>
+    <a class="dl"
+        href="/pages/getnaro-app.html">
+        <i class="fa-solid fa-download"></i> DOWNLOAD APP
+    </a>
+</div>
+<!-- ========== GN MOBILE HAMBURGER (SAFE OUTSIDE HEADER) ========== -->
+<button id="gn-hamburger" class="gn-hamburger" aria-expanded="false" aria-label="Open menu">
+  <span class="gn-ham-box"><span class="gn-ham-inner"></span></span>
+</button>
+
+<nav id="gn-mobile-nav" class="gn-mobile-nav" aria-hidden="true">
+  <div class="gn-mobile-backdrop" data-close></div>
+
+  <div class="gn-mobile-panel" role="dialog" aria-modal="true">
+
+    <!-- Mobile Search — triggers existing #gn-search-btn -->
+    <button class="gn-mobile-btn gn-mobile-search" type="button" aria-label="Open search">
+      <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i> <span>Search</span>
+    </button>
+
+    <!-- Theme toggle — triggers existing #theme-toggle -->
+    <button class="gn-mobile-btn gn-mobile-theme" type="button" aria-label="Toggle theme">
+      <i class="fa-solid fa-moon" aria-hidden="true"></i> <span>Theme</span>
+    </button>
+
+    <!-- EXACT UL you provided -->
+    <ul class="gn-mobile-links" role="menu" aria-label="Mobile navigation">
+      <li role="none"><a role="menuitem" href="/index.html">Home</a></li>
+      <li role="none"><a role="menuitem" href="/pages/community.html">Community</a></li>
+      <li role="none"><a role="menuitem" href="/pages/login.html">Account</a></li>
+      <li role="none"><a role="menuitem" href="/pages/about.html">About Us</a></li>
+      <li role="none"><a role="menuitem" href="/pages/faq.html">FAQ</a></li>
+    </ul>
+
+    <!-- Download App -->
+    <a class="gn-mobile-download" href="/pages/getnaro-app.html">
+      <i class="fa-solid fa-download" aria-hidden="true"></i> <span>Download App</span>
+    </a>
+
+  </div>
+</nav>
+<!-- ========== END GN MOBILE HAMBURGER ========== -->
+
+<!-- MODERN FULLSCREEN SEARCH -->
+<div id="gn-search-overlay" class="gn-search-overlay">
+    <div class="gn-search-wrapper">
+        <i class="fa-solid fa-magnifying-glass search-icon"></i>
+        <input type="text" id="gn-search-input" placeholder="Search here" style="overflow-x: hidden;" autocomplete="off">
+        <button id="gn-search-close" class="close-btn">
+            <i class="fa-solid fa-xmark"></i>
+        </button>
+    </div>
+
+    <div id="gn-search-results" class="gn-search-results"></div>
+</div>
+<div id="gn-ai-root">
+    <!-- Floating Button -->
+    <div class="gn-ai-fab" id="gn-ai-trigger">
+        <i class="fa-solid fa-robot" style="color: white !important;"></i>
+        <span style="color: white !important;">Chat Now</span>
+    </div>
+
+    <div class="gn-ai-overlay" id="gn-ai-overlay">
+        <div class="gn-ai-box">
+            
+            <!-- Header -->
+            <div class="gn-ai-header">
+                <div class="gn-ai-title">
+                    <div class="gn-bot-avatar">
+                        <i class="fa-solid fa-brain" style="color: aliceblue !important;"></i>
+                    </div>
+                    <div class="gn-ai-info">
+                        <h3>Getnaro Assistant</h3>
+                        <p>AI Powered • Voice Enabled</p>
+                    </div>
+                </div>
+                <button class="gn-ai-close" id="gn-ai-close"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+
+            <!-- Chat Area -->
+            <div class="gn-ai-messages" id="gn-ai-chat">
+                <!-- Intro Message -->
+                <div class="msg bot">
+                    Hello! I'm your Getnaro Assistant. I can help you find software, answer FAQs, or navigate the site.<br><br>
+                    Try saying <b>"Install AMD Drivers"</b> or <b>"Open Profile"</b>.
+                </div>
+            </div>
+
+            <!-- Input Area -->
+            <div class="gn-ai-input-area">
+                <button class="gn-ai-btn" id="btn-mic" title="Speak"><i class="fa-solid fa-microphone"></i></button>
+                <button class="gn-ai-btn" id="btn-speaker" title="Text-to-Speech Toggle"><i class="fa-solid fa-volume-high"></i></button>
+                <input type="text" class="gn-ai-input" id="gn-ai-input" placeholder="Type a message or ask a question..">
+                <button class="gn-ai-btn" id="btn-send"><i class="fa-solid fa-paper-plane" style="color: aliceblue !important;"></i></button>
+            </div>
+
+        </div>
+    </div>
+</div>
+</nav>
+<!-- ========== END GN MOBILE HAMBURGER ========== -->
+<!-- CONTENT -->
+<div class="content-box">
+    <h2>Privacy Policy</h2>
+
+    <p>Getnaro respects your privacy. We operate with a strict no-tracking, no-data-collection philosophy.</p>
+
+    <h3>1. No Data Collection</h3>
+    <p>We do not collect personal data, browser data, analytics, cookies, or device identifiers.</p>
+
+    <h3>2. No Accounts</h3>
+    <p>Getnaro does not require or support user accounts, login systems, or any form of registration.</p>
+
+    <h3>3. No Hosting of Files</h3>
+    <p>Getnaro only redirects users to official websites for downloading apps, tools, drivers, and software.</p>
+
+    <h3>4. Third-Party Websites</h3>
+    <p>All downloads are hosted by official developers. Their own privacy policies may apply once you leave Getnaro.</p>
+
+    <h3>5. No Advertising</h3>
+    <p>We do not run ads, popups, banners, trackers, or affiliate marketing scripts.</p>
+
+    <h3>6. Security</h3>
+    <p>Because downloads come directly from official developers, security is governed by those sources.</p>
+
+    <h3>7. Updates to This Policy</h3>
+    <p>We may revise this privacy policy if needed. Changes will reflect instantly on this page.</p>
+
+</div>
+
+<!-- FOOTER -->
+<footer class="footer">
+    <div class="footer-container">
+
+        <div class="footer-col">
+            <h3>Getnaro</h3>
+            <p>Official download redirection hub for Windows software — clean, safe & ad-free.</p>
+        </div>
+
+        <div class="footer-col">
+            <h3>Quick Links</h3>
+            <a href="/pages/t&c.html">Terms & Conditions</a><br>
+            <a href="/pages/coc.html">Code Of Conduct</a><br>
+            <a href="/pages/privacypolicy.html">Privacy Policy</a><br>
+            <a href="/pages/contact.html">Contact</a>
+        </div>
+
+        <div class="footer-col">
+            <h3>Follow Us</h3>
+            <div class="footer-social">
+                 <a href="https://www.instagram.com/narotech.india" target="_blank"><i class="fa-brands fa-instagram"></i></a>
+                <a href="https://discord.gg/mcxbEsxXcQ" target="_blank"><i class="fa-brands fa-discord"></i></a>
+                <a href="https://whatsapp.com/channel/0029Vb7IFu7HwXbKP3roZa0E" target="_blank"><i class="fa-brands fa-whatsapp"></i></a>
+                <a href="https://www.reddit.com/r/narotech" target="_blank"><i class="fa-brands fa-reddit" ></i></a>
+                <a href="https://www.youtube.com/@narotechofc" target="_blank"><i class="fa-brands fa-youtube"></i></a>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="footer-bottom">
+        © 2025 Getnaro — Developed by NaroTech • Hosted on GitHub • Domain by BigRock
+    </div>
+</footer>
+<script src="/scripts/tod.js"></script>
+<script src="/scripts/tog.js"></script>
+<script src="/scripts/caro.js"></script>
+<script src="/scripts/particles.js"></script>
+<script type="module" src="/scripts/download-index.js"></script>
+<script type="module" src="/scripts/ai_assistant.js"></script>
+<script type="module" src="/scripts/stats.js"></script>
+<script src="/scripts/theme.js"></script>
+<script src="/scripts/search.js"></script>
+<script src="/scripts/hamburger.js"></script>
+<script type="module" src="/scripts/header_auth.js"></script>
+</body>
+</html>
