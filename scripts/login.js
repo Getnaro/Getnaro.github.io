@@ -56,7 +56,7 @@
             });
 
             showMsg("Account Created Successfully!", "success");
-            setTimeout(() => window.location.href = 'index.html', 1500);
+            setTimeout(() => window.location.href = '/index.html', 1500);
 
         } catch (error) {
             showMsg(error.message.replace("Firebase: ", ""), "error");

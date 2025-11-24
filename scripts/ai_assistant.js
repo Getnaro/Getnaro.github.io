@@ -1,280 +1,394 @@
-// --- CONFIGURATION ---
-const FAQ_DB = {
-    "what is getnaro": "Getnaro is your all-in-one hub for downloading verified Windows software.",
-    "is it safe": "Yes! All files are scanned for viruses.",
-    "contact support": "Email support@getnaro.com."
+/**
+ * GETNARO AI ASSISTANT - COMPLETE FINAL VERSION
+ * Fixes: Trigger Button Toggle, Internal Button Clicks, Navigation, Voice
+ */
+
+// ==========================================
+// --- 1. CONFIGURATION ---
+// ==========================================
+const WORKER_URL = "https://getnaro-ai.narotech.workers.dev/"; 
+
+const SETTINGS = {
+    speechEnabled: true,     // Auto-speak AI responses
+    navDelay: 1000,          // Delay before redirecting
+    localPath: "/downloads/" // Absolute path for reliability
 };
 
-// WEB LINKS
-const APP_KEYWORDS = {
-    "amd": { name: "AMD Software", url: "/downloads/amd-driver.html" },
-    "asrock": { name: "ASRock Downloads", url: "/downloads/asrock-downloads.html" },
-    "pro": { name: "AMD Pro Edition", url: "/downloads/amd-pro.html" },
-    "nvidia": { name: "NVIDIA Drivers", url: "/downloads/nvidia-drivers.html" },
-    "intel": { name: "Intel DSA", url: "/downloads/intel-dsa.html" }
+// ==========================================
+// --- 2. KNOWLEDGE BASE ---
+// ==========================================
+
+const SITE_CONTEXT = `
+IDENTITY: You are the Getnaro Assistant.
+WEBSITE: www.getnaro.com.
+DEVELOPER: NaroTech.
+MISSION: Safe, ad-free, direct downloads for Windows software.
+
+POLICIES:
+- Privacy: No data collection.
+- Safety: Official redirects only.
+- Cost: 100% Free.
+
+INSTRUCTIONS:
+- If the user asks for an app we have, describe it briefly.
+- If the user confirms (says "yes", "install", "do it"), I will handle the redirect.
+`;
+
+const APP_DB = [
+  // DRIVERS
+  { id: "gigabyte_driver", name: "GIGABYTE Driver", category: "drivers", tags: ["gpu", "motherboard"] },
+  { id: "amd_driver", name: "AMD Driver", category: "drivers", tags: ["amd", "gpu", "radeon"] },
+  { id: "amd_adrenalin", name: "AMD Adrenalin", category: "drivers", tags: ["amd", "gaming", "software"] },
+  { id: "amd_pro", name: "AMD Pro Edition", category: "drivers", tags: ["workstation", "pro"] },
+  { id: "nvidia_app", name: "NVIDIA App", category: "drivers", tags: ["geforce", "gpu", "graphics"] },
+  { id: "intel_graphics", name: "Intel Graphics", category: "drivers", tags: ["arc", "iris", "display"] },
+  { id: "asrock_tweak", name: "ASRock Tweak", category: "drivers", tags: ["tuning", "gpu"] },
+  { id: "asrock_downloads", name: "ASRock Downloads", category: "drivers", tags: ["motherboard"] },
+  { id: "asus_downloads", name: "ASUS Downloads", category: "drivers", tags: ["armoury"] },
+  { id: "msi_downloads", name: "MSI Downloads", category: "drivers", tags: ["center", "dragon"] },
+  { id: "lg_display_driver", name: "LG Display Driver", category: "drivers", tags: ["monitor"] },
+  { id: "crucial_disk", name: "Crucial Disk Manager", category: "drivers", tags: ["ssd"] },
+
+  // TOOLS
+  { id: "msi_afterburner", name: "MSI Afterburner", category: "tools", tags: ["fps", "overclock"] },
+  { id: "cpu-z", name: "CPU-Z", category: "tools", tags: ["specs", "info"], url: "cpu-z.html" },
+  { id: "ventoy_booter", name: "Ventoy", category: "tools", tags: ["usb", "boot"], url: "ventoy-booter.html" },
+  { id: "winrar_archiver", name: "WinRAR", category: "tools", tags: ["zip", "extract"] },
+  { id: "nanazip", name: "NanaZip", category: "tools", tags: ["7zip", "extract"] },
+  { id: "canva_editor", name: "Canva", category: "tools", tags: ["design", "photo"] },
+  { id: "free_download_manager", name: "FDM", category: "tools", tags: ["download", "speed"], url: "free-download-manager.html" },
+  { id: "speedtest_pc", name: "SpeedTest", category: "tools", tags: ["internet", "wifi"] },
+  { id: "traffic_monitor", name: "Traffic Monitor", category: "tools", tags: ["network"] },
+  { id: "translucenttb", name: "TranslucentTB", category: "tools", tags: ["taskbar", "clear"] },
+  { id: "lively_wallpaper", name: "Lively Wallpaper", category: "tools", tags: ["desktop", "live"] },
+  { id: "ear_trumpet", name: "EarTrumpet", category: "tools", tags: ["volume", "audio"] },
+  { id: "parsec_remote", name: "Parsec", category: "tools", tags: ["remote", "gaming"] },
+  { id: "ddu_uninstaller", name: "DDU Uninstaller", category: "tools", tags: ["driver", "clean"] },
+  { id: "dns_changer", name: "DNS Changer", category: "tools", tags: ["internet", "dns"] },
+  { id: "ninite_all_apps", name: "Ninite", category: "tools", tags: ["installer", "bulk"] },
+
+  // SOCIAL
+  { id: "arattai_chat", name: "Arattai", category: "desi", tags: ["chat", "india", "zoho"] },
+  { id: "telegram_pc", name: "Telegram", category: "social", tags: ["chat", "messenger"] },
+  { id: "whatsapp_pc", name: "WhatsApp", category: "social", tags: ["chat", "messenger"] },
+  { id: "chatgpt_pc", name: "ChatGPT", category: "social", tags: ["ai", "bot"] },
+  { id: "lm_studio", name: "LM Studio", category: "social", tags: ["ai", "local"] },
+
+  // OPEN SOURCE
+  { id: "local_send", name: "LocalSend", category: "opensource", tags: ["share", "wifi"] },
+  { id: "obs_studio", name: "OBS Studio", category: "opensource", tags: ["record", "stream"] },
+  { id: "ulaa_browser", name: "Ulaa Browser", category: "opensource", tags: ["browser", "zoho"] },
+  { id: "vscode_pc", name: "VS Code", category: "opensource", tags: ["code", "editor"] },
+  { id: "sublime_text", name: "Sublime Text", category: "opensource", tags: ["code", "text"] },
+  { id: "github_pc", name: "GitHub Desktop", category: "opensource", tags: ["git", "version"], url: "git-pc.html" },
+
+  // GAMING
+  { id: "epic_games", name: "Epic Games", category: "gaming", tags: ["store", "fortnite"] },
+  { id: "steam_client", name: "Steam", category: "gaming", tags: ["store", "valve"] },
+  { id: "bluestacks_a13", name: "BlueStacks", category: "gaming", tags: ["android", "emulator"] }
+];
+
+const PAGES_DB = {
+    "home": "/index.html",
+    "login": "/pages/login.html",
+    "signup": "/pages/signup.html",
+    "profile": "/pages/profile.html",
+    "about": "/pages/about.html",
+    "contact": "/pages/contact.html",
+    "faq": "/pages/faq.html",
+    "policy": "/pages/privacypolicy.html",
+    "community": "/pages/community.html",
+    "app": "/pages/getnaro-app.html"
 };
 
-// MANUAL MODE DATA TREE
-const MANUAL_MENU = {
-    "root": {
-        text: "How can I help you today?",
-        options: [
-            { label: "🤖 AI Assistant", action: "set_mode_ai" },
-            { label: "📂 Manual Selection", action: "goto_manual_cat" }
-        ]
-    },
-    "manual_cat": {
-        text: "Select a category:",
-        options: [
-            { label: "💾 Drivers", action: "goto_drivers" },
-            { label: "🛠️ Utilities", action: "goto_utils" },
-            { label: "👤 Account Help", action: "goto_account" },
-            { label: "⬅️ Back", action: "goto_root" }
-        ]
-    },
-    "drivers": {
-        text: "Which driver do you need?",
-        options: [
-            { label: "AMD Adrenalin", url: "/downloads/amd-driver.html" },
-            { label: "AMD Pro", url: "/downloads/amd-pro.html" },
-            { label: "ASRock", url: "/downloads/asrock-downloads.html" },
-            { label: "⬅️ Back", action: "goto_manual_cat" }
-        ]
-    },
-    "utils": {
-        text: "Useful Tools:",
-        options: [
-            { label: "DirectX", url: "#" }, 
-            { label: "C++ Runtimes", url: "#" },
-            { label: "⬅️ Back", action: "goto_manual_cat" }
-        ]
-    },
-    "account": {
-        text: "Account Options:",
-        options: [
-            { label: "Login", url: "/pages/login.html" },
-            { label: "Sign Up", url: "/pages/signup.html" },
-            { label: "My Profile", url: "/pages/profile.html" },
-            { label: "⬅️ Back", action: "goto_manual_cat" }
-        ]
-    }
+// ==========================================
+// --- 3. UI ELEMENTS ---
+// ==========================================
+const ui = {
+    trigger: document.getElementById('gn-ai-trigger'),
+    overlay: document.getElementById('gn-ai-overlay'),
+    closeBtn: document.getElementById('gn-ai-close'),
+    chatBox: document.getElementById('gn-ai-chat'),
+    inputField: document.getElementById('gn-ai-input'),
+    sendBtn: document.getElementById('btn-send'),
+    micBtn: document.getElementById('btn-mic'),
+    speakerBtn: document.getElementById('btn-speaker'),
+    inputArea: document.querySelector('.gn-ai-input-area')
 };
 
-// --- DOM ELEMENTS ---
-const trigger = document.getElementById('gn-ai-trigger');
-const overlay = document.getElementById('gn-ai-overlay');
-const closeBtn = document.getElementById('gn-ai-close');
-const chatBox = document.getElementById('gn-ai-chat');
-const inputField = document.getElementById('gn-ai-input');
-const sendBtn = document.getElementById('btn-send');
-const micBtn = document.getElementById('btn-mic');
-const speakerBtn = document.getElementById('btn-speaker');
-const inputArea = document.querySelector('.gn-ai-input-area');
-
-// --- STATE ---
-let isSpeakingEnabled = true;
 let currentMode = 'menu'; 
+let recognition = null;
+let isListening = false;
+let lastSuggestedApp = null;
 
-// --- 1. TOGGLE UI ---
-if (trigger && overlay && closeBtn) {
-    trigger.addEventListener('click', () => {
-        overlay.classList.add('active');
-        if (chatBox.children.length <= 1) {
-            initChat();
-        }
-    });
-    closeBtn.addEventListener('click', () => overlay.classList.remove('active'));
+// ==========================================
+// --- 4. CORE NAVIGATION ---
+// ==========================================
+
+function getAppUrl(app) {
+    if (app.url) return SETTINGS.localPath + app.url;
+    let filename = app.id.replace(/_/g, '-') + ".html";
+    return SETTINGS.localPath + filename;
 }
 
-// --- 2. INITIALIZATION ---
-function initChat() {
-    chatBox.innerHTML = ''; 
-    showMenu("root");
+function navigateTo(url, label) {
+    addMessage(`Opening <b>${label}</b>...`, 'bot');
+    speak(`Opening ${label}`);
+    setTimeout(() => {
+        window.location.href = url;
+    }, SETTINGS.navDelay);
 }
 
-function showMenu(menuKey) {
-    currentMode = 'manual'; 
-    disableInput(true); 
-
-    const data = MANUAL_MENU[menuKey] || MANUAL_MENU["root"];
-    
-    addMessage(data.text, 'bot');
-
-    // Create Options Container
-    const optionsDiv = document.createElement('div');
-    optionsDiv.className = 'msg bot gn-ai-options'; // Use new class instead of inline styles
-
-    data.options.forEach(opt => {
-        const btn = document.createElement('button');
-        btn.textContent = opt.label;
-        btn.className = 'gn-ai-option-btn'; // Use new class
-        btn.onclick = () => handleMenuSelection(opt);
-        optionsDiv.appendChild(btn);
-    });
-
-    chatBox.appendChild(optionsDiv);
-    chatBox.scrollTop = chatBox.scrollHeight;
+function scrollToBottom() {
+    if(ui.chatBox) ui.chatBox.scrollTop = ui.chatBox.scrollHeight;
 }
 
-function handleMenuSelection(option) {
-    addMessage(option.label, 'user');
-
-    if (option.action === "set_mode_ai") {
-        currentMode = 'ai';
-        disableInput(false);
-        addMessage("AI Mode Activated. You can type or speak now!", 'bot');
-        return;
-    }
-
-    if (option.action && option.action.startsWith("goto_")) {
-        const nextKey = option.action.replace("goto_", "");
-        setTimeout(() => showMenu(nextKey), 500);
-        return;
-    }
-
-    if (option.url) {
-        addMessage(`Navigating to <b>${option.label}</b>...`, 'bot');
-        setTimeout(() => window.location.href = option.url, 1000);
-    }
-}
-
-function disableInput(disable) {
-    if (inputArea) {
-        inputArea.style.display = disable ? 'none' : 'flex';
-    }
-}
-
-// --- 3. INTELLIGENCE (Fuzzy Search) ---
-function getSimilarity(s1, s2) {
-    let longer = s1; let shorter = s2;
-    if (s1.length < s2.length) { longer = s2; shorter = s1; }
-    let longerLength = longer.length;
-    if (longerLength == 0) { return 1.0; }
-    return (longerLength - editDistance(longer, shorter)) / parseFloat(longerLength);
-}
-function editDistance(s1, s2) {
-    s1 = s1.toLowerCase(); s2 = s2.toLowerCase();
-    let costs = new Array();
-    for (let i = 0; i <= s1.length; i++) {
-        let lastValue = i;
-        for (let j = 0; j <= s2.length; j++) {
-            if (i == 0) costs[j] = j;
-            else {
-                if (j > 0) {
-                    let newValue = costs[j - 1];
-                    if (s1.charAt(i - 1) != s2.charAt(j - 1)) newValue = Math.min(Math.min(newValue, lastValue), costs[j]) + 1;
-                    costs[j - 1] = lastValue;
-                    lastValue = newValue;
-                }
-            }
-        }
-        if (i > 0) costs[s2.length] = lastValue;
-    }
-    return costs[s2.length];
-}
-function findBestMatch(inputWord) {
-    let bestMatch = null; let highestScore = 0;
-    for (let key in APP_KEYWORDS) {
-        let score = getSimilarity(inputWord, key);
-        if (score > highestScore) { highestScore = score; bestMatch = APP_KEYWORDS[key]; }
-    }
-    return highestScore > 0.6 ? bestMatch : null;
-}
-
-// --- 4. CHAT LOGIC ---
-function addMessage(text, sender) {
-    if (!chatBox) return;
+function addMessage(html, sender) {
+    if(!ui.chatBox) return;
     const div = document.createElement('div');
     div.className = `msg ${sender}`;
-    div.innerHTML = text;
-    chatBox.appendChild(div);
-    chatBox.scrollTop = chatBox.scrollHeight;
-
-    if (sender === 'bot' && isSpeakingEnabled && currentMode === 'ai') {
-        speak(text.replace(/<[^>]*>?/gm, '')); 
-    }
+    div.innerHTML = html;
+    ui.chatBox.appendChild(div);
+    scrollToBottom();
 }
 
-function processQuery(query) {
-    if (currentMode !== 'ai') return;
+// ==========================================
+// --- 5. BUTTON CREATOR (DIRECT BINDING) ---
+// ==========================================
+function createBtn(parent, label, onClickFunction) {
+    const btn = document.createElement('button');
+    btn.innerHTML = label;
+    btn.className = 'gn-ai-option-btn';
+    btn.type = "button"; 
+    
+    // Direct click handler fixes the "button not working" issue
+    btn.onclick = function() {
+        onClickFunction();
+    };
+    
+    parent.appendChild(btn);
+}
 
-    query = query.toLowerCase().trim();
+// ==========================================
+// --- 6. MENUS & ACTIONS ---
+// ==========================================
+
+function showRootMenu() {
+    currentMode = 'menu';
+    if(ui.inputArea) ui.inputArea.style.display = 'none';
+    ui.chatBox.innerHTML = ''; 
+    addMessage("👋 <b>Hi! I'm the Getnaro AI.</b>", 'bot');
+    
+    const div = document.createElement('div');
+    div.className = 'msg bot gn-ai-options';
+    
+    createBtn(div, "🤖 AI Chat Mode", () => {
+        currentMode = 'ai';
+        if(ui.inputArea) ui.inputArea.style.display = 'flex';
+        addMessage("AI Mode Active! Ask me to download something.", 'bot');
+        speak("AI Mode Active");
+    });
+
+    createBtn(div, "📂 Browse Apps", () => showCategories());
+    
+    createBtn(div, "👤 Account", () => {
+        addMessage("Account", 'user');
+        navigateTo(PAGES_DB.login, "Account");
+    });
+
+    ui.chatBox.appendChild(div);
+    scrollToBottom();
+}
+
+function showCategories() {
+    addMessage("Select a category:", 'bot');
+    const div = document.createElement('div');
+    div.className = 'msg bot gn-ai-options';
+    
+    const cats = [...new Set(APP_DB.map(a => a.category))];
+    cats.forEach(cat => {
+        createBtn(div, `📂 ${cat.toUpperCase()}`, () => showApps(cat));
+    });
+    
+    createBtn(div, "⬅️ Back", () => showRootMenu());
+    ui.chatBox.appendChild(div);
+    scrollToBottom();
+}
+
+function showApps(cat) {
+    addMessage(`Apps in ${cat}:`, 'bot');
+    const div = document.createElement('div');
+    div.className = 'msg bot gn-ai-options';
+    
+    APP_DB.filter(a => a.category === cat).forEach(app => {
+        createBtn(div, app.name, () => {
+            addMessage(app.name, 'user');
+            navigateTo(getAppUrl(app), app.name);
+        });
+    });
+    
+    createBtn(div, "⬅️ Back", () => showCategories());
+    ui.chatBox.appendChild(div);
+    scrollToBottom();
+}
+
+// ==========================================
+// --- 7. INTELLIGENCE LOGIC ---
+// ==========================================
+
+async function processQuery(rawQuery) {
+    if (currentMode !== 'ai') return;
+    const query = rawQuery.toLowerCase().trim();
     if (!query) return;
 
-    addMessage(query, 'user');
-    if (inputField) inputField.value = '';
+    addMessage(rawQuery, 'user');
+    if (ui.inputField) ui.inputField.value = '';
 
-    if (query.includes("install") || query.includes("download") || query.includes("get")) {
-        const words = query.split(" ");
-        let foundApp = null;
-        for (let word of words) {
-            if (APP_KEYWORDS[word]) { foundApp = APP_KEYWORDS[word]; break; }
-            let fuzzy = findBestMatch(word);
-            if (fuzzy) { foundApp = fuzzy; break; }
-        }
-        if (foundApp) {
-            addMessage(`Found it! Opening <b>${foundApp.name}</b>...`, 'bot');
-            setTimeout(() => window.location.href = foundApp.url, 1500);
-            return;
-        }
+    // AUTO-CONFIRMATION
+    const confirmWords = ["yes", "sure", "install", "download", "do it", "go ahead"];
+    if (lastSuggestedApp && confirmWords.some(w => query.includes(w))) {
+        navigateTo(getAppUrl(lastSuggestedApp), lastSuggestedApp.name);
+        lastSuggestedApp = null;
+        return;
     }
 
-    if (query.includes("home")) { window.location.href = "index.html"; return; }
-    if (query.includes("login")) { window.location.href = "/pages/login.html"; return; }
-    if (query.includes("profile")) { window.location.href = "/pages/profile.html"; return; }
+    // DIRECT LOCAL MATCH
+    let foundApp = APP_DB.find(app => query.includes(app.name.toLowerCase())) ||
+                   APP_DB.find(app => app.tags.some(tag => query.includes(tag)));
 
-    let bestMatch = "";
-    for (let q in FAQ_DB) {
-        if (query.includes(q)) bestMatch = FAQ_DB[q];
+    if (foundApp && (query.includes('download') || query.includes('install') || query.includes('get'))) {
+        navigateTo(getAppUrl(foundApp), foundApp.name);
+        return;
     }
-    if (bestMatch) { addMessage(bestMatch, 'bot'); return; }
 
-    addMessage("I didn't quite catch that. Try asking 'Install AMD' or switch to Manual Mode by reloading.", 'bot');
-}
+    // AI REQUEST
+    const loadingId = "load-" + Date.now();
+    const loadDiv = document.createElement('div');
+    loadDiv.className = 'msg bot loading-msg';
+    loadDiv.id = loadingId;
+    loadDiv.innerHTML = '<i>Thinking...</i>';
+    ui.chatBox.appendChild(loadDiv);
+    scrollToBottom();
 
-// --- 5. EVENT LISTENERS ---
-if (sendBtn) sendBtn.addEventListener('click', () => processQuery(inputField.value));
-if (inputField) {
-    inputField.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') processQuery(inputField.value);
-    });
-}
-
-// --- 6. SPEECH ---
-if (micBtn) {
-    if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
-        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-        recognition = new SpeechRecognition();
-        recognition.continuous = false;
-        recognition.lang = 'en-US';
-        recognition.onstart = () => { micBtn.classList.add('active'); inputField.placeholder = "Listening..."; };
-        recognition.onend = () => { micBtn.classList.remove('active'); inputField.placeholder = "Type a message..."; };
-        recognition.onresult = (event) => { processQuery(event.results[0][0].transcript); };
-        micBtn.addEventListener('click', () => {
-            if (currentMode !== 'ai') {
-                alert("Switch to AI Mode first!");
-                return;
-            }
-            recognition.start();
+    try {
+        const res = await fetch(WORKER_URL, {
+            method: "POST", headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                prompt: rawQuery,
+                system: SITE_CONTEXT + `\nUser Query: ${rawQuery}. If match found (${foundApp ? foundApp.name : "None"}), explain it.`
+            })
         });
-    } else {
-        micBtn.style.display = 'none';
+
+        const data = await res.json();
+        document.getElementById(loadingId).remove();
+
+        if (data.reply) {
+            addMessage(data.reply, 'bot');
+            speak(data.reply);
+
+            if (foundApp) {
+                lastSuggestedApp = foundApp;
+                const div = document.createElement('div');
+                div.className = 'msg bot gn-ai-options';
+                
+                createBtn(div, `Download ${foundApp.name}`, () => {
+                    addMessage(`Download ${foundApp.name}`, 'user');
+                    navigateTo(getAppUrl(foundApp), foundApp.name);
+                });
+                
+                ui.chatBox.appendChild(div);
+                scrollToBottom();
+            }
+        }
+    } catch (err) {
+        document.getElementById(loadingId).remove();
+        if (foundApp) {
+            lastSuggestedApp = foundApp;
+            addMessage(`AI offline, but I found <b>${foundApp.name}</b>!`, 'bot');
+            const div = document.createElement('div');
+            div.className = 'msg bot gn-ai-options';
+            createBtn(div, `Download ${foundApp.name}`, () => navigateTo(getAppUrl(foundApp), foundApp.name));
+            ui.chatBox.appendChild(div);
+        } else {
+            addMessage("Connection error.", 'bot');
+        }
     }
 }
+
+// ==========================================
+// --- 8. UTILITIES & INIT ---
+// ==========================================
 
 function speak(text) {
-    if (!window.speechSynthesis) return;
+    if (!SETTINGS.speechEnabled || !window.speechSynthesis) return;
     window.speechSynthesis.cancel();
-    const utterance = new SpeechSynthesisUtterance(text);
-    utterance.lang = 'en-US';
-    utterance.rate = 1;
-    window.speechSynthesis.speak(utterance);
+    const u = new SpeechSynthesisUtterance(text.replace(/<[^>]*>?/gm, ''));
+    window.speechSynthesis.speak(u);
 }
 
-if (speakerBtn) {
-    speakerBtn.addEventListener('click', () => {
-        isSpeakingEnabled = !isSpeakingEnabled;
-        speakerBtn.classList.toggle('speak-active', isSpeakingEnabled);
-        speakerBtn.innerHTML = isSpeakingEnabled ? '<i class="fa-solid fa-volume-high"></i>' : '<i class="fa-solid fa-volume-xmark"></i>';
+function init() {
+    // HELPER: Change Button Appearance
+    const setTriggerState = (isOpen) => {
+        if (isOpen) {
+            ui.trigger.innerHTML = '<i class="fa-solid fa-xmark" style="color: white !important;"></i> <span style="color: white !important;">Close</span>';
+            ui.trigger.style.background = '#ff4444'; 
+            ui.trigger.style.boxShadow = '0 5px 15px rgba(255, 68, 68, 0.4)';
+        } else {
+            ui.trigger.innerHTML = '<i class="fa-solid fa-robot" style="color: white !important;"></i> <span style="color: white !important;">Chat Now</span>';
+            ui.trigger.style.background = ''; 
+            ui.trigger.style.boxShadow = '';
+        }
+    };
+
+    // 1. TRIGGER BUTTON LOGIC
+    if (ui.trigger) {
+        ui.trigger.addEventListener('click', () => {
+            const isOpen = ui.overlay.classList.contains('active');
+            if (isOpen) {
+                // CLOSE
+                ui.overlay.classList.remove('active');
+                window.speechSynthesis.cancel();
+                setTriggerState(false);
+            } else {
+                // OPEN
+                ui.overlay.classList.add('active');
+                if (ui.chatBox.children.length < 2) showRootMenu();
+                setTriggerState(true);
+            }
+        });
+    }
+    
+    // 2. CLOSE BUTTON (Syncs Trigger)
+    if (ui.closeBtn) {
+        ui.closeBtn.addEventListener('click', () => {
+            ui.overlay.classList.remove('active');
+            window.speechSynthesis.cancel();
+            setTriggerState(false);
+        });
+    }
+
+    // 3. INPUTS
+    if (ui.sendBtn) ui.sendBtn.addEventListener('click', () => processQuery(ui.inputField.value));
+    if (ui.inputField) ui.inputField.addEventListener('keypress', e => { if (e.key === 'Enter') processQuery(ui.inputField.value); });
+
+    if (ui.speakerBtn) ui.speakerBtn.addEventListener('click', () => {
+        SETTINGS.speechEnabled = !SETTINGS.speechEnabled;
+        if (!SETTINGS.speechEnabled) window.speechSynthesis.cancel();
+        ui.speakerBtn.innerHTML = SETTINGS.speechEnabled ? '<i class="fa-solid fa-volume-high"></i>' : '<i class="fa-solid fa-volume-xmark"></i>';
     });
+
+    if (ui.micBtn && window.webkitSpeechRecognition) {
+        const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+        recognition = new SR();
+        recognition.continuous = false;
+        recognition.onstart = () => { isListening = true; ui.micBtn.classList.add('active'); ui.inputField.placeholder = "Listening..."; };
+        recognition.onend = () => { isListening = false; ui.micBtn.classList.remove('active'); ui.inputField.placeholder = "Type message..."; };
+        recognition.onresult = (e) => processQuery(e.results[0][0].transcript);
+        ui.micBtn.addEventListener('click', () => {
+            if (currentMode !== 'ai') return alert("Click AI Mode first");
+            isListening ? recognition.stop() : recognition.start();
+        });
+    } else if(ui.micBtn) ui.micBtn.style.display = 'none';
 }
+
+init();
