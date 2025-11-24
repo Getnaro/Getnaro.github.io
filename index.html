@@ -28,6 +28,26 @@
     <meta name="twitter:card" content="summary_large_image">
     <!-- FAVICON -->
     <link rel="icon" type="image/x-icon" href="Assests/Favicon.png">
+    <style>
+        /* Loading State for Dynamic Grid */
+        .gn-grid-loader {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            grid-column: 1 / -1;
+            padding: 50px 0;
+        }
+        .gn-spinner {
+            border: 4px solid #222;
+            border-top: 4px solid #9F00FF;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
 </head>
 <body>
     <canvas id="gn-particles"></canvas>
@@ -151,35 +171,6 @@
         </div>
     </div>
 </div>
-    <!--<div id="popup" class="popup">
-    <div class="popup-box">
-        <h3>Welcome to Getnaro!</h3>
-        <p>Your safe download hub.</p>
-
-        <div class="update-notes">
-            <h4 class="patchy">Patch Notes</h4>
-            <ul>
-                <li>
-                    UI Animation Optimized
-                </li>
-                <li>
-                    Fixed Crash
-                </li>
-                <li>
-                    Reworked The Download Label
-                </li>
-                <li>
-                    Added Light Mode
-                </li>
-                <li>
-                    Fixed Misalignment Issue
-                </li>
-            </ul>
-        </div>
-        <button id="closePopup">OK</button>
-    </div>
-</div>
--->
 
 <!-- ------------------ CAROUSEL ------------------ -->
 <div class="gn-carousel" aria-roledescription="carousel">
@@ -293,436 +284,14 @@
 </div>
 
 <!-- ------------------ DOWNLOAD GRID ------------------ -->
-<div class="container">
-
-    <!-- DRIVERS / SYSTEM -->
-    <div class="content-one" data-category="drivers">
-        <img src="/images/gigabyte-logo.png">
-        <span class="tet">
-            <h5>GIGABYTE Driver</h5>
-            <a href="/downloads/gigabyte-driver.html">DOWNLOAD</a>
-        </span>
+<!-- DYNAMIC CONTENT CONTAINER (This is where DB apps load) -->
+ <div class="container" id="apps-container">
+        <div class="gn-grid-loader">
+            <div class="gn-spinner"></div>
+        </div>
+        <!-- Apps will be injected here by JavaScript -->
     </div>
 
-    <div class="content-one" data-category="drivers">
-        <img src="/images/AMD-logo.png">
-        <span class="tet">
-            <h5>AMD Driver</h5>
-            <a href="/downloads/amd-driver.html">DOWNLOAD</a>
-        </span>
-    </div>
-
-    <div class="content-one" data-category="drivers" data-category="video">
-        <img src="/images/amdadrenaline-logopng.png">
-        <span class="tet">
-            <h5>AMD Adrenalin</h5>
-            <a href="/downloads/amd-adrenalin.html">DOWNLOAD</a>
-        </span>
-    </div>
-    <div class="content-one" data-category="drivers" data-category="video">
-        <img src="/images/amdpro-logo.png">
-        <span class="tet">
-            <h5>AMD Pro Edition</h5>
-            <a href="/downloads/amd-pro-edition.html">DOWNLOAD</a>
-        </span>
-    </div>
-    <div class="content-one" data-category="drivers" data-category="video">
-        <img src="/images/nvidia-logo.png">
-        <span class="tet">
-            <h5>NVIDIA App</h5>
-            <a href="/downloads/nvidia-app.html">DOWNLOAD</a>
-        </span>
-    </div>
-    <div class="content-one" data-category="drivers, video" data-category="video">
-        <img src="/images/interldriver-logo.png">
-        <span class="tet">
-            <h5>Intel Graphics</h5>
-            <a href="/downloads/intel-graphics.html">DOWNLOAD</a>
-        </span>
-    </div>
-    <div class="content-one" data-category="drivers">
-        <img src="/images/crucial-logo.jpg">
-        <span class="tet">
-            <h5>Crucial Disk Manager</h5>
-            <a href="/downloads/crucial-disk-manager.html">DOWNLOAD</a>
-        </span>
-    </div>
-    <div class="content-one" data-category="drivers">
-        <img src="/images/asus-logo-png_seeklogo-500532.png">
-        <span class="tet">
-            <h5>ASUS Downloads</h5>
-            <a href="/downloads/asus-downloads.html">DOWNLOAD</a>
-        </span>
-    </div>
-    <div class="content-one" data-category="drivers">
-        <img src="/images/MSILOGO.PNG">
-        <span class="tet">
-            <h5>MSI Downloads</h5>
-            <a href="/downloads/msi-downloads.html">DOWNLOAD</a>
-        </span>
-    </div>
-    <div class="content-one" data-category="drivers">
-        <img src="/images/asrock-logo-png_seeklogo-12146.png">
-        <span class="tet">
-            <h5>ASRock Tweak</h5>
-            <a href="/downloads/asrock-tweak.html">DOWNLOAD</a>
-        </span>
-    </div>
-    <div class="content-one" data-category="drivers">
-        <img src="/images/asrock-logo-png_seeklogo-12146.png">
-        <span class="tet">
-            <h5>ASRock Downloads</h5>
-            <a href="/downloads/asrock-downloads.html">DOWNLOAD</a>
-        </span>
-    </div>
-    <div class="content-one" data-category="Tools">
-        <img src="/images/winrar.jpg">
-        <span class="tet">
-            <h5>WinRar Archiver</h5>
-            <a href="/downloads/winrar-archiver.html">DOWNLOAD</a>
-        </span>
-    </div>
-    <div class="content-one" data-category="productivity">
-        <img src="/images/lmstudio-app-logo.11b4d746.webp">
-        <span class="tet">
-            <h5>LM Studio</h5>
-            <a href="/downloads/lm-studio.html">DOWNLOAD</a>
-        </span>
-    </div>
-    <div class="content-one" data-category="tools">
-        <img src="/images/lively-wallpaper.jpg">
-        <span class="tet">
-            <h5>Lively Wallpaper</h5>
-            <a href="/downloads/lively-wallpaper.html">DOWNLOAD</a>
-        </span>
-    </div>
-    <div class="content-one" data-category="tools">
-        <img src="/images/thumb__ranslucent__.png">
-        <span class="tet">
-            <h5>TranslucentTB</h5>
-            <a href="/downloads/translucenttb.html">DOWNLOAD</a>
-        </span>
-    </div>
-    <div class="content-one" data-category="productivity">
-        <img src="/images/inkspacelogo.png">
-        <span class="tet">
-            <h5>Inkspace</h5>
-            <a href="/downloads/inkspace-editor.html">DOWNLOAD</a>
-        </span>
-    </div>
-    <div class="content-one" data-category="productivity">
-        <img src="/images/The_GIMP_icon_-_v3.0.svg.png">
-        <span class="tet">
-            <h5>Gimp Editor</h5>
-            <a href="/downloads/gimp-editor.html">DOWNLOAD</a>
-        </span>
-    </div>
-    <div class="content-one" data-category="drivers">
-        <img src="/images/lg-driver.png">
-        <span class="tet">
-            <h5>LG Display Driver</h5>
-            <a href="/downloads/lg-display-driver.html">DOWNLOAD</a>
-        </span>
-    </div>
-
-    <div class="content-one" data-category="tools">
-        <img src="/images/msiafterburner.png">
-        <span class="tet">
-            <h5>MSI Afterburner</h5>
-            <a href="/downloads/msi-afterburner.html">DOWNLOAD</a>
-        </span>
-    </div>
-    <div class="content-one" data-category="Productivity">
-        <img src="/images/vlclogo.png">
-        <span class="tet">
-            <h5>VLC Player</h5>
-            <a href="/downloads/vlc-player.html">DOWNLOAD</a>
-        </span>
-    </div>
-    <div class="content-one" data-category="tools">
-        <img src="/images/eartrumpet.jpg">
-        <span class="tet">
-            <h5>Ear Trumpet</h5>
-            <a href="/downloads/ear-trumpet.html">DOWNLOAD</a>
-        </span>
-    </div>
-    <div class="content-one" data-category="tools">
-        <img src="/images/parsec.png">
-        <span class="tet">
-            <h5>Parsec</h5>
-            <a href="/downloads/parsec-remote.html">DOWNLOAD</a>
-        </span>
-    </div>
-    <!--
-    <div class="content-one" data-category="drivers">
-        <img src="/images/">
-        <span class="tet">
-            <h5></h5>
-            <a href="">DOWNLOAD</a>
-        </span>
-    </div>
-    -->
-    <div class="content-one" data-category="tools">
-        <img src="/images/hwinfo.png">
-        <span class="tet">
-            <h5>HW Info</h5>
-            <a href="/downloads/hw-info.html">DOWNLOAD</a>
-        </span>
-    </div>
-    <div class="content-one" data-category="productivity">
-        <img src="/images/firefox-logo.png">
-        <span class="tet">
-            <h5>Firefox</h5>
-            <a href="/downloads/firefox-browser.html">DOWNLOAD</a>
-        </span>
-    </div>
-    <div class="content-one" data-category="drivers">
-        <img src="/images/trafficmonitor.png">
-        <span class="tet">
-            <h5>Traffic Monitor</h5>
-            <a href="/downloads/traffic-monitor.html">DOWNLOAD</a>
-        </span>
-    </div>
-    <div class="content-one" data-category="Productivity">
-        <img src="/images/pcremotelogo.png">
-        <span class="tet">
-            <h5>PC Remote</h5>
-            <a href="/downloads/pc-remote.html">DOWNLOAD</a>
-        </span>
-    </div>
-    <div class="content-one" data-category="video">
-        <img src="/images/ddulogo.png">
-        <span class="tet">
-            <h5>DDU Uninstaller</h5>
-            <a href="/downloads/ddu-uninstaller.html">DOWNLOAD</a>
-        </span>
-    </div>
-    <div class="content-one" data-category="tools">
-        <img src="/images/CPU-Z_Icon.svg.png">
-        <span class="tet">
-            <h5>CPU-Z PC</h5>
-            <a href="/downloads/cpu-z.html">DOWNLOAD</a>
-        </span>
-    </div>
-
-    <div class="content-one" data-category="tools">
-        <img src="/images/ventoylogo.png">
-        <span class="tet">
-            <h5>Ventoy Booter</h5>
-            <a href="/downloads/ventoy-booter.html">DOWNLOAD</a>
-        </span>
-    </div>
-
-    <!-- DESI APPS -->
-    <div class="content-one" data-category="desi">
-        <img src="/images/arattai-logo.jpg">
-        <span class="tet">
-            <h5>Arattai</h5>
-            <a href="/downloads/arattai-chat.html">DOWNLOAD</a>
-        </span>
-    </div>
-
-    <!-- SOCIAL MEDIA -->
-    <div class="content-one" data-category="social">
-        <img src="/images/Telegram_logo.png">
-        <span class="tet">
-            <h5>Telegram PC</h5>
-            <a href="/downloads/telegram-pc.html">DOWNLOAD</a>
-        </span>
-    </div>
-
-    <div class="content-one" data-category="social">
-        <img src="/images/whatsapp-logo.png">
-        <span class="tet">
-            <h5>Whatsapp PC</h5>
-            <a href="/downloads/whatsapp-pc.html">DOWNLOAD</a>
-        </span>
-    </div>
-
-    <div class="content-one" data-category="social">
-        <img src="/images/chatgpt.png">
-        <span class="tet">
-            <h5>ChatGPT PC</h5>
-            <a href="/downloads/chatgpt-pc.html">DOWNLOAD</a>
-        </span>
-    </div>
-
-    <!-- TOOLS / UTILITIES -->
-    <div class="content-one" data-category="tools">
-        <img src="/images/canva-logot.jpeg">
-        <span class="tet">
-            <h5>Canva Editor</h5>
-            <a href="/downloads/canva-editor.html">DOWNLOAD</a>
-        </span>
-    </div>
-    <div class="content-one" data-category="tools">
-        <img src="/images/dns.png">
-        <span class="tet">
-            <h5>DNS Changer</h5>
-            <a href="/downloads/dns-changer.html">DOWNLOAD</a>
-        </span>
-    </div>
-
-    <div class="content-one" data-category="tools">
-        <img src="/images/ninitelogo.jpeg">
-        <span class="tet">
-            <h5>Ninite All Apps</h5>
-            <a href="/downloads/ninite-all-apps.html">DOWNLOAD</a>
-        </span>
-    </div>
-
-    <div class="content-one" data-category="tools">
-        <img src="/images/nanazip.png">
-        <span class="tet">
-            <h5>NanaZip</h5>
-            <a href="/downloads/nanazip.html">DOWNLOAD</a>
-        </span>
-    </div>
-
-    <div class="content-one" data-category="tools">
-        <img src="/images/fdm.png">
-        <span class="tet">
-            <h5>Free Download Manager</h5>
-            <a href="/downloads/free-download-manager.html">DOWNLOAD</a>
-        </span>
-    </div>
-
-    <div class="content-one" data-category="tools">
-        <img src="/images/speedtest.png">
-        <span class="tet">
-            <h5>SpeedTest PC</h5>
-            <a href="/downloads/speedtest-pc.html">DOWNLOAD</a>
-        </span>
-    </div>
-
-    <!-- OPEN SOURCE -->
-    <div class="content-one" data-category="opensource">
-        <img src="/images/localsend-logo.png">
-        <span class="tet">
-            <h5>Local Send</h5>
-            <a href="/downloads/local-send.html">DOWNLOAD</a>
-        </span>
-    </div>
-
-    <div class="content-one" data-category="opensource">
-        <img src="/images/OBS_Studio_Logo.png">
-        <span class="tet">
-            <h5>OBS Studio</h5>
-            <a href="/downloads/obs-studio.html">DOWNLOAD</a>
-        </span>
-    </div>
-
-    <div class="content-one" data-category="opensource">
-        <img src="/images/ulaa-browser-logo.png">
-        <span class="tet">
-            <h5>Ulaa Browser</h5>
-            <a href="/downloads/ulaa-browser.html">DOWNLOAD</a>
-        </span>
-    </div>
-
-    <div class="content-one" data-category="opensource">
-        <img src="/images/Visual_Studio_Code_1.35_icon.svg.png">
-        <span class="tet">
-            <h5>VS Code PC</h5>
-            <a href="/downloads/vscode-pc.html">DOWNLOAD</a>
-        </span>
-    </div>
-
-    <div class="content-one" data-category="opensource">
-        <img src="/images/sublime_text.png">
-        <span class="tet">
-            <h5>Sublime Text</h5>
-            <a href="/downloads/sublime-text.html">DOWNLOAD</a>
-        </span>
-    </div>
-
-    <!-- OFFICE / PRODUCTIVITY -->
-    <div class="content-one" data-category="office">
-        <img src="/images/Microsoft_Office_logo_(2013–2019).png">
-        <span class="tet">
-            <h5>MS Office</h5>
-            <a href="/downloads/ms-office.html">DOWNLOAD</a>
-        </span>
-    </div>
-
-    <div class="content-one" data-category="office">
-        <img src="/images/office-active-logo.png">
-        <span class="tet">
-            <h5>Office Config</h5>
-            <a href="/downloads/office-config.html" download>DOWNLOAD</a>
-        </span>
-    </div>
-
-    <div class="content-one" data-category="office">
-        <img src="/images/zohomail-logo.png">
-        <span class="tet">
-            <h5>Zoho Mail</h5>
-            <a href="/downloads/zoho-mail.html">DOWNLOAD</a>
-        </span>
-    </div>
-
-    <div class="content-one" data-category="office">
-        <img src="/images/zohoshow-logo.png">
-        <span class="tet">
-            <h5>Zoho Show</h5>
-            <a href="/downloads/zoho-show.html">DOWNLOAD</a>
-        </span>
-    </div>
-
-    <div class="content-one" data-category="office">
-        <img src="/images/Zoho-Writer-Logo.png">
-        <span class="tet">
-            <h5>Zoho Writer</h5>
-            <a href="/downloads/zoho-writer.html">DOWNLOAD</a>
-        </span>
-    </div>
-
-    <!-- GAMING -->
-    <div class="content-one" data-category="gaming">
-        <img src="/images/Epic_Games_logo.svg.png">
-        <span class="tet">
-            <h5>Epic Games</h5>
-            <a href="/downloads/epic-games.html">DOWNLOAD</a>
-        </span>
-    </div>
-
-    <div class="content-one" data-category="gaming">
-        <img src="/images//images.jpeg">
-        <span class="tet">
-            <h5>Steam</h5>
-            <a href="/downloads/steam-client.html">DOWNLOAD</a>
-        </span>
-    </div>
-
-    <div class="content-one" data-category="gaming">
-        <img src="/images/bluestacks.jpeg">
-        <span class="tet">
-            <h5>Bluestacks A13</h5>
-            <a href="/downloads/bluestacks-a13.html">DOWNLOAD</a>
-        </span>
-    </div>
-    <div class="content-one" data-category="office">
-        <img src="/images/brave-logo.png">
-        <span class="tet">
-            <h5>Brave Browser</h5>
-            <a href="/downloads/brave-browser.html">DOWNLOAD</a>
-        </span>
-    </div>
-    <div class="content-one" data-category="opensource, Productivity">
-        <img src="/images/github.png">
-        <span class="tet">
-            <h5>Github PC</h5>
-            <a href="/downloads/git-pc.html">DOWNLOAD</a>
-        </span>
-    </div>
-    <div class="content-one" data-category="opensource, Productivity">
-        <img src="/images/Git_icon.png">
-        <span class="tet">
-            <h5>Git PC</h5>
-            <a href="/downloads/git-pc.html">DOWNLOAD</a>
-        </span>
-    </div>
-</div>
 <!-- ================= FEATURE HIGHLIGHTS ================= -->
 <section class="gn-features">
     <h2 class="gn-features-title">Why Choose Getnaro?</h2>
@@ -786,66 +355,207 @@
     </div>
 </footer>
 <script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-app.js";
-  import { getDatabase, ref, onValue, update } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-database.js";
+        // UPDATED TO STABLE 10.12.0
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+        import { getFirestore, collection, getDocs, query } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-  const firebaseConfig = {
-    apiKey: "AIzaSyAJrJnSQl7X1YJHL0fHZkknmoAoioIGuEo",
-    authDomain: "getnaroapp.firebaseapp.com",
-    databaseURL: "https://getnaroapp-default-rtdb.asia-southeast1.firebasedatabase.app",
-    projectId: "getnaroapp",
-    storageBucket: "getnaroapp.firebasestorage.app",
-    messagingSenderId: "304744138530",
-    appId: "1:304744138530:web:8166344d61cdfa127ec77b",
-    measurementId: "G-FLBX24J98C"
-  };
-
-  const app = initializeApp(firebaseConfig);
-  const db = getDatabase(app);
-
-</script>
-<script>
-        window.onload = function() {
-            document.getElementById("popup").style.display = "flex";
+        const firebaseConfig = {
+            apiKey: "AIzaSyAJrJnSQI7X1YJHLOfHZkknmoAoiOiGuEo",
+            authDomain: "getnaroapp.firebaseapp.com",
+            databaseURL: "https://getnaroapp-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "getnaroapp",
+            storageBucket: "getnaroapp.firebasestorage.app",
+            messagingSenderId: "304744138530",
+            appId: "1:304744138530:web:8166344d61cdfa127ec77b",
+            measurementId: "G-FLBX24J98C"
         };
 
-        document.getElementById("closePopup").onclick = function() {
-            document.getElementById("popup").style.display = "none";
-        };
-        </script>
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const container = document.getElementById('apps-container');
 
-        <script>
+        async function fetchAndRenderApps() {
+            try {
+                const q = query(collection(db, "apps")); 
+                const querySnapshot = await getDocs(q);
+                
+                container.innerHTML = ''; 
+
+                if (querySnapshot.empty) {
+                    container.innerHTML = '<p style="text-align:center; width:100%; color: #aaa;">No apps found. Use Admin Panel to import.</p>';
+                    return;
+                }
+
+                let apps = [];
+                querySnapshot.forEach((doc) => {
+                    apps.push({ id: doc.id, ...doc.data() });
+                });
+                
+                apps.sort((a, b) => a.name.localeCompare(b.name));
+
+                apps.forEach(app => {
+                    const imgSrc = app.image || '/Assests/logo-getnaro-nobg.png';
+                    const category = (app.category || 'tools').toLowerCase();
+                    
+                    const card = document.createElement('div');
+                    card.className = 'content-one';
+                    card.setAttribute('data-category', category); 
+                    
+                    card.innerHTML = `
+                        <img src="${imgSrc}" alt="${app.name}" onerror="this.src='/Assests/logo-getnaro-nobg.png'">
+                        <span class="tet">
+                            <h5>${app.name}</h5>
+                            <a href="/pages/view.html?id=${app.id}">DOWNLOAD</a>
+                        </span>
+                    `;
+                    
+                    container.appendChild(card);
+                });
+
+                initTabs();
+
+            } catch (error) {
+                console.error("Error fetching apps:", error);
+                container.innerHTML = '<p style="text-align:center; width:100%; color: red;">Failed to load apps. Check console.</p>';
+            }
+        }
+
+        function initTabs() {
             const tabs = document.querySelectorAll(".tab");
+            const items = document.querySelectorAll(".content-one");
+
+            tabs.forEach(tab => {
+                tab.addEventListener("click", () => {
+                    const category = tab.dataset.category;
+                    tabs.forEach(t => t.classList.remove("active"));
+                    tab.classList.add("active");
+
+                    if (category === "all") {
+                        container.classList.remove("filtered");
+                        items.forEach(item => item.style.display = "flex");
+                    } else {
+                        container.classList.add("filtered");
+                        items.forEach(item => {
+                            const itemCat = item.getAttribute('data-category');
+                            if (itemCat && itemCat.includes(category)) {
+                                item.style.display = "flex";
+                            } else {
+                                item.style.display = "none";
+                            }
+                        });
+                    }
+                });
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', fetchAndRenderApps);
+    </script>
+<script type="module">
+    // UPDATED TO STABLE 10.12.0
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import { getFirestore, collection, getDocs, query } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+    // IMPORT REALTIME DB FOR STATS UPDATE
+    import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyAJrJnSQI7X1YJHLOfHZkknmoAoiOiGuEo",
+        authDomain: "getnaroapp.firebaseapp.com",
+        databaseURL: "https://getnaroapp-default-rtdb.asia-southeast1.firebasedatabase.app",
+        projectId: "getnaroapp",
+        storageBucket: "getnaroapp.firebasestorage.app",
+        messagingSenderId: "304744138530",
+        appId: "1:304744138530:web:8166344d61cdfa127ec77b",
+        measurementId: "G-FLBX24J98C"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const rtdb = getDatabase(app); // Initialize Realtime DB for stats updates
+    const container = document.getElementById('apps-container');
+
+    async function fetchAndRenderApps() {
+        try {
+            const q = query(collection(db, "apps")); 
+            const querySnapshot = await getDocs(q);
+            
+            container.innerHTML = ''; 
+
+            if (querySnapshot.empty) {
+                container.innerHTML = '<p style="text-align:center; width:100%; color: #aaa;">No apps found. Use Admin Panel to import.</p>';
+                return;
+            }
+
+            let apps = [];
+            querySnapshot.forEach((doc) => {
+                apps.push({ id: doc.id, ...doc.data() });
+            });
+            
+            // --- FIX FOR TOTAL APPS COUNT ---
+            set(ref(rtdb, "stats/total_apps"), apps.length);
+            // --------------------------------
+
+            apps.sort((a, b) => a.name.localeCompare(b.name));
+
+            apps.forEach(app => {
+                const imgSrc = app.image || '/Assests/logo-getnaro-nobg.png';
+                const category = (app.category || 'tools').toLowerCase();
+                
+                const card = document.createElement('div');
+                card.className = 'content-one';
+                card.setAttribute('data-category', category); 
+                
+                card.innerHTML = `
+                    <img src="${imgSrc}" alt="${app.name}" onerror="this.src='/Assests/logo-getnaro-nobg.png'">
+                    <span class="tet">
+                        <h5>${app.name}</h5>
+                        <a href="/pages/view.html?id=${app.id}">DOWNLOAD</a>
+                    </span>
+                `;
+                
+                container.appendChild(card);
+            });
+
+            initTabs();
+
+        } catch (error) {
+            console.error("Error fetching apps:", error);
+            container.innerHTML = '<p style="text-align:center; width:100%; color: red;">Failed to load apps. Check console.</p>';
+        }
+    }
+
+    // ... rest of the functions (initTabs) ...
+
+    function initTabs() {
+        const tabs = document.querySelectorAll(".tab");
         const items = document.querySelectorAll(".content-one");
-        const container = document.querySelector(".container");
 
         tabs.forEach(tab => {
             tab.addEventListener("click", () => {
-
                 const category = tab.dataset.category;
-
                 tabs.forEach(t => t.classList.remove("active"));
                 tab.classList.add("active");
 
                 if (category === "all") {
                     container.classList.remove("filtered");
                     items.forEach(item => item.style.display = "flex");
-                    return;
+                } else {
+                    container.classList.add("filtered");
+                    items.forEach(item => {
+                        const itemCat = item.getAttribute('data-category');
+                        if (itemCat && itemCat.includes(category)) {
+                            item.style.display = "flex";
+                        } else {
+                            item.style.display = "none";
+                        }
+                    });
                 }
-
-                container.classList.add("filtered");
-
-                items.forEach(item => {
-                    if (item.dataset.category === category) {
-                        item.style.display = "flex";
-                    } else {
-                        item.style.display = "none";
-                    }
-                });
             });
         });
+    }
 
+    document.addEventListener('DOMContentLoaded', fetchAndRenderApps);
 </script>
+<!-- YOUR ORIGINAL SCRIPTS RESTORED BELOW -->
 <script src="/scripts/tod.js"></script>
 <script src="/scripts/tog.js"></script>
 <script src="/scripts/caro.js"></script>

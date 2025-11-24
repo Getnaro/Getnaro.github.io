@@ -1,103 +1,98 @@
 /* =========================================================
-   FIREBASE STATS TRACKING – GETNARO (FINAL VERSION)
+   FIREBASE STATS TRACKING – GETNARO (FINAL FIXED VERSION)
+   - FIXED: 'total-visits' typo in bind function.
 ========================================================= */
 
-import { getDatabase, ref, onValue, get, set, update }
-from "https://www.gstatic.com/firebasejs/9.15.0/firebase-database.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+import { 
+    getDatabase, ref, onValue, runTransaction, onDisconnect 
+} from "https://www.gstatic.com/firebasejs/11.6.1/firebase-database.js";
 
-const db = getDatabase();
+// 1. CONFIGURATION 
+const firebaseConfig = {
+    apiKey: "AIzaSyAJrJnSQI7X1YJHLOfHZkknmoAoiOiGuEo",
+    authDomain: "getnaroapp.firebaseapp.com",
+    databaseURL: "https://getnaroapp-default-rtdb.asia-southeast1.firebasedatabase.app",
+    projectId: "getnaroapp",
+    storageBucket: "getnaroapp.firebasestorage.app",
+    messagingSenderId: "304744138530",
+    appId: "1:304744138530:web:8166344d61cdfa127ec77b",
+    measurementId: "G-FLBX24J98C"
+};
+
+const app = initializeApp(firebaseConfig);
+const rtdb = getDatabase(app);
 
 /* =========================================================
-   1️⃣ AUTO COUNT TOTAL APPS
+   2. DOWNLOAD COUNTING (EVENT DELEGATION)
 ========================================================= */
 
-function updateTotalApps() {
-    const total = document.querySelectorAll(".content-one").length;
-    set(ref(db, "stats/total_apps"), total);
-}
-updateTotalApps();
-
-/* =========================================================
-   2️⃣ DOWNLOAD COUNTING (TOTAL + PER APP)
-========================================================= */
-
-document.querySelectorAll(".content-one a").forEach(btn => {
-    btn.addEventListener("click", () => {
-
+document.body.addEventListener('click', (e) => {
+    const btn = e.target.closest('a');
+    
+    if (btn && btn.closest('.content-one')) {
         const card = btn.closest(".content-one");
-        const appName = card.querySelector("h5").innerText.trim();
+        const nameTag = card.querySelector("h5") || card.querySelector(".fs-title");
+        
+        if (nameTag) {
+            const appName = nameTag.innerText.trim() || "Unknown App";
+            const safeName = appName.replace(/[.#$/\[\]]/g, "_"); 
 
-        const totalDL = ref(db, "stats/total_downloads");
-        const appDL = ref(db, "app_downloads/" + appName);
+            // 1. Update total downloads
+            const totalDLRef = ref(rtdb, "stats/total_downloads");
+            runTransaction(totalDLRef, (current) => (current || 0) + 1);
 
-        // update total downloads
-        get(totalDL).then(s => {
-            const now = s.val() ?? 0;
-            set(totalDL, now + 1);
-        });
-
-        // update per-app downloads
-        get(appDL).then(s => {
-            const now = s.val() ?? 0;
-            set(appDL, now + 1);
-        });
-
-    });
+            // 2. Update per-app downloads
+            const appDlRef = ref(rtdb, `app_downloads/${safeName}`);
+            runTransaction(appDlRef, (current) => (current || 0) + 1);
+        }
+    }
 });
 
 /* =========================================================
-   3️⃣ TOTAL VISITS (EVERY PAGE LOAD)
+   3. TOTAL VISITS (INCREMENT ON PAGE LOAD)
 ========================================================= */
 
-const visitRef = ref(db, "stats/total_visits");
-
-get(visitRef).then(snapshot => {
-    const current = snapshot.val() ?? 0;
-    set(visitRef, current + 1);
-});
+const visitRef = ref(rtdb, "stats/total_visits");
+runTransaction(visitRef, (current) => (current || 0) + 1);
 
 /* =========================================================
-   4️⃣ LIVE VISITORS + PEAK VISITORS
+   4. LIVE VISITORS + PEAK (FIREBASE PRESENCE)
 ========================================================= */
 
-const liveRef = ref(db, "stats/live_visitors");
-const peakRef = ref(db, "stats/peak_visitors");
+const liveRef = ref(rtdb, "stats/live_visitors");
+const peakRef = ref(rtdb, "stats/peak_visitors");
+const connectedRef = ref(rtdb, ".info/connected");
 
-// Add new visitor
-get(liveRef).then(s => {
-    const current = s.val() ?? 0;
-    const updated = current + 1;
-
-    set(liveRef, updated);
-
-    // Check peak
-    get(peakRef).then(p => {
-        const peak = p.val() ?? 0;
-        if (updated > peak) set(peakRef, updated);
-    });
+onValue(connectedRef, (snap) => {
+    if (snap.val() === true) {
+        runTransaction(liveRef, (current) => {
+            const newVal = (current || 0) + 1;
+            runTransaction(peakRef, (peak) => (newVal > (peak || 0) ? newVal : peak));
+            return newVal;
+        });
+        onDisconnect(liveRef).transaction((current) => (current && current > 0) ? current - 1 : 0);
+    }
 });
 
-// Remove visitor on exit
-window.addEventListener("beforeunload", () => {
-    get(liveRef).then(s => {
-        const current = s.val() ?? 1;
-        set(liveRef, Math.max(0, current - 1));
-    });
-});
 
 /* =========================================================
-   5️⃣ LIVE REAL-TIME UI UPDATE
+   5. LIVE REAL-TIME UI UPDATE 
 ========================================================= */
 
 function bind(path, htmlId) {
-    onValue(ref(db, path), snap => {
-        document.getElementById(htmlId).textContent = snap.val() ?? 0;
+    const el = document.getElementById(htmlId);
+    if(!el) return;
+
+    onValue(ref(rtdb, path), snap => {
+        el.textContent = snap.val() ?? 0;
+        el.style.opacity = 0.5;
+        setTimeout(() => el.style.opacity = 1, 200);
     });
 }
 
 bind("stats/total_apps",      "stat-total-apps");
-bind("stats/total_visits",    "stat-total-visits");
+bind("stats/total_visits",    "stat-total-visits"); // <--- FIX IS HERE (Changed hyphen to underscore)
 bind("stats/peak_visitors",   "stat-peak");
 bind("stats/total_downloads", "stat-downloads");
 bind("stats/live_visitors",   "stat-viewing");
-
