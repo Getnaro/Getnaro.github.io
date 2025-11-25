@@ -27,6 +27,15 @@ const showToast = (message) => {
     }
 };
 
+// Helper based on renderer.js logic for consistency
+function getCleanAppName(filename) {
+    if (!filename) return "App";
+    let name = filename.replace(/\.(exe|msi|zip|rar|iso)$/i, ''); 
+    let parts = name.split(/_| v\d/);
+    let cleanName = parts[0] ? parts[0] : name;
+    return cleanName.trim();
+}
+
 function getCleanPageAppName(rawName) {
     if (!rawName) return null;
     const parts = rawName.toUpperCase().split(/[\W_]/).filter(Boolean);
@@ -200,6 +209,8 @@ export function initAppTracking() {
                         installLocation: null,
                         lastChecked: Date.now()
                     });
+                    // Sync to apps node as well
+                    syncToAppsNode(user.uid, appName, 'uninstalled');
                     showToast(`Uninstall signal sent.`);
                 }
             };
@@ -247,6 +258,24 @@ export function initAppTracking() {
         }
     }
 
+    // --- NEW: SYNC TO APPS NODE (Matches renderer.js logic) ---
+    function syncToAppsNode(uid, appName, status, location = "") {
+        const cleanName = getCleanAppName(appName).toLowerCase().replace(/[.#$[\]]/g, '_');
+        const payload = {
+            appName: appName,
+            filename: appName, // Best guess
+            size: "N/A",
+            downloadedDate: new Date().toLocaleDateString(),
+            location: location,
+            status: status,
+            lastUpdated: new Date().toISOString()
+        };
+        
+        update(ref(db, `users/${uid}/apps/${cleanName}`), payload)
+            .then(() => console.log(`[AppTracking] Synced to apps/${cleanName}`))
+            .catch(err => console.error("[AppTracking] Failed to sync apps node:", err));
+    }
+
     function saveToHistory(uid, id, name, icon, status) {
         const timestamp = Date.now();
         console.log(`[AppTracking] Writing to DB: users/${uid}/history/${id}`);
@@ -258,19 +287,27 @@ export function initAppTracking() {
             timestamp: timestamp, 
             status: status || 'Downloading'
         })
-        .then(() => console.log("[AppTracking] History saved successfully."))
+        .then(() => {
+            console.log("[AppTracking] History saved successfully.");
+            // Also sync to apps node for renderer compatibility
+            syncToAppsNode(uid, name, status || 'Downloading');
+        })
         .catch((err) => console.error("[AppTracking] Failed to save history:", err));
     }
     
     function saveFinalInstallState(uid, id, location, versionDate) {
         const timestamp = Date.now();
         const dateString = versionDate || new Date(timestamp).toLocaleDateString();
+        
         update(ref(db, `users/${uid}/history/${id}`), {
             status: 'Installed', 
             installLocation: location, 
             timestamp: timestamp, 
             installedDate: dateString,
             lastChecked: Date.now()
+        }).then(() => {
+            // Also sync final state to apps node
+            syncToAppsNode(uid, appName, 'installed', location);
         });
     }
 
