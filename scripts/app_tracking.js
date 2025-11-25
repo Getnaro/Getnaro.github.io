@@ -188,7 +188,6 @@ export function initAppTracking() {
             const allHistory = snapshot.val() || {};
             let myEntry = allHistory[appId];
 
-            // Try Name Match if ID fails
             if (!myEntry) {
                 const targetName = getCleanMatchName(appName);
                 const foundKey = Object.keys(allHistory).find(key => {
@@ -214,12 +213,12 @@ export function initAppTracking() {
             let detectedPath = await smartFindAppPath(appName);
 
             if (detectedPath) {
-                // Update UI
-                updateUIInstalled(detectedPath, false); 
+                const needsUpdate = (serverLastUpdated && cachedFirebaseData.installedDate && serverLastUpdated !== cachedFirebaseData.installedDate);
+                updateUIInstalled(detectedPath, needsUpdate); 
 
-                // FIX: UPDATE DB IF MISMATCH
+                // If DB says uninstalled/downloading but it IS installed locally, update DB
                 if (!myEntry || myEntry.status !== 'Installed' || myEntry.installLocation !== detectedPath) {
-                    saveFinalInstallState(user.uid, appId, detectedPath, "");
+                    saveFinalInstallState(user.uid, appId, detectedPath, serverLastUpdated);
                 }
             } else {
                 // Not installed locally
@@ -227,6 +226,7 @@ export function initAppTracking() {
 
                 // If DB says "Installed" but file is missing, downgrade to Uninstalled
                 if (myEntry && (myEntry.status === 'Installed' || myEntry.status === 'installed')) {
+                    console.log("App missing locally. Updating DB to Uninstalled...");
                     update(ref(db, `users/${user.uid}/history/${appId}`), {
                         status: 'Uninstalled',
                         installLocation: null,
@@ -275,7 +275,7 @@ export function initAppTracking() {
             if (detectedPath) {
                 updateUIInstalled(detectedPath, false); 
                 if (user && !user.isAnonymous) {
-                    saveFinalInstallState(user.uid, appId, detectedPath, ""); 
+                    saveFinalInstallState(user.uid, appId, detectedPath, serverLastUpdated); 
                 }
                 isMonitoring = false; 
             } else if (attempts < maxAttempts) {
