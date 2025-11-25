@@ -257,6 +257,22 @@
             color: #9F00FF !important;
         }
     }
+
+    /* OPEN Button (Green) */
+    .gn-btn-open {
+        background: #00c851;
+        color: white !important;
+        box-shadow: 0 10px 30px rgba(0, 200, 81, 0.3);
+        border: 2px solid #00c851;
+        outline: none;
+    }
+    .gn-btn-open:hover {
+        background: transparent;
+        color: #00c851 !important;
+        transform: translateY(-3px);
+        box-shadow: 0 15px 40px rgba(0, 200, 81, 0.2);
+        i { color: #00c851 !important; }
+    }
     
     /* Update Button (Blue/Cyan) */
     .gn-btn-update {
@@ -272,7 +288,7 @@
         transform: translateY(-3px);
         box-shadow: 0 15px 40px rgba(33, 150, 243, 0.2);
         i{
-            color: #9F00FF !important;
+            color: #2196F3 !important; /* Fixed color reference */
         }
     }
 
@@ -288,6 +304,24 @@
         color: white !important;
         transform: translateY(-3px);
         box-shadow: 0 15px 40px rgba(255, 77, 77, 0.3);
+    }
+
+    /* FAV Button (Heart) */
+    .gn-btn-fav {
+        background: transparent;
+        border: 2px solid #ff69b4; /* Hot pink border */
+        color: #ff69b4 !important;
+        padding: 18px 25px; /* Smaller width */
+        min-width: unset;
+        font-size: 1.4rem;
+    }
+    .gn-btn-fav:hover, .gn-btn-fav.active {
+        background: #ff69b4;
+        color: white !important;
+        box-shadow: 0 0 15px rgba(255, 105, 180, 0.4);
+    }
+    .gn-btn-fav i {
+        color: inherit !important;
     }
 
     /* --- CUSTOM TOAST --- */
@@ -319,6 +353,7 @@
     body.light-mode .fs-loc-wrapper { background: rgba(255,255,255,0.6); border-color: #ddd; }
     body.light-mode .fs-loc-link { color: #555; }
     body.light-mode .gn-btn-download:hover { color: #9F00FF !important; background: white; }
+    body.light-mode .gn-btn-open:hover { color: #00c851 !important; background: white; }
     body.light-mode .gn-custom-toast { background-color: rgba(255, 255, 255, 0.95); color: #1a1a1a; border-color: #9F00FF; }
 
     /* Responsive */
