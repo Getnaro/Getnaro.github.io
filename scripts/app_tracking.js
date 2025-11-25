@@ -44,9 +44,37 @@ function getCleanPageAppName(rawName) {
     return parts.length > 0 ? parts[0] : null; 
 }
 
-// --- MAIN TRACKING FUNCTION ---
+// --- ELECTRON CHECK ---
+const isElectron = window.appAPI && window.appAPI.findAppPath;
+
+// --- HELPER: SMART FIND PATH ---
+async function smartFindAppPath(originalName) {
+    if (!isElectron) return null;
+
+    // 1. Try Exact Name (e.g., "CPU-Z PC")
+    let path = await window.appAPI.findAppPath(originalName);
+    if (path) return path;
+
+    // 2. Try Cleaning Common Suffixes (e.g., "CPU-Z")
+    const simpleName = originalName
+        .replace(/ PC$/i, "")
+        .replace(/ Edition$/i, "")
+        .replace(/ Software$/i, "")
+        .replace(/ App$/i, "");
+        
+    if (simpleName !== originalName) {
+        path = await window.appAPI.findAppPath(simpleName);
+        if (path) return path;
+    }
+
+    return null;
+}
+
+// =========================================================
+// 1. VIEW PAGE LOGIC (Single App)
+// =========================================================
 export function initAppTracking() {
-    console.log("Initializing App Tracking...");
+    console.log("Initializing App Tracking (View Page)...");
     
     const appCard = document.querySelector('#app-card-root'); 
     if (!appCard || appCard.style.display === 'none') return;
@@ -72,33 +100,6 @@ export function initAppTracking() {
     let cachedFirebaseData = {};
     const cleanPageName = getCleanPageAppName(rawAppName); 
 
-    // --- ELECTRON CHECK ---
-    const isElectron = window.appAPI && window.appAPI.findAppPath;
-
-    // --- HELPER: SMART FIND PATH ---
-    // Tries multiple variations of the name to find the app in Electron
-    async function smartFindAppPath(originalName) {
-        if (!isElectron) return null;
-
-        // 1. Try Exact Name (e.g., "CPU-Z PC")
-        let path = await window.appAPI.findAppPath(originalName);
-        if (path) return path;
-
-        // 2. Try Cleaning Common Suffixes (e.g., "CPU-Z")
-        const simpleName = originalName
-            .replace(/ PC$/i, "")
-            .replace(/ Edition$/i, "")
-            .replace(/ Software$/i, "")
-            .replace(/ App$/i, "");
-            
-        if (simpleName !== originalName) {
-            path = await window.appAPI.findAppPath(simpleName);
-            if (path) return path;
-        }
-
-        return null;
-    }
-
     // --- 1. HANDLE DOWNLOAD CLICK ---
     if (btnDownload) {
         if (!btnDownload.dataset.trackingAttached) {
@@ -118,7 +119,6 @@ export function initAppTracking() {
     if (btnOpen && isElectron) {
         btnOpen.onclick = async () => {
              if(window.appAPI.openApp) {
-                 // Try smart opening
                  let opened = await window.appAPI.openApp(appName);
                  if (!opened) {
                      const simpleName = appName.replace(/ PC$/i, "").replace(/ Edition$/i, "");
@@ -204,11 +204,8 @@ export function initAppTracking() {
 
         onValue(historyRef, async (snapshot) => {
             const allHistory = snapshot.val() || {};
-            
-            // 1. Direct Match
             let myEntry = allHistory[appId];
 
-            // 2. Fuzzy Match
             if (!myEntry) {
                 const targetName = getCleanMatchName(appName);
                 const foundKey = Object.keys(allHistory).find(key => {
@@ -230,18 +227,30 @@ export function initAppTracking() {
                 return;
             }
 
-            // ELECTRON: Check Real Local Status using Smart Search
+            // ELECTRON: Check Real Local Status
             let detectedPath = await smartFindAppPath(appName);
 
             if (detectedPath) {
                 const needsUpdate = (serverLastUpdated && cachedFirebaseData.installedDate && serverLastUpdated !== cachedFirebaseData.installedDate);
                 updateUIInstalled(detectedPath, needsUpdate); 
 
+                // If DB says uninstalled/downloading but it IS installed locally, update DB
                 if (!myEntry || myEntry.status !== 'Installed' || myEntry.installLocation !== detectedPath) {
                     saveFinalInstallState(user.uid, appId, detectedPath, serverLastUpdated);
                 }
             } else {
+                // Not installed locally
                 updateUINotInstalled();
+
+                // CRITICAL FIX: If DB says "Installed" but file is missing, downgrade to Uninstalled
+                if (myEntry && (myEntry.status === 'Installed' || myEntry.status === 'installed')) {
+                    console.log("App missing locally. Updating DB to Uninstalled...");
+                    update(ref(db, `users/${user.uid}/history/${appId}`), {
+                        status: 'Uninstalled',
+                        installLocation: null,
+                        lastChecked: Date.now()
+                    });
+                }
             }
         });
 
@@ -280,7 +289,6 @@ export function initAppTracking() {
         const poll = async () => {
             if (!isElectron) { isMonitoring = false; return; }
             
-            // Use Smart Search here too
             let detectedPath = await smartFindAppPath(appName);
 
             if (detectedPath) {
@@ -373,8 +381,62 @@ export function initAppTracking() {
     }
 }
 
+// =========================================================
+// 2. PROFILE PAGE SYNC LOGIC (Run on profile.html)
+// =========================================================
+function initProfileSync() {
+    console.log("Initializing Profile Sync...");
+    
+    if (!isElectron) return;
+
+    onAuthStateChanged(auth, (user) => {
+        if (user && !user.isAnonymous) {
+            const historyRef = ref(db, `users/${user.uid}/history`);
+            
+            // Check ALL history items and update their status based on local machine
+            onValue(historyRef, async (snapshot) => {
+                const history = snapshot.val();
+                if (!history) return;
+
+                for (const key in history) {
+                    const item = history[key];
+                    // Only check items that aren't already uninstalled
+                    if (item.status !== 'Uninstalled') {
+                        const appName = item.appName || item.filename;
+                        const detectedPath = await smartFindAppPath(appName);
+                        
+                        // Case 1: Found locally -> Set to Installed
+                        if (detectedPath && item.status !== 'Installed') {
+                            console.log(`[Sync] Found ${appName} locally. Updating to Installed.`);
+                            update(ref(db, `users/${user.uid}/history/${key}`), {
+                                status: 'Installed',
+                                installLocation: detectedPath,
+                                lastChecked: Date.now()
+                            });
+                        }
+                        // Case 2: Not Found locally -> Set to Uninstalled (if previously installed)
+                        else if (!detectedPath && (item.status === 'Installed' || item.status === 'installed')) {
+                            console.log(`[Sync] Missing ${appName} locally. Updating to Uninstalled.`);
+                            update(ref(db, `users/${user.uid}/history/${key}`), {
+                                status: 'Uninstalled',
+                                installLocation: null,
+                                lastChecked: Date.now()
+                            });
+                        }
+                    }
+                }
+            }, { onlyOnce: true }); // Run once on load/auth to prevent loops
+        }
+    });
+}
+
+// =========================================================
+// 3. ROUTER
+// =========================================================
 document.addEventListener("DOMContentLoaded", () => {
-    if (!window.location.pathname.includes('view.html')) {
+    if (window.location.pathname.includes('view.html')) {
         initAppTracking();
+    } else if (window.location.pathname.includes('profile.html')) {
+        initProfileSync();
     }
 });
