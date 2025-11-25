@@ -20,11 +20,8 @@ const auth = getAuth(app);
 const db = getDatabase(app);
 
 const showToast = (message) => {
-    if (typeof window.showToast === 'function') {
-        window.showToast(message);
-    } else {
-        console.log(`[TOAST]: ${message}`);
-    }
+    if (typeof window.showToast === 'function') window.showToast(message);
+    else console.log(`[TOAST]: ${message}`);
 };
 
 // Helper to strip "PC", "Edition", etc for matching
@@ -379,12 +376,19 @@ export function initAppTracking() {
         if (statusText) statusText.innerText = "Not Installed";
         if (locLink) locLink.innerText = "—";
     }
+
+    // Add aggressive polling for View Page
+    setInterval(() => {
+        if(auth.currentUser && !auth.currentUser.isAnonymous) {
+             syncAppStatus(auth.currentUser, appId, appName, appIcon);
+        }
+    }, 3000);
 }
 
 // =========================================================
 // 2. PROFILE PAGE SYNC LOGIC (Run on profile.html)
 // =========================================================
-function initProfileSync() {
+export function initProfileSync() {
     console.log("Initializing Profile Sync...");
     
     if (!isElectron) return;
@@ -425,7 +429,7 @@ function initProfileSync() {
                         }
                     }
                 }
-            }, { onlyOnce: true }); // Run once on load/auth to prevent loops
+            }); 
         }
     });
 }
