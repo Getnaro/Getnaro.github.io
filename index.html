@@ -27,7 +27,7 @@
     <meta property="og:url" content="https://getnaro.com/">
     <meta name="twitter:card" content="summary_large_image">
     <!-- FAVICON -->
-    <link rel="icon" type="image/x-icon" href="Assests/Favicon.png">
+    <link rel="icon" type="image/x-icon" href="assests/Favicon.png">
     <style>
         /* Loading State for Dynamic Grid */
         .gn-grid-loader {
@@ -54,7 +54,7 @@
     <!-- ------------------ HEADER ------------------ -->
 <div class="heading">
 
-    <a href="/index.html"><img src="/Assests/logo-getnaro-nobg.png" class="logo"></a>
+    <a href="/index.html"><img src="/assests/logo-getnaro-nobg.png" class="logo"></a>
     <h4>Getnaro</h4>
     <ul>
         <li><a href="/index.html" style="background-color:#9F00FF; color: white !important;
@@ -394,7 +394,7 @@
                 apps.sort((a, b) => a.name.localeCompare(b.name));
 
                 apps.forEach(app => {
-                    const imgSrc = app.image || '/Assests/logo-getnaro-nobg.png';
+                    const imgSrc = app.image || '/assests/logo-getnaro-nobg.png';
                     const category = (app.category || 'tools').toLowerCase();
                     
                     const card = document.createElement('div');
@@ -402,7 +402,7 @@
                     card.setAttribute('data-category', category); 
                     
                     card.innerHTML = `
-                        <img src="${imgSrc}" alt="${app.name}" onerror="this.src='/Assests/logo-getnaro-nobg.png'">
+                        <img src="${imgSrc}" alt="${app.name}" onerror="this.src='/assests/logo-getnaro-nobg.png'">
                         <span class="tet">
                             <h5>${app.name}</h5>
                             <a href="/pages/view.html?id=${app.id}">DOWNLOAD</a>
@@ -497,7 +497,7 @@
             apps.sort((a, b) => a.name.localeCompare(b.name));
 
             apps.forEach(app => {
-                const imgSrc = app.image || '/Assests/logo-getnaro-nobg.png';
+                const imgSrc = app.image || '/assests/logo-getnaro-nobg.png';
                 const category = (app.category || 'tools').toLowerCase();
                 
                 const card = document.createElement('div');
@@ -505,7 +505,7 @@
                 card.setAttribute('data-category', category); 
                 
                 card.innerHTML = `
-                    <img src="${imgSrc}" alt="${app.name}" onerror="this.src='/Assests/logo-getnaro-nobg.png'">
+                    <img src="${imgSrc}" alt="${app.name}" onerror="this.src='/assests/logo-getnaro-nobg.png'">
                     <span class="tet">
                         <h5>${app.name}</h5>
                         <a href="/pages/view.html?id=${app.id}">DOWNLOAD</a>

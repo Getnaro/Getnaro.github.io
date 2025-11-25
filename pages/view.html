@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="/stylesheets/downloads.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <meta name="robots" content="index, follow">
-    <link rel="icon" type="image/x-icon" href="/Assests/Favicon.png">
+    <link rel="icon" type="image/x-icon" href="/assests/Favicon.png">
     <style>
         .loading-overlay {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
@@ -28,7 +28,7 @@
     
     <!-- HEADER -->
     <div class="heading">
-        <a href="/index.html"><img src="/Assests/logo-getnaro-nobg.png" class="logo"></a>
+        <a href="/index.html"><img src="/assests/logo-getnaro-nobg.png" class="logo"></a>
         <h4>Getnaro</h4>
         <ul>
             <li><a href="/index.html">HOME</a></li>
@@ -223,8 +223,8 @@
                     document.getElementById('d-app-updated').innerText = data.lastUpdated || "Recently";
                     
                     const img = document.getElementById('d-app-image');
-                    img.src = data.image || "/Assests/logo-getnaro-nobg.png";
-                    img.onerror = () => { img.src = "/Assests/logo-getnaro-nobg.png"; };
+                    img.src = data.image || "/assests/logo-getnaro-nobg.png";
+                    img.onerror = () => { img.src = "/assests/logo-getnaro-nobg.png"; };
 
                     const dlBtn = document.getElementById('d-btn-download');
                     dlBtn.href = data.downloadLink || "#";
@@ -335,8 +335,8 @@
                     document.getElementById('d-app-updated').innerText = data.lastUpdated || "Recently";
                     
                     const img = document.getElementById('d-app-image');
-                    img.src = data.image || "/Assests/logo-getnaro-nobg.png";
-                    img.onerror = () => { img.src = "/Assests/logo-getnaro-nobg.png"; };
+                    img.src = data.image || "/assests/logo-getnaro-nobg.png";
+                    img.onerror = () => { img.src = "/assests/logo-getnaro-nobg.png"; };
 
                     // Setup Download Button
                     const dlBtn = document.getElementById('d-btn-download');

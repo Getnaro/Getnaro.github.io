@@ -101,7 +101,7 @@
 
     <!-- HEADER -->
     <div class="heading">
-        <a href="/index.html"><img src="/Assests/logo-getnaro-nobg.png" class="logo"></a>
+        <a href="/index.html"><img src="/assests/logo-getnaro-nobg.png" class="logo"></a>
         <h4>Getnaro</h4>
         <ul>
             <li><a href="/index.html">HOME</a></li>
@@ -225,7 +225,7 @@
         async function measurePing() {
             const start = performance.now();
             try {
-                await fetch('/Assests/logo-getnaro-nobg.png?t=' + Date.now());
+                await fetch('/assests/logo-getnaro-nobg.png?t=' + Date.now());
             } catch(e) {}
             const end = performance.now();
             return Math.round(end - start);

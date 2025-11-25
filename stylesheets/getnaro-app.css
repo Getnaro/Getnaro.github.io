@@ -1,7 +1,7 @@
 /* ... (Keep font-face and top styles) ... */
 @font-face {
     font-family: Getnaro;
-    src: url(/Assests/Getnaro-medium.ttf);
+    src: url(/assests/Getnaro-medium.ttf);
 }
 *{
     font-family: Getnaro;
