@@ -27,13 +27,16 @@ const showToast = (message) => {
     }
 };
 
-// Helper based on renderer.js logic for consistency
-function getCleanAppName(filename) {
-    if (!filename) return "App";
-    let name = filename.replace(/\.(exe|msi|zip|rar|iso)$/i, ''); 
-    let parts = name.split(/_| v\d/);
-    let cleanName = parts[0] ? parts[0] : name;
-    return cleanName.trim();
+// Cleaner helper to match "CPU-Z PC" with "cpu-z"
+function getCleanMatchName(rawName) {
+    if (!rawName) return "";
+    // Remove common junk suffixes and special chars
+    return rawName.toLowerCase()
+        .replace(/ pc$/i, '')
+        .replace(/ edition$/i, '')
+        .replace(/ app$/i, '')
+        .replace(/ software$/i, '')
+        .replace(/[^a-z0-9]/g, ''); // "cpu-z" -> "cpuz"
 }
 
 function getCleanPageAppName(rawName) {
@@ -73,13 +76,12 @@ export function initAppTracking() {
     // --- ELECTRON CHECK ---
     const isElectron = window.appAPI && window.appAPI.findAppPath;
 
-    // --- 1. HANDLE DOWNLOAD CLICK (History Save) ---
+    // --- 1. HANDLE DOWNLOAD CLICK ---
     if (btnDownload) {
         if (!btnDownload.dataset.trackingAttached) {
             btnDownload.addEventListener("click", () => {
                 const user = auth.currentUser;
                 if (user && !user.isAnonymous) {
-                    console.log(`[AppTracking] Saving download: ${appName} for user ${user.uid}`);
                     saveToHistory(user.uid, appId, appName, appIcon, "Downloading");
                 } else {
                     showToast("Download started. Login to save history.");
@@ -89,11 +91,17 @@ export function initAppTracking() {
         }
     }
 
-    // --- 2. HANDLE OPEN CLICK (Electron) ---
+    // --- 2. HANDLE OPEN CLICK ---
     if (btnOpen && isElectron) {
         btnOpen.onclick = async () => {
              if(window.appAPI.openApp) {
-                 window.appAPI.openApp(appName);
+                 // Try raw name first, then cleaned name
+                 let opened = await window.appAPI.openApp(appName);
+                 if (!opened) {
+                     // Try removing "PC" or similar suffix
+                     const simpleName = appName.replace(/ PC$/i, "").replace(/ Edition$/i, "");
+                     window.appAPI.openApp(simpleName);
+                 }
              } else {
                  showToast("Cannot open app: API missing.");
              }
@@ -104,7 +112,6 @@ export function initAppTracking() {
     if (btnFav) {
         btnFav.onclick = async () => {
             const user = auth.currentUser;
-            
             if(!user || user.isAnonymous) {
                 return showToast("Please Login to add to favorites.");
             }
@@ -159,7 +166,7 @@ export function initAppTracking() {
         }
     });
 
-    // --- 5. ELECTRON INSTALL SIGNALS ---
+    // --- 5. ELECTRON SIGNALS ---
     if (isElectron && window.appAPI.onInstallStartSignal) {
         window.appAPI.onInstallStartSignal((data) => {
             const signalAppNameClean = getCleanPageAppName(data.appName);
@@ -169,33 +176,66 @@ export function initAppTracking() {
         });
     }
 
+    // --- CORE LOGIC: SYNC STATUS FROM DB (Improved) ---
     async function syncAppStatus(user, appId, appName, appIcon) {
-        const appRef = ref(db, `users/${user.uid}/history/${appId}`);
+        // FIX: Listen to ALL history to perform a fuzzy lookup
+        const historyRef = ref(db, `users/${user.uid}/history`);
 
-        onValue(appRef, async (snapshot) => {
-            cachedFirebaseData = snapshot.val() || {};
+        onValue(historyRef, async (snapshot) => {
+            const allHistory = snapshot.val() || {};
             
+            // 1. Try Direct Match (Created by Website)
+            let myEntry = allHistory[appId];
+
+            // 2. If no direct match, try Fuzzy Name Match (Created by Electron)
+            if (!myEntry) {
+                const targetName = getCleanMatchName(appName);
+                const foundKey = Object.keys(allHistory).find(key => {
+                    const item = allHistory[key];
+                    const itemName = getCleanMatchName(item.appName || item.filename);
+                    return itemName.includes(targetName) || targetName.includes(itemName);
+                });
+                if (foundKey) myEntry = allHistory[foundKey];
+            }
+
+            cachedFirebaseData = myEntry || {};
+            
+            // Decide what to show based on platform
             if (!isElectron) {
-                updateUINotInstalled(); 
+                // WEB VIEW: Trust the DB status
+                if (myEntry && (myEntry.status === 'Installed' || myEntry.status === 'installed')) {
+                    // Fake the location for web view just to show "Installed" state
+                    updateUIInstalled(myEntry.location || "On Desktop", false);
+                } else {
+                    updateUINotInstalled();
+                }
                 return;
             }
 
+            // ELECTRON VIEW: Check Real Local Status
             let detectedPath = await window.appAPI.findAppPath(appName);
+            
+            // If not found, try simpler name (e.g. "CPU-Z PC" -> "CPU-Z")
+            if (!detectedPath) {
+                const simpleName = appName.replace(/ PC$/i, "").replace(/ Edition$/i, "");
+                detectedPath = await window.appAPI.findAppPath(simpleName);
+            }
 
             if (detectedPath) {
                 const needsUpdate = (serverLastUpdated && cachedFirebaseData.installedDate && serverLastUpdated !== cachedFirebaseData.installedDate);
                 updateUIInstalled(detectedPath, needsUpdate); 
 
-                const dbData = snapshot.val();
-                if (!dbData || dbData.status !== 'installed' || dbData.installLocation !== detectedPath) {
+                // Sync DB if it's installed locally but DB doesn't know yet
+                if (!myEntry || myEntry.status !== 'Installed' || myEntry.installLocation !== detectedPath) {
                     saveFinalInstallState(user.uid, appId, detectedPath, serverLastUpdated);
                 }
             } else {
-                // If DB says installed but file is gone, we keep DB history but reset UI
+                // Not installed locally
                 updateUINotInstalled();
             }
         });
 
+        // Uninstall Hook
         if (btnUninstall && isElectron) {
             const newUninstall = btnUninstall.cloneNode(true);
             btnUninstall.parentNode.replaceChild(newUninstall, btnUninstall);
@@ -203,20 +243,22 @@ export function initAppTracking() {
             newUninstall.onclick = (e) => {
                 e.preventDefault();
                 if (window.appAPI.uninstallApp) {
-                    window.appAPI.uninstallApp(appName);
+                    // Try cleaning name for uninstall too
+                    const simpleName = appName.replace(/ PC$/i, "").replace(/ Edition$/i, "");
+                    window.appAPI.uninstallApp(simpleName);
+                    
                     update(ref(db, `users/${user.uid}/history/${appId}`), {
-                        status: 'uninstalled',
+                        status: 'Uninstalled',
                         installLocation: null,
                         lastChecked: Date.now()
                     });
-                    // Sync to apps node as well
-                    syncToAppsNode(user.uid, appName, 'uninstalled');
                     showToast(`Uninstall signal sent.`);
                 }
             };
         }
     }
 
+    // ... rest of functions (startInstallMonitoring, etc.) same as before ...
     async function startInstallMonitoring(appName, appId) {
         if (isMonitoring) return;
         isMonitoring = true;
@@ -230,7 +272,11 @@ export function initAppTracking() {
         const poll = async () => {
             if (!isElectron) { isMonitoring = false; return; }
             
-            const detectedPath = await window.appAPI.findAppPath(appName);
+            let detectedPath = await window.appAPI.findAppPath(appName);
+            if (!detectedPath) {
+                 const simpleName = appName.replace(/ PC$/i, "").replace(/ Edition$/i, "");
+                 detectedPath = await window.appAPI.findAppPath(simpleName);
+            }
 
             if (detectedPath) {
                 updateUIInstalled(detectedPath, false); 
@@ -250,7 +296,12 @@ export function initAppTracking() {
 
     async function checkLocalOnly(appName) {
         if (!isElectron) return;
-        const detectedPath = await window.appAPI.findAppPath(appName);
+        let detectedPath = await window.appAPI.findAppPath(appName);
+        if (!detectedPath) {
+             const simpleName = appName.replace(/ PC$/i, "").replace(/ Edition$/i, "");
+             detectedPath = await window.appAPI.findAppPath(simpleName);
+        }
+
         if (detectedPath) {
             updateUIInstalled(detectedPath, false);
         } else {
@@ -258,56 +309,26 @@ export function initAppTracking() {
         }
     }
 
-    // --- NEW: SYNC TO APPS NODE (Matches renderer.js logic) ---
-    function syncToAppsNode(uid, appName, status, location = "") {
-        const cleanName = getCleanAppName(appName).toLowerCase().replace(/[.#$[\]]/g, '_');
-        const payload = {
-            appName: appName,
-            filename: appName, // Best guess
-            size: "N/A",
-            downloadedDate: new Date().toLocaleDateString(),
-            location: location,
-            status: status,
-            lastUpdated: new Date().toISOString()
-        };
-        
-        update(ref(db, `users/${uid}/apps/${cleanName}`), payload)
-            .then(() => console.log(`[AppTracking] Synced to apps/${cleanName}`))
-            .catch(err => console.error("[AppTracking] Failed to sync apps node:", err));
-    }
-
     function saveToHistory(uid, id, name, icon, status) {
         const timestamp = Date.now();
-        console.log(`[AppTracking] Writing to DB: users/${uid}/history/${id}`);
-        
         update(ref(db, `users/${uid}/history/${id}`), {
             appName: name, 
             appId: id, 
             icon: icon, 
             timestamp: timestamp, 
             status: status || 'Downloading'
-        })
-        .then(() => {
-            console.log("[AppTracking] History saved successfully.");
-            // Also sync to apps node for renderer compatibility
-            syncToAppsNode(uid, name, status || 'Downloading');
-        })
-        .catch((err) => console.error("[AppTracking] Failed to save history:", err));
+        }).catch((err) => console.error(err));
     }
     
     function saveFinalInstallState(uid, id, location, versionDate) {
         const timestamp = Date.now();
         const dateString = versionDate || new Date(timestamp).toLocaleDateString();
-        
         update(ref(db, `users/${uid}/history/${id}`), {
             status: 'Installed', 
             installLocation: location, 
             timestamp: timestamp, 
             installedDate: dateString,
             lastChecked: Date.now()
-        }).then(() => {
-            // Also sync final state to apps node
-            syncToAppsNode(uid, appName, 'installed', location);
         });
     }
 
