@@ -27,10 +27,9 @@ const showToast = (message) => {
     }
 };
 
-// Cleaner helper to match "CPU-Z PC" with "cpu-z"
+// Helper to strip "PC", "Edition", etc for matching
 function getCleanMatchName(rawName) {
     if (!rawName) return "";
-    // Remove common junk suffixes and special chars
     return rawName.toLowerCase()
         .replace(/ pc$/i, '')
         .replace(/ edition$/i, '')
@@ -76,6 +75,30 @@ export function initAppTracking() {
     // --- ELECTRON CHECK ---
     const isElectron = window.appAPI && window.appAPI.findAppPath;
 
+    // --- HELPER: SMART FIND PATH ---
+    // Tries multiple variations of the name to find the app in Electron
+    async function smartFindAppPath(originalName) {
+        if (!isElectron) return null;
+
+        // 1. Try Exact Name (e.g., "CPU-Z PC")
+        let path = await window.appAPI.findAppPath(originalName);
+        if (path) return path;
+
+        // 2. Try Cleaning Common Suffixes (e.g., "CPU-Z")
+        const simpleName = originalName
+            .replace(/ PC$/i, "")
+            .replace(/ Edition$/i, "")
+            .replace(/ Software$/i, "")
+            .replace(/ App$/i, "");
+            
+        if (simpleName !== originalName) {
+            path = await window.appAPI.findAppPath(simpleName);
+            if (path) return path;
+        }
+
+        return null;
+    }
+
     // --- 1. HANDLE DOWNLOAD CLICK ---
     if (btnDownload) {
         if (!btnDownload.dataset.trackingAttached) {
@@ -95,10 +118,9 @@ export function initAppTracking() {
     if (btnOpen && isElectron) {
         btnOpen.onclick = async () => {
              if(window.appAPI.openApp) {
-                 // Try raw name first, then cleaned name
+                 // Try smart opening
                  let opened = await window.appAPI.openApp(appName);
                  if (!opened) {
-                     // Try removing "PC" or similar suffix
                      const simpleName = appName.replace(/ PC$/i, "").replace(/ Edition$/i, "");
                      window.appAPI.openApp(simpleName);
                  }
@@ -176,18 +198,17 @@ export function initAppTracking() {
         });
     }
 
-    // --- CORE LOGIC: SYNC STATUS FROM DB (Improved) ---
+    // --- CORE LOGIC: SYNC STATUS ---
     async function syncAppStatus(user, appId, appName, appIcon) {
-        // FIX: Listen to ALL history to perform a fuzzy lookup
         const historyRef = ref(db, `users/${user.uid}/history`);
 
         onValue(historyRef, async (snapshot) => {
             const allHistory = snapshot.val() || {};
             
-            // 1. Try Direct Match (Created by Website)
+            // 1. Direct Match
             let myEntry = allHistory[appId];
 
-            // 2. If no direct match, try Fuzzy Name Match (Created by Electron)
+            // 2. Fuzzy Match
             if (!myEntry) {
                 const targetName = getCleanMatchName(appName);
                 const foundKey = Object.keys(allHistory).find(key => {
@@ -200,11 +221,8 @@ export function initAppTracking() {
 
             cachedFirebaseData = myEntry || {};
             
-            // Decide what to show based on platform
             if (!isElectron) {
-                // WEB VIEW: Trust the DB status
-                if (myEntry && (myEntry.status === 'Installed' || myEntry.status === 'installed')) {
-                    // Fake the location for web view just to show "Installed" state
+                if (myEntry && (myEntry.status && myEntry.status.toLowerCase() === 'installed')) {
                     updateUIInstalled(myEntry.location || "On Desktop", false);
                 } else {
                     updateUINotInstalled();
@@ -212,25 +230,17 @@ export function initAppTracking() {
                 return;
             }
 
-            // ELECTRON VIEW: Check Real Local Status
-            let detectedPath = await window.appAPI.findAppPath(appName);
-            
-            // If not found, try simpler name (e.g. "CPU-Z PC" -> "CPU-Z")
-            if (!detectedPath) {
-                const simpleName = appName.replace(/ PC$/i, "").replace(/ Edition$/i, "");
-                detectedPath = await window.appAPI.findAppPath(simpleName);
-            }
+            // ELECTRON: Check Real Local Status using Smart Search
+            let detectedPath = await smartFindAppPath(appName);
 
             if (detectedPath) {
                 const needsUpdate = (serverLastUpdated && cachedFirebaseData.installedDate && serverLastUpdated !== cachedFirebaseData.installedDate);
                 updateUIInstalled(detectedPath, needsUpdate); 
 
-                // Sync DB if it's installed locally but DB doesn't know yet
                 if (!myEntry || myEntry.status !== 'Installed' || myEntry.installLocation !== detectedPath) {
                     saveFinalInstallState(user.uid, appId, detectedPath, serverLastUpdated);
                 }
             } else {
-                // Not installed locally
                 updateUINotInstalled();
             }
         });
@@ -243,7 +253,6 @@ export function initAppTracking() {
             newUninstall.onclick = (e) => {
                 e.preventDefault();
                 if (window.appAPI.uninstallApp) {
-                    // Try cleaning name for uninstall too
                     const simpleName = appName.replace(/ PC$/i, "").replace(/ Edition$/i, "");
                     window.appAPI.uninstallApp(simpleName);
                     
@@ -258,7 +267,6 @@ export function initAppTracking() {
         }
     }
 
-    // ... rest of functions (startInstallMonitoring, etc.) same as before ...
     async function startInstallMonitoring(appName, appId) {
         if (isMonitoring) return;
         isMonitoring = true;
@@ -272,11 +280,8 @@ export function initAppTracking() {
         const poll = async () => {
             if (!isElectron) { isMonitoring = false; return; }
             
-            let detectedPath = await window.appAPI.findAppPath(appName);
-            if (!detectedPath) {
-                 const simpleName = appName.replace(/ PC$/i, "").replace(/ Edition$/i, "");
-                 detectedPath = await window.appAPI.findAppPath(simpleName);
-            }
+            // Use Smart Search here too
+            let detectedPath = await smartFindAppPath(appName);
 
             if (detectedPath) {
                 updateUIInstalled(detectedPath, false); 
@@ -296,11 +301,7 @@ export function initAppTracking() {
 
     async function checkLocalOnly(appName) {
         if (!isElectron) return;
-        let detectedPath = await window.appAPI.findAppPath(appName);
-        if (!detectedPath) {
-             const simpleName = appName.replace(/ PC$/i, "").replace(/ Edition$/i, "");
-             detectedPath = await window.appAPI.findAppPath(simpleName);
-        }
+        let detectedPath = await smartFindAppPath(appName);
 
         if (detectedPath) {
             updateUIInstalled(detectedPath, false);
