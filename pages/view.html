@@ -211,7 +211,8 @@
     </script>
 
     <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        // UPDATED TO SAFE INIT (getApps)
+        import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
         import { getDatabase, ref, runTransaction, onValue, onDisconnect } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-database.js";
         import { initAppTracking } from "/scripts/app_tracking.js";
@@ -227,7 +228,8 @@
             measurementId: "G-FLBX24J98C"
         };
 
-        const app = initializeApp(firebaseConfig);
+        // --- SAFE INIT (Fixes the Crash) ---
+        const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
         const db = getFirestore(app);      
         const rtdb = getDatabase(app);     
 
@@ -299,7 +301,7 @@
                     wrapper.style.display = 'flex';
                     document.getElementById('page-loader').style.display = 'none';
 
-                    // START TRACKING
+                    // START TRACKING (Now that app is safely init)
                     initAppTracking();
 
                 } else {

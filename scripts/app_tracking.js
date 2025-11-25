@@ -14,7 +14,7 @@ const firebaseConfig = {
     measurementId: "G-FLBX24J98C"
 };
 
-// --- SAFE INITIALIZATION (CRITICAL FIX) ---
+// --- SAFE INITIALIZATION ---
 const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
 const auth = getAuth(app);
 const db = getDatabase(app);
@@ -64,19 +64,23 @@ export function initAppTracking() {
     // --- ELECTRON CHECK ---
     const isElectron = window.appAPI && window.appAPI.findAppPath;
 
-    // --- 1. HANDLE DOWNLOAD CLICK ---
+    // --- 1. HANDLE DOWNLOAD CLICK (FIXED: No Replacement) ---
     if (btnDownload) {
-        const newBtn = btnDownload.cloneNode(true);
-        btnDownload.parentNode.replaceChild(newBtn, btnDownload);
-        
-        newBtn.addEventListener("click", () => {
-            const user = auth.currentUser;
-            if (user && !user.isAnonymous) {
-                saveToHistory(user.uid, appId, appName, appIcon, "Downloading...");
-            } else {
-                showToast("Download started. Login to save history.");
-            }
-        });
+        // Remove any previous listeners we might have added (to be safe) by cloning ONE last time if needed, 
+        // OR better: just add the listener. Since page reloads, adding is fine.
+        // To prevent duplicate listeners if init is called twice, we check a flag.
+        if (!btnDownload.dataset.trackingAttached) {
+            btnDownload.addEventListener("click", () => {
+                const user = auth.currentUser;
+                if (user && !user.isAnonymous) {
+                    console.log("Saving to history...");
+                    saveToHistory(user.uid, appId, appName, appIcon, "Downloading");
+                } else {
+                    showToast("Download started. Login to save history.");
+                }
+            });
+            btnDownload.dataset.trackingAttached = "true";
+        }
     }
 
     // --- 2. HANDLE OPEN CLICK (Electron) ---
@@ -166,6 +170,7 @@ export function initAppTracking() {
             cachedFirebaseData = snapshot.val() || {};
             
             if (!isElectron) {
+                // If just web, we don't change buttons to "Open", but we assume install is not verifiable locally
                 updateUINotInstalled(); 
                 return;
             }
@@ -186,6 +191,7 @@ export function initAppTracking() {
         });
 
         if (btnUninstall && isElectron) {
+            // Simple replacement for uninstall is fine as it has no other listeners
             const newUninstall = btnUninstall.cloneNode(true);
             btnUninstall.parentNode.replaceChild(newUninstall, btnUninstall);
 
@@ -252,7 +258,7 @@ export function initAppTracking() {
             appId: id, 
             icon: icon, 
             timestamp: timestamp, 
-            status: status || 'downloading'
+            status: status || 'Downloading' // Ensure string value
         }).catch((err) => console.error(err));
     }
     
@@ -260,7 +266,7 @@ export function initAppTracking() {
         const timestamp = Date.now();
         const dateString = versionDate || new Date(timestamp).toLocaleDateString();
         update(ref(db, `users/${uid}/history/${id}`), {
-            status: 'installed', 
+            status: 'Installed', 
             installLocation: location, 
             timestamp: timestamp, 
             installedDate: dateString,
