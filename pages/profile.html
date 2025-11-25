@@ -156,6 +156,7 @@
 <div class="container" > 
 <!-- ==========================================
      START OF PROFILE CONTAINER CONTENT
+     Paste this INSIDE <div class="container">
 ========================================== -->
 
 <style>
@@ -389,10 +390,10 @@
 <div id="toast">Notification</div>
 
 <script type="module">
-    import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-    import { getAuth, onAuthStateChanged, updateProfile, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-    import { getDatabase, ref, onValue, update as updateDB } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-database.js";
-    import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-storage.js";
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
+    import { getAuth, onAuthStateChanged, updateProfile, signOut } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
+    import { getDatabase, ref, onValue, update as updateDB } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-database.js";
+    import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-storage.js";
 
     const firebaseConfig = {
         apiKey: "AIzaSyAJrJnSQI7X1YJHLOfHZkknmoAoiOiGuEo",
@@ -406,7 +407,7 @@
     };
 
     try {
-        const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
+        const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getDatabase(app);
         const storage = getStorage(app);
@@ -435,7 +436,7 @@
                 if(confirm("Are you sure you want to logout?")) {
                     signOut(auth).then(() => {
                         showToast("Logged out successfully!");
-                        window.location.replace('/pages/login.html');
+                        setTimeout(() => window.location.href = '/pages/login.html', 1000);
                     }).catch((error) => {
                         showToast("Error logging out: " + error.message);
                     });
@@ -443,7 +444,7 @@
             });
         }
 
-        // 2. UPLOAD LOGIC
+        // 2. UPLOAD LOGIC (With Cache Busting)
         if(els.wrapper && els.fileInput) {
             els.wrapper.addEventListener('click', () => els.fileInput.click());
             
@@ -457,33 +458,52 @@
                 showToast("Uploading...");
                 
                 try {
+                    // Create ref (overwrite existing)
                     const picRef = storageRef(storage, 'profile_pics/' + user.uid);
+                    
+                    // Upload
                     await uploadBytes(picRef, file);
+                    
+                    // Get URL
                     const url = await getDownloadURL(picRef);
+                    
+                    // Update Auth & DB
                     await updateProfile(user, { photoURL: url });
                     await updateDB(ref(db, 'users/' + user.uid), { photoURL: url });
                     
+                    // FORCE UPDATE UI with Timestamp (Bypasses Browser Cache)
                     const cacheBuster = "?t=" + new Date().getTime();
                     els.avatar.src = url + cacheBuster;
                     
                     showToast("Profile picture updated!");
+                    
                 } catch (err) {
                     console.error(err);
-                    showToast("Failed: " + err.message);
+                    if(err.code === 'storage/unauthorized') {
+                        showToast("Error: Enable Storage in Firebase Console!");
+                    } else {
+                        showToast("Failed: " + err.message);
+                    }
                 } finally {
                     els.wrapper.classList.remove('uploading');
                 }
             });
         }
 
-        // 3. AUTH LISTENER & REDIRECT CHECK
+        // 3. AUTH LISTENER
+        let gotResponse = false;
+
         onAuthStateChanged(auth, (user) => {
-            // FIX: Treat Anonymous users as NOT logged in for the profile page
-            if (user && !user.isAnonymous) {
+            gotResponse = true;
+
+            if (user) {
                 // --- LOGGED IN ---
                 if(els.name) els.name.textContent = user.displayName || "User";
                 if(els.email) els.email.textContent = user.email;
+                
+                // Load Photo (Use cache busting if possible, otherwise simple URL)
                 if(els.avatar && user.photoURL) {
+                    // If URL already has params (Firebase ones do), append with &
                     const separator = user.photoURL.includes('?') ? '&' : '?';
                     els.avatar.src = user.photoURL + separator + "v=" + Math.random(); 
                 }
@@ -491,21 +511,38 @@
                 const userRef = ref(db, 'users/' + user.uid);
                 onValue(userRef, (snapshot) => {
                     const data = snapshot.val() || {};
+                    
                     if(els.phone) els.phone.textContent = data.phone || user.phoneNumber || "Not Set";
                     if(els.user) els.user.textContent = data.username ? `@${data.username}` : (user.displayName ? `@${user.displayName}` : "@user");
+                    
+                    // Also update from DB to be sure
                     if(els.avatar && data.photoURL) {
                          const separator = data.photoURL.includes('?') ? '&' : '?';
                          els.avatar.src = data.photoURL + separator + "db=" + Math.random(); 
                     }
+
                     renderList(data.history || {}, els.history, 'download');
                     renderList(data.favorites || {}, els.favs, 'heart');
                 });
+
             } else {
-                // --- USER IS GUEST OR NOT LOGGED IN -> REDIRECT ---
-                console.log("User not logged in (or is anonymous). Redirecting...");
-                window.location.replace("/pages/login.html");
+                setGuestState();
             }
         });
+
+        setTimeout(() => {
+            if (!gotResponse) setGuestState();
+        }, 2500);
+
+        function setGuestState() {
+            if(els.name) els.name.textContent = "Guest";
+            if(els.email) els.email.textContent = "-";
+            if(els.phone) els.phone.textContent = "-";
+            if(els.user) els.user.textContent = "-";
+            const loginLink = `<div class="empty-state"><p>Please <a href="/pages/login.html" style="color:#9F00FF;font-weight:bold;">Login</a></p></div>`;
+            if(els.history) els.history.innerHTML = loginLink;
+            if(els.favs) els.favs.innerHTML = loginLink;
+        }
 
         function renderList(dataObj, container, type) {
             if(!container) return;
@@ -529,8 +566,7 @@
 
     } catch (e) {
         console.error("CRITICAL ERROR:", e);
-        // Fallback redirect if something explodes
-        window.location.replace("/pages/login.html");
+        document.getElementById('u-name').textContent = "Script Error";
     }
 </script>
 <!-- ==========================================
@@ -573,14 +609,13 @@
 <script src="/scripts/tog.js"></script>
 <script src="/scripts/caro.js"></script>
 <script src="/scripts/particles.js"></script>
+<script type="module" src="/scripts/download-index.js"></script>
+<script type="module" src="/scripts/ai_assistant.js"></script>
+<script type="module" src="/scripts/stats.js"></script>
 <script src="/scripts/theme.js"></script>
 <script src="/scripts/search.js"></script>
 <script src="/scripts/hamburger.js"></script>
 <script type="module" src="/scripts/header_auth.js"></script>
-<script type="module" src="/scripts/app_tracking.js"></script>
-<script type="module" src="/scripts/download-index.js"></script>
-<script type="module" src="/scripts/ai_assistant.js"></script>
-<script type="module" src="/scripts/stats.js"></script>
 <script type="module">
 /* When clicking download */
 document.querySelectorAll(".gn-btn-download").forEach(btn => {
@@ -602,4 +637,3 @@ document.querySelectorAll(".gn-btn-download").forEach(btn => {
 });
 </script>
 </body>
-</html>

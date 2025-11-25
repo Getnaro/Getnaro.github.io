@@ -132,13 +132,13 @@
                     <div class="fs-actions">
                         <a href="#" class="fs-btn gn-btn-download" id="d-btn-download" target="_blank"><i class="fa-solid fa-download"></i> DOWNLOAD NOW</a>
                         
-                        <!-- NEW: OPEN BUTTON (Hidden by default, shown by Electron logic) -->
+                        <!-- OPEN BUTTON (Hidden by default, shown by Electron) -->
                         <button class="fs-btn gn-btn-open" id="d-btn-open" style="display: none;"><i class="fa-solid fa-arrow-up-right-from-square"></i> OPEN APP</button>
                         
                         <a href="#" class="fs-btn gn-btn-update" id="d-btn-update" style="display: none;"><i class="fa-solid fa-rotate"></i> UPDATE</a>
                         <a href="#" class="fs-btn gn-btn-uninstall" id="d-btn-uninstall" style="display: none;"><i class="fa-solid fa-trash"></i> UNINSTALL</a>
 
-                        <!-- NEW: FAVOURITE BUTTON -->
+                        <!-- FAVORITE BUTTON (Always visible, logic handles auth) -->
                         <button class="fs-btn gn-btn-fav" id="d-btn-fav" title="Add to Favorites"><i class="fa-regular fa-heart"></i></button>
                     </div>
                 </div>
@@ -188,12 +188,10 @@
     <script src="/scripts/theme.js"></script>
     <script src="/scripts/search.js"></script>
     <script src="/scripts/hamburger.js"></script>
-    <!-- REMOVED header_auth from here to prevent duplicate execution, imported below as module -->
     <script type="module" src="/scripts/header_auth.js"></script>
     <script type="module" src="/scripts/ai_assistant.js"></script>
 
     <script>
-        // Simple Toast & Clipboard logic
         function showToast(message) {
             const toast = document.getElementById("gn-toast");
             const toastMsg = document.getElementById("gn-toast-msg");
@@ -295,14 +293,13 @@
                     const wrapper = document.getElementById('app-card-root');
                     wrapper.setAttribute('data-app', appId);
                     wrapper.setAttribute('data-category', data.category || "tools");
-                    // NEW: Pass the last updated date to DOM for app_tracking.js comparison
                     wrapper.setAttribute('data-last-updated', data.lastUpdated || "");
                     
                     document.title = `${data.name} - Download at Getnaro`;
                     wrapper.style.display = 'flex';
                     document.getElementById('page-loader').style.display = 'none';
 
-                    // Initialize tracking ONLY after content is loaded
+                    // START TRACKING
                     initAppTracking();
 
                 } else {

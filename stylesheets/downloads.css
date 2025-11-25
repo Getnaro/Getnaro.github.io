@@ -51,7 +51,7 @@
         100% { transform: translate(20px, -20px) scale(1.1); }
     }
 
-    /* Logo - Added gn-card-left for JS targeting */
+    /* Logo */
     .fs-logo-container {
         z-index: 2;
         width: 280px;
@@ -217,7 +217,7 @@
     .fs-copy-btn:hover { color: white; }
 
     /* --- BUTTONS (Integrated with Tracking Classes) --- */
-    .fs-actions { display: flex; gap: 20px; flex-wrap: wrap;      i{
+    .fs-actions { display: flex; gap: 20px; flex-wrap: wrap; align-items: center; i{
             color: white !important;
 
         }
@@ -288,7 +288,7 @@
         transform: translateY(-3px);
         box-shadow: 0 15px 40px rgba(33, 150, 243, 0.2);
         i{
-            color: #2196F3 !important; /* Fixed color reference */
+            color: #2196F3 !important;
         }
     }
 
@@ -306,14 +306,15 @@
         box-shadow: 0 15px 40px rgba(255, 77, 77, 0.3);
     }
 
-    /* FAV Button (Heart) */
+    /* FAV Button (Heart) - VISIBLE ALWAYS */
     .gn-btn-fav {
         background: transparent;
-        border: 2px solid #ff69b4; /* Hot pink border */
+        border: 2px solid #ff69b4;
         color: #ff69b4 !important;
-        padding: 18px 25px; /* Smaller width */
+        padding: 18px 25px;
         min-width: unset;
         font-size: 1.4rem;
+        display: inline-flex !important; /* Force visible */
     }
     .gn-btn-fav:hover, .gn-btn-fav.active {
         background: #ff69b4;
