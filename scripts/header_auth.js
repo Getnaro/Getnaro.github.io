@@ -1,7 +1,7 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
 
-// --- 1. FIREBASE CONFIGURATION ---
+// --- FIREBASE CONFIG ---
 const firebaseConfig = {
     apiKey: "AIzaSyAJrJnSQI7X1YJHLOfHZkknmoAoiOiGuEo",
     authDomain: "getnaroapp.firebaseapp.com",
@@ -13,34 +13,29 @@ const firebaseConfig = {
     measurementId: "G-FLBX24J98C"
 };
 
-// Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 
-// --- 2. AUTH STATE LISTENER ---
+// --- AUTH STATE LISTENER ---
 onAuthStateChanged(auth, (user) => {
-    // Select both Desktop and Mobile menu "Account" links
-    // We look for links that currently point to login.html OR profile.html
+    // Find "Account" or "Profile" links
     const accountLinks = document.querySelectorAll('a[href*="login.html"], a[href*="profile.html"]');
 
     accountLinks.forEach(link => {
-        // Only target links that actually say "Account" or "Profile" to avoid breaking other links
+        // Safe check for text content to ensure we target the main nav items
         const text = link.textContent.trim().toUpperCase();
-        if (text === "ACCOUNT" || text === "PROFILE") {
-            
-            if (user) {
-                // --- SCENARIO: USER IS LOGGED IN ---
-                // 1. Change Link to Profile
+        
+        // Check if it's the Account/Profile button
+        if (text === "ACCOUNT" || text === "PROFILE" || link.querySelector('i')) { // Logic adjusted to catch icon-only links if any
+             if (user) {
+                // User is LOGGED IN -> Point to Profile
                 link.href = "/pages/profile.html";
-                // 2. (Optional) Change Text to 'Profile'
-                // link.textContent = "PROFILE"; 
-                console.log("User Logged In: Redirecting Account button to Profile");
+                // Optional: Update text if you want
+                // if(text === "ACCOUNT") link.textContent = "PROFILE";
             } else {
-                // --- SCENARIO: USER IS LOGGED OUT ---
-                // 1. Change Link to Login
+                // User is LOGGED OUT -> Point to Login
                 link.href = "/pages/login.html";
-                // link.textContent = "ACCOUNT";
-                console.log("User Logged Out: Redirecting Account button to Login");
+                // if(text === "PROFILE") link.textContent = "ACCOUNT";
             }
         }
     });
