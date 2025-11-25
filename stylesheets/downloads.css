@@ -294,16 +294,21 @@
 
     /* Uninstall Button (Red) */
     .gn-btn-uninstall {
-        background: transparent;
-        color: #ff4d4d !important;
-        border: 2px solid #ff4d4d;
-        box-shadow: 0 5px 15px rgba(255, 77, 77, 0.1);
+        background: transparent !important;
+        color: white !important;
+        background-color: #ff4d4d !important;
+        box-shadow: 0 5px 15px #ff4d4d;
+        border: 2px solid #ff4d4d !important;
     }
     .gn-btn-uninstall:hover {
-        background: #ff4d4d;
-        color: white !important;
+        color: #ff4d4d !important;
         transform: translateY(-3px);
+        background: transparent !important;
         box-shadow: 0 15px 40px rgba(255, 77, 77, 0.3);
+
+        i{
+            color: #ff4d4d !important;
+        }
     }
 
     /* FAV Button (Heart) - VISIBLE ALWAYS */
@@ -311,7 +316,8 @@
         background: transparent;
         border: 2px solid #ff69b4;
         color: #ff69b4 !important;
-        padding: 18px 25px;
+        padding: 20px 35px;
+        margin-left: 10px;
         min-width: unset;
         font-size: 1.4rem;
         display: inline-flex !important; /* Force visible */
@@ -356,6 +362,9 @@
     body.light-mode .gn-btn-download:hover { color: #9F00FF !important; background: white; }
     body.light-mode .gn-btn-open:hover { color: #00c851 !important; background: white; }
     body.light-mode .gn-custom-toast { background-color: rgba(255, 255, 255, 0.95); color: #1a1a1a; border-color: #9F00FF; }
+    body.light-mode .gn-btn-uninstall{border: #ff4d4d !important;
+    }
+    body.light-mode .gn-btn-uninstall:hover{color: #ff4d4d !important;border:2px solid #ff4d4d !important;}
 
     /* Responsive */
     @media (max-width: 1000px) {
@@ -367,3 +376,14 @@
         .fs-loc-link { max-width: 100%; white-space: normal; word-break: break-all; }
         .fs-actions { justify-content: center; }
     }
+    .search-result-item {
+    background: white; /* Problematic default */
+    color: black;
+    /* ... */
+}
+
+/* From header.css/style.css: Dark Mode fix attempt */
+body.dark-mode .search-result-item {
+    background: var(--gn-bg-alt, #1a1a1a) !important;
+    color: var(--gn-text, #fff) !important;
+}

@@ -830,6 +830,7 @@ mark {
 #gn-search-results::-webkit-scrollbar-track {
     background: transparent;
 }
+
 /* ========================= FLOATING PARTICLES ========================= */
 /* ---------- SAFE MOBILE HEADER + HAMBURGER (MOBILE/TABLET ONLY) ---------- */
 
@@ -1385,4 +1386,15 @@ body.dark-mode .search-result-item p {
     .heading{
         max-height: 85px !important;
     }
+}
+.search-result-item {
+    background: white; /* Problematic default */
+    color: black;
+    /* ... */
+}
+
+/* From header.css/style.css: Dark Mode fix attempt */
+body.dark-mode .search-result-item {
+    background: var(--gn-bg-alt, #1a1a1a) !important;
+    color: var(--gn-text, #fff) !important;
 }

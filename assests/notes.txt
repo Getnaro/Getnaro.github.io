@@ -85,7 +85,7 @@
     </ul>
 
     <!-- Download App -->
-    <a class="gn-mobile-download" href="/pages/getnaro-app.html">
+     <a class="gn-mobile-download" href="/pages/getnaro-app.html">
       <i class="fa-solid fa-download" aria-hidden="true"></i> <span>Download App</span>
     </a>
 
@@ -93,18 +93,25 @@
 </nav>
 <!-- ========== END GN MOBILE HAMBURGER ========== -->
 
-<!-- MODERN FULLSCREEN SEARCH -->
+<!-- REQUIRED: The FULLSCREEN SEARCH OVERLAY -->
 <div id="gn-search-overlay" class="gn-search-overlay">
     <div class="gn-search-wrapper">
         <i class="fa-solid fa-magnifying-glass search-icon"></i>
+        <!-- CRITICAL: Input field must have the ID 'gn-search-input' -->
         <input type="text" id="gn-search-input" placeholder="Search here" style="overflow-x: hidden;" autocomplete="off">
         <button id="gn-search-close" class="close-btn">
             <i class="fa-solid fa-xmark"></i>
         </button>
     </div>
 
-    <div id="gn-search-results" class="gn-search-results"></div>
+    <!-- CRITICAL: Results container must have the ID 'gn-search-results' -->
+    <div id="gn-search-results" class="gn-search-results">
+        <!-- Results will be dynamically injected here by search.js -->
+    </div>
 </div>
+<!-- ========== END GN MOBILE HAMBURGER ========== -->
+
+
 
 <div class="container" > 
 <!--All the Coded Contents must be here--> 
@@ -148,7 +155,7 @@
 <script src="/scripts/caro.js"></script>
 <script src="/scripts/particles.js"></script>
 <script src="/scripts/theme.js"></script>
-<script src="/scripts/search.js"></script>
+<script type="module" src="/scripts/search.js"></script>
 <script src="/scripts/hamburger.js"></script>
 <script type="module" src="/scripts/appstats.js"></script>
 <script type="module" src="/scripts/app_tracking.js"></script>
@@ -158,7 +165,7 @@
 <script type="module" src="/scripts/stats.js"></script>
 <script src="/scripts/particles.js"></script>
 <script src="/scripts/theme.js"></script>
-<script src="/scripts/search.js"></script>
+<script type="module" src="/scripts/search.js"></script>
 <script src="/scripts/hamburger.js"></script>
 <script type="module" src="/scripts/download-index.js"></script>
 <script type="module" src="/scripts/stats.js"></script>

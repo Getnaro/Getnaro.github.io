@@ -81,6 +81,13 @@ export function initAppTracking() {
     
     let cachedFirebaseData = {};
 
+    // --- START OF EDIT: IMMEDIATE UI STATE FOR WEB/MOBILE ---
+    // Enforce Download-only UI instantly if not running in Electron
+    if (!isElectron) {
+        updateUINotInstalled();
+    }
+    // --- END OF EDIT ---
+
     // --- 1. HANDLE DOWNLOAD CLICK ---
     if (btnDownload) {
         if (!btnDownload.dataset.trackingAttached) {
