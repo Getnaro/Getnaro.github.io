@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Getnaro Online</title>
+        <link rel="stylesheet" href="/stylesheets/header.css">
+        <link rel="stylesheet" href="/stylesheets/ai_assistant.css">
+    <!-- FONTS & ICONS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <!-- SEO + META -->
+    <meta name="title" content="Getnaro — Free Software, Drivers & Tools Download Hub">
+    <meta name="description"
+        content="Getnaro is your all-in-one download hub for Windows software, drivers, tools, utilities and essential apps. Fast, safe and direct downloads with no ads or redirects. Updated daily.">
+    <meta name="keywords"
+        content="Getnaro, software download, drivers download, free pc tools, windows apps download, downloader website, pc utilities, direct download hub">
+    <meta name="author" content="Getnaro Team">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://getnaro.com/">
+
+    <!-- SOCIAL -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Getnaro — Free Software, Drivers & Tools Download Hub">
+    <meta property="og:description"
+        content="Download software, drivers, utilities and PC tools safely from Getnaro. Direct downloads without ads or redirects.">
+    <meta property="og:image" content="https://getnaro.com/assets/getnaro-banner.jpg">
+    <meta property="og:url" content="https://getnaro.com/">
+    <meta name="twitter:card" content="summary_large_image">
+    <!-- FAVICON -->
+    <link rel="icon" type="image/x-icon" href="/assests/Favicon.png">
+    <style>
+/* -------------------------------------------------- */
+/* FONT & GLOBAL */
+/* -------------------------------------------------- */
+@font-face {
+    font-family: Getnaro;
+    src: url(assests/Getnaro-medium.ttf);
+}
+/* -------------------------------------------------- */
+/* BG ANIMATION */
+/* -------------------------------------------------- */
+.bg {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    color: var(--text);
+    background-color: var(--bg);
+    background-size: 400% 400%;
+    animation: bgMove 14s ease infinite;
+    z-index: -5;
+}
+
+@keyframes bgMove {
+    0% { background-position: 0 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0 50%; }
+}
+
+/* -------------------------------------------------- */
+/* ABOUT BOX */
+/* -------------------------------------------------- */
+.about-box {
+    width: 75%;
+    margin: 180px auto 60px;
+    padding: 40px;
+    border-radius: 25px;
+    backdrop-filter: blur(15px);
+    box-shadow: 0 0 30px #9F00FF40;
+    background: none;
+    animation: fadeIn 1.3s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(60px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* -------------------------------------------------- */
+/* GLASSY MISSION + VISION COMPARTMENT */
+/* -------------------------------------------------- */
+.glass-box {
+    width: 100%;
+    padding: 35px;
+    border-radius: 20px;
+    backdrop-filter: blur(25px);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    margin-bottom: 40px;
+    box-shadow: 0 0 25px #ffffff1a;
+    animation: fadeIn 1.4s ease;
+}
+
+.glass-box h3 {
+    font-size: 40px;
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.glass-box p {
+    font-size: 23px;
+    line-height: 38px;
+}
+
+/* -------------------------------------------------- */
+/* ABOUT DETAILS */
+/* -------------------------------------------------- */
+.about-info {
+    font-size: 25px;
+    line-height: 45px;
+    color: var(--text);
+    background-color: var(--bg);
+}
+
+.about-info span {
+    color: #9F00FF !important;
+}
+
+/* -------------------------------------------------- */
+/* SOCIAL ICONS */
+/* -------------------------------------------------- */
+.social-icons {
+    margin-top: 25px;
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+}
+
+.social-icons a {
+    font-size: 45px;
+    transition: .4s;
+}
+
+.social-icons a:hover {
+    color: #9F00FF;
+    text-shadow: 0 0 20px #9F00FF;
+}
+
+/* CONTACT BUTTON INSIDE ABOUT BOX */
+.contact-btn {
+    margin: 35px auto;
+    display: block;
+    width: 280px;
+    text-align: center;
+    padding: 20px;
+    background: #9F00FF;
+    border-radius: 15px;
+    font-size: 24px;
+    color: white !important;
+    text-decoration: none;
+    transition: .4s;
+}
+
+.contact-btn:hover {
+    box-shadow: 0 0 25px #9F00FF;
+}
+.vline{
+    position: absolute;
+    background-color: #9F00FF;
+    width: 80%;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    height: 5px;
+    border-radius: 50px;
+    right: 0;
+    margin: auto;
+}
+/* -------------------------------------------------- */
+/* RESPONSIVE */
+/* -------------------------------------------------- */
+@media (max-width: 900px) {
+    .about-box { width: 92%; }
+    .about-info { font-size: 20px; }
+    .glass-box p { font-size: 20px; }
+    .glass-box h3 { font-size: 30px; }
+    .heading ul { width: 80%; right: 5%; }
+    .heading .dl { display: none; }
+}
+    </style>
+</head>
+
+<body>
+
+ <canvas id="gn-particles"></canvas>
+    <!-- ------------------ HEADER ------------------ -->
+<div class="heading">
+
+    <a href="/index.html"><img src="/assests/logo-getnaro-nobg.png" class="logo"></a>
+    <h4>Getnaro</h4>
+    <ul>
+        <li><a href="/index.html" 
+        >HOME</a></li>
+        <li><a href="/pages/community.html">COMMUNITY</a></li>
+        <li><a href="/pages/login.html">ACCOUNT</a></li>
+        <li><a href="/pages/about.html" style="background-color:#9F00FF; color: white !important;
+        padding: 10px ; 
+        border-radius: 10px;">ABOUT US</a></li>
+        <li><a href="/pages/faq.html">FAQ</a></li>
+    </ul>
+<button id="theme-toggle" class="theme-toggle">
+    <i id="theme-icon" class="fa-solid fa-moon"></i>
+</button>
+<div id="gn-search-btn" class="gn-search-btn">
+    <i class="fa-solid fa-magnifying-glass"></i>
+</div>
+    <a class="dl"
+        href="/pages/getnaro-app.html">
+        <i class="fa-solid fa-download"></i> DOWNLOAD APP
+    </a>
+</div>
+<!-- ========== GN MOBILE HAMBURGER (SAFE OUTSIDE HEADER) ========== -->
+<button id="gn-hamburger" class="gn-hamburger" aria-expanded="false" aria-label="Open menu">
+  <span class="gn-ham-box"><span class="gn-ham-inner"></span></span>
+</button>
+
+<nav id="gn-mobile-nav" class="gn-mobile-nav" aria-hidden="true">
+  <div class="gn-mobile-backdrop" data-close></div>
+
+  <div class="gn-mobile-panel" role="dialog" aria-modal="true">
+
+    <!-- Mobile Search — triggers existing #gn-search-btn -->
+    <button class="gn-mobile-btn gn-mobile-search" type="button" aria-label="Open search">
+      <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i> <span>Search</span>
+    </button>
+
+    <!-- Theme toggle — triggers existing #theme-toggle -->
+    <button class="gn-mobile-btn gn-mobile-theme" type="button" aria-label="Toggle theme">
+      <i class="fa-solid fa-moon" aria-hidden="true"></i> <span>Theme</span>
+    </button>
+
+    <!-- EXACT UL you provided -->
+    <ul class="gn-mobile-links" role="menu" aria-label="Mobile navigation">
+      <li role="none"><a role="menuitem" href="/index.html">Home</a></li>
+      <li role="none"><a role="menuitem" href="/pages/community.html">Community</a></li>
+      <li role="none"><a role="menuitem" href="/pages/login.html">Account</a></li>
+      <li role="none"><a role="menuitem" href="/pages/about.html">About Us</a></li>
+      <li role="none"><a role="menuitem" href="/pages/faq.html">FAQ</a></li>
+    </ul>
+
+    <!-- Download App -->
+    <a class="gn-mobile-download" href="/pages/getnaro-app.html">
+      <i class="fa-solid fa-download" aria-hidden="true"></i> <span>Download App</span>
+    </a>
+
+  </div>
+</nav>
+<!-- ========== END GN MOBILE HAMBURGER ========== -->
+
+<!-- MODERN FULLSCREEN SEARCH -->
+<div id="gn-search-overlay" class="gn-search-overlay">
+    <div class="gn-search-wrapper">
+        <i class="fa-solid fa-magnifying-glass search-icon"></i>
+        <input type="text" id="gn-search-input" placeholder="Search here" style="overflow-x: hidden;" autocomplete="off">
+        <button id="gn-search-close" class="close-btn">
+            <i class="fa-solid fa-xmark"></i>
+        </button>
+    </div>
+
+    <div id="gn-search-results" class="gn-search-results"></div>
+</div>
+<div id="gn-ai-root">
+    <!-- Floating Button -->
+    <div class="gn-ai-fab" id="gn-ai-trigger">
+        <i class="fa-solid fa-robot" style="color: white !important;"></i>
+        <span style="color: white !important;">Chat Now</span>
+    </div>
+
+    <div class="gn-ai-overlay" id="gn-ai-overlay">
+        <div class="gn-ai-box">
+            
+            <!-- Header -->
+            <div class="gn-ai-header">
+                <div class="gn-ai-title">
+                    <div class="gn-bot-avatar">
+                        <i class="fa-solid fa-brain" style="color: aliceblue !important;"></i>
+                    </div>
+                    <div class="gn-ai-info">
+                        <h3>Getnaro Assistant</h3>
+                        <p>AI Powered • Voice Enabled</p>
+                    </div>
+                </div>
+                <button class="gn-ai-close" id="gn-ai-close"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+
+            <!-- Chat Area -->
+            <div class="gn-ai-messages" id="gn-ai-chat">
+                <!-- Intro Message -->
+                <div class="msg bot">
+                    Hello! I'm your Getnaro Assistant. I can help you find software, answer FAQs, or navigate the site.<br><br>
+                    Try saying <b>"Install AMD Drivers"</b> or <b>"Open Profile"</b>.
+                </div>
+            </div>
+
+            <!-- Input Area -->
+            <div class="gn-ai-input-area">
+                <button class="gn-ai-btn" id="btn-mic" title="Speak"><i class="fa-solid fa-microphone"></i></button>
+                <button class="gn-ai-btn" id="btn-speaker" title="Text-to-Speech Toggle"><i class="fa-solid fa-volume-high"></i></button>
+                <input type="text" class="gn-ai-input" id="gn-ai-input" placeholder="Type a message or ask a question..">
+                <button class="gn-ai-btn" id="btn-send"><i class="fa-solid fa-paper-plane" style="color: aliceblue !important;"></i></button>
+            </div>
+
+        </div>
+    </div>
+</div>
+<!-- ABOUT BOX -->
+<div class="about-box">
+
+    <!-- GLASSY MISSION & VISION SECTION -->
+    <div class="glass-box">
+        <h3><i class="fa-solid fa-bullseye"></i> Our Mission</h3>
+        <p>
+            To create a clean, fast and secure platform for downloading Windows software, essential drivers, tools and utilities — fully free from ads, redirects, or interruptions.
+        </p>
+
+        <br><br> <span class="vline">
+
+        </span>
+
+        <h3><i class="fa-solid fa-eye"></i> Our Vision</h3>
+        <p>
+            To establish Getnaro as one of India’s most trusted indie-built download hubs by offering transparency, speed, a modern UI, and an enjoyable user-first experience.
+        </p>
+    </div>
+
+    <!-- CONTACT BUTTON -->
+    <a href="contact.html" class="contact-btn">Contact Us 📩</a>
+
+    <!-- ALL OTHER DETAILS -->
+    <div class="about-info">
+        <p><span>Category:</span> Sole Proprietorship</p>
+        <p><span>Domain:</span> www.getnaro.online</p>
+        <p><span>Domain Provider:</span> BigRock</p>
+        <p><span>Hosting:</span> GitHub Repository</p>
+        <p><span>Developer:</span> NaroTech</p>
+        <p><span>State / UT:</span> Tamil Nadu</p>
+        <p><span>Genre:</span> Indie / Solo Developer Project</p>
+        <p><span>Year Started:</span> 2025</p>
+    </div>
+
+    <br><br>
+
+    <!-- SOCIAL -->
+    <div class="social-icons">
+        <a href="https://instagram.com/yourpage" target="_blank"><i class="fa-brands fa-instagram"></i></a>
+        <a href="https://discord.gg/yourserver" target="_blank"><i class="fa-brands fa-discord"></i></a>
+        <a href="https://wa.me/yourNumber" target="_blank"><i class="fa-brands fa-whatsapp"></i></a>
+        <a href="https://reddit.com/u/yourprofile" target="_blank"><i class="fa-brands fa-reddit"></i></a>
+        <a href="https://youtube.com/yourchannel" target="_blank"><i class="fa-brands fa-youtube"></i></a>
+    </div>
+
+</div>
+<footer class="footer">
+    <div class="footer-container">
+
+        <div class="footer-col">
+            <h3>Getnaro</h3>
+            <p>Official download redirection hub for Windows software, tools, utilities and drivers—clean, safe & ad-free.</p>
+        </div>
+
+       <div class="footer-col">
+            <h3>Quick Links</h3>
+            <a href="/pages/t&c.html">Terms & Conditions</a><br>
+            <a href="/pages/coc.html">Code Of Conduct</a><br>
+            <a href="/pages/privacypolicy.html">Privacy Policy</a><br>
+            <a href="/pages/contact.html">Contact</a>
+        </div>
+
+        <div class="footer-col">
+            <h3>Follow Us</h3>
+            <div class="footer-social">
+                 <a href="https://www.instagram.com/narotech.india" target="_blank"><i class="fa-brands fa-instagram"></i></a>
+                <a href="https://discord.gg/mcxbEsxXcQ" target="_blank"><i class="fa-brands fa-discord"></i></a>
+                <a href="https://whatsapp.com/channel/0029Vb7IFu7HwXbKP3roZa0E" target="_blank"><i class="fa-brands fa-whatsapp"></i></a>
+                <a href="https://www.reddit.com/r/narotech" target="_blank"><i class="fa-brands fa-reddit" ></i></a>
+                <a href="https://www.youtube.com/@narotechofc" target="_blank"><i class="fa-brands fa-youtube"></i></a>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="footer-bottom">
+        © 2025 Getnaro — Developed by NaroTech • Hosted on GitHub • Domain by BigRock
+    </div>
+
+</footer>
+<script src="/scripts/tod.js"></script>
+<script src="/scripts/tog.js"></script>
+<script src="/scripts/caro.js"></script>
+<script src="/scripts/particles.js"></script>
+<script type="module" src="/scripts/download-index.js"></script>
+<script type="module" src="/scripts/ai_assistant.js"></script>
+<script type="module" src="/scripts/stats.js"></script>
+<script src="/scripts/theme.js"></script>
+<script src="/scripts/search.js"></script>
+<script src="/scripts/hamburger.js"></script>
+<script type="module" src="/scripts/header_auth.js"></script>
+</body>
+</html>

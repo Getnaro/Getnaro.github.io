@@ -1,0 +1,506 @@
+[
+  {
+    "id": "gigabyte-driver",
+    "name": "GIGABYTE Driver",
+    "category": "drivers",
+    "tags": ["gpu", "motherboard", "gcc"],
+    "description": "The Gigabyte Control Center (GCC) is a unified software platform designed for all Gigabyte supported products. It provides a newly designed, intuitive user interface to control essential functions like RGB Fusion for lighting, Fan Control for thermal management, and Performance Tuning for overclocking. Keeping this driver updated ensures your Gigabyte hardware runs efficiently and remains compatible with the latest Windows updates. This tool simplifies hardware management by bringing all necessary controls into a single, easy-to-use dashboard for seamless operation.",
+    "downloadLink": "https://www.gigabyte.com/Support/Consumer/Download",
+    "image": "/images/gigabyte-logo.png"
+  },
+  {
+    "id": "amd-driver",
+    "name": "AMD Driver",
+    "category": "drivers",
+    "tags": ["gpu", "driver", "ryzen"],
+    "description": "The AMD Driver package is the foundational software required for optimal operation of all AMD hardware components, including Ryzen processors and Radeon graphics cards. This essential driver ensures high system stability, unlocks peak performance across demanding applications, and enables critical features like AMD FreeSync™ and Smart Access Memory. Regular updates improve hardware compatibility, provide performance optimizations for new game releases, and patch security flaws. Keeping your AMD Driver current is crucial for achieving the best user experience and reliable system operation.",
+    "downloadLink": "https://www.amd.com/en/support/download/drivers.html",
+    "image": "/images/AMD-logo.png"
+  },
+  {
+    "id": "amd-adrenalin",
+    "name": "AMD Adrenalin",
+    "category": "drivers",
+    "tags": ["gpu", "amd", "gaming"],
+    "description": "AMD Software: Adrenalin Edition is designed to provide you with a clean, modern, and easy-to-use interface where you can quickly access the latest software features, game stats, performance reports, and driver updates. It features Radeon Super Resolution, AMD Link, and advanced performance tuning controls to get the most out of your Radeon GPU. The software also includes robust recording and streaming tools, allowing you to capture your best gaming moments and share them instantly with your friends and followers online.",
+    "downloadLink": "https://www.amd.com/en/resources/support-articles/release-notes/RN-RAD-WIN-25-11-1.html",
+    "image": "/images/amdadrenaline-logopng.png"
+  },
+  {
+    "id": "amd-pro-edition",
+    "name": "AMD Pro Edition",
+    "category": "drivers",
+    "tags": ["workstation", "pro", "gpu"],
+    "description": "AMD Software: PRO Edition is built for productivity and reliability, specifically tailored for professional environments. It is rigorously tested with leading professional applications to ensure optimal performance and stability for content creators, engineers, and designers. It includes specialized features for enterprise environments and workstation-class hardware, providing peace of mind for mission-critical tasks. With a focus on long-term stability and security, this driver package is the ideal choice for users who demand consistent, high-quality results from their professional workstations.",
+    "downloadLink": "https://www.amd.com/en/resources/support-articles/release-notes/RN-PRO-WIN-25-Q3.html",
+    "image": "/images/amdpro-logo.png"
+  },
+  {
+    "id": "nvidia-app",
+    "name": "NVIDIA App",
+    "category": "drivers",
+    "tags": ["gpu", "geforce", "rtx"],
+    "description": "The NVIDIA App is the essential companion for gamers and creators with NVIDIA GeForce GPUs. It provides a modern, unified interface to keep your drivers up to date, optimize game settings, and capture your best gaming moments. It replaces the older GeForce Experience with a faster, more responsive UI and integrates key features like NVIDIA Broadcast and RTX Video Super Resolution. Whether you need to update drivers, tune performance, or record gameplay, the NVIDIA App streamlines the experience effortlessly.",
+    "downloadLink": "https://www.nvidia.com/en-us/software/nvidia-app/",
+    "image": "/images/nvidia-logo.png"
+  },
+  {
+    "id": "intel-graphics",
+    "name": "Intel Graphics",
+    "category": "drivers",
+    "tags": ["arc", "iris", "display"],
+    "description": "Intel Graphics Drivers are essential for getting the best performance and visual quality from your Intel integrated graphics or Arc dedicated GPUs. They enable features like hardware acceleration for video playback, support for the latest games, and the Intel Arc Control center for fine-tuning your graphics settings. Regular updates ensure compatibility with new software releases and provide critical bug fixes. Installing the latest drivers guarantees that your Intel-powered system delivers smooth visuals and efficient performance for all your daily tasks.",
+    "downloadLink": "https://www.intel.com/content/www/us/en/search.html#sortCriteria=@lastmodifieddt%20descending&cf-tabfilter=Downloads&cf-downloadsppth=Graphics",
+    "image": "/images/interldriver-logo.png"
+  },
+  {
+    "id": "crucial-disk-manager",
+    "name": "Crucial Disk Manager",
+    "category": "drivers",
+    "tags": ["ssd", "storage", "firmware"],
+    "description": "Crucial Disk Manager (Storage Executive) is the definitive utility for optimizing and maintaining Crucial SSDs, designed to significantly enhance system speed and longevity. It features 'Momentum Cache,' an intelligent caching tool that leverages your system's DRAM to boost burst write performance significantly while reducing wear on the drive. The software provides a comprehensive dashboard to monitor real-time drive health, operating temperature, and available storage space. Users can easily perform non-destructive firmware updates and configure Over-provisioning to improve long-term endurance.",
+    "downloadLink": "https://www.crucial.in/content/dam/crucial/support/storage-executive-win-64.zip",
+    "image": "/images/crucial-logo.jpg"
+  },
+  {
+    "id": "asus-downloads",
+    "name": "ASUS Downloads",
+    "category": "drivers",
+    "tags": ["armoury", "crate", "driver"],
+    "description": "The ASUS Download Center provides access to the latest drivers, BIOS, and software for all ASUS products. Whether you need Armoury Crate for lighting control, AI Suite for system tuning, or basic chipset drivers, this is the official source to ensure your ASUS hardware runs perfectly. Keeping your system updated with the latest software from ASUS ensures compatibility with new operating system updates and maximizes the performance and stability of your motherboard, graphics card, and other peripherals.",
+    "downloadLink": "https://www.asus.com/in/support/download-center/",
+    "image": "/images/asus-logo-png_seeklogo-500532.png"
+  },
+  {
+    "id": "msi-downloads",
+    "name": "MSI Downloads",
+    "category": "drivers",
+    "tags": ["utility", "control", "driver"],
+    "description": "MSI Center and Dragon Center are the go-to suites for managing your MSI hardware. From monitoring system temperatures and fan speeds to controlling Mystic Light RGB effects, these tools allow you to unlock the full potential of your MSI motherboard, graphics card, and peripherals. The software provides a unified interface for all your MSI devices, making it easy to keep everything synchronized and running smoothly. Regular updates ensure new features and stability improvements are delivered to your system.",
+    "downloadLink": "https://www.msi.com/support/download",
+    "image": "/images/MSILOGO.PNG"
+  },
+  {
+    "id": "asrock-tweak",
+    "name": "ASRock Tweak",
+    "category": "drivers",
+    "tags": ["overclock", "gpu", "tuning"],
+    "description": "ASRock Tweak is a powerful utility designed for ASRock graphics cards. It allows users to monitor GPU status in real-time and tweak settings such as clock speed, voltage, and fan profiles for optimal performance. It provides a simple interface for both novice and experienced overclockers to get the most out of their hardware. Whether you want to push your card to the limit or optimize it for silent operation, ASRock Tweak gives you the control you need.",
+    "downloadLink": "https://www.asrock.com/Graphics-Card/AMD/Radeon%20RX%206750%20XT%20Challenger%20Pro%2012GB%20OC/#Download",
+    "image": "/images/asrock-logo-png_seeklogo-12146.png"
+  },
+  {
+    "id": "asrock-downloads",
+    "name": "ASRock Downloads",
+    "category": "drivers",
+    "tags": ["motherboard", "utility", "driver"],
+    "description": "The ASRock App Shop is an all-in-one utility designed for system update and software downloading. It provides the latest BIOS updates and driver software for your ASRock motherboard, ensuring your system remains stable and compatible with the newest hardware and games. The App Shop also offers support for various useful applications and utilities that enhance your computing experience. Keeping your system up-to-date has never been easier thanks to the convenient and user-friendly interface of the ASRock App Shop.",
+    "downloadLink": "https://www.asrock.com/support/index.asp?cat=Drivers",
+    "image": "/images/asrock-logo-png_seeklogo-12146.png"
+  },
+  {
+    "id": "winrar-archiver",
+    "name": "WinRar Archiver",
+    "category": "tools",
+    "tags": ["zip", "rar", "extract"],
+    "description": "WinRAR is a powerful archive manager that can backup your data and reduce the size of email attachments. It decompresses RAR, ZIP and other files downloaded from the Internet and creates new archives in RAR and ZIP file format. WinRAR's proprietary compression algorithm is widely considered one of the best on the market, offering higher compression ratios than its competitors. It also supports strong AES-256 encryption, recovery records to repair damaged files, and splitting archives into multiple volumes.",
+    "downloadLink": "https://www.win-rar.com/fileadmin/winrar-versions/winrar/winrar-x64-713.exe",
+    "image": "/images/winrar.jpg"
+  },
+  {
+    "id": "lm-studio",
+    "name": "LM Studio",
+    "category": "productivity",
+    "tags": ["ai", "llm", "local"],
+    "description": "LM Studio is an easy-to-use desktop application for experimenting with local LLMs (Large Language Models). It allows you to download and run models from Hugging Face directly on your computer without needing a complex setup or coding knowledge. With LM Studio, you can chat with AI models entirely offline, ensuring your data stays private and secure. It supports hardware acceleration on modern GPUs, making it a powerful tool for developers, researchers, and enthusiasts exploring the world of AI.",
+    "downloadLink": "https://lmstudio.ai/download/latest/win32/x64",
+    "image": "/images/lmstudio-app-logo.11b4d746.webp"
+  },
+  {
+    "id": "lively-wallpaper",
+    "name": "Lively Wallpaper",
+    "category": "tools",
+    "tags": ["desktop", "custom", "live"],
+    "description": "Lively Wallpaper is a free and open-source software that allows you to set animated desktop wallpapers and screensavers. It supports various types of wallpapers, including videos, GIFs, web pages, and even games. It is lightweight and pauses playback when full-screen applications or games are running to save resources. Lively offers a high degree of customization, allowing you to tweak parameters of your wallpapers to suit your style. Bring your desktop to life with this amazing customization tool.",
+    "downloadLink": "https://github.com/rocksdanister/lively/releases/download/v2.2.1.0/lively_setup_x86_full_v2210.exe",
+    "image": "/images/lively-wallpaper.jpg"
+  },
+  {
+    "id": "translucenttb",
+    "name": "TranslucentTB",
+    "category": "tools",
+    "tags": ["taskbar", "custom", "windows"],
+    "description": "TranslucentTB offers you control over the appearance of your Windows taskbar. You can customize the effect and color of the taskbar on the fly, making it transparent, blurred, or acrylic. It allows for different states depending on whether a window is maximized, the start menu is open, or Cortana is active, giving you a dynamic and aesthetically pleasing desktop environment. It is lightweight, resource-efficient, and integrates seamlessly with Windows 10 and 11 for a cleaner look.",
+    "downloadLink": "https://apps.microsoft.com/detail/9pf4kz2vn4w9?hl=en-US&gl=IN",
+    "image": "/images/thumb__ranslucent__.png"
+  },
+  {
+    "id": "inkspace-editor",
+    "name": "Inkscape",
+    "category": "productivity",
+    "tags": ["vector", "design", "graphics"],
+    "description": "Inkscape is a professional quality vector graphics software which runs on Windows, Mac OS X and GNU/Linux. It is used by design professionals and hobbyists worldwide for creating a wide variety of graphics such as illustrations, icons, logos, diagrams, maps and web graphics. Inkscape uses the W3C open standard SVG (Scalable Vector Graphics) as its native format, and is free and open-source. It features powerful drawing tools, compatibility with broad file formats, and a comprehensive text tool.",
+    "downloadLink": "https://inkscape.org/gallery/item/56340/inkscape-1.4.2_2025-05-13_f4327f4-x64.msi",
+    "image": "/images/inkspacelogo.png"
+  },
+  {
+    "id": "gimp-editor",
+    "name": "GIMP",
+    "category": "productivity",
+    "tags": ["design", "photo", "editor"],
+    "description": "GIMP is a cross-platform image editor available for GNU/Linux, OS X, Windows and more. It provides the sophisticated tools needed to get your job done. Whether you are a graphic designer, photographer, illustrator, or scientist, GIMP provides you with sophisticated tools to get your job done. You can further enhance your productivity with GIMP thanks to many customization options and 3rd party plugins. It is a powerful free alternative to premium image editing software like Adobe Photoshop.",
+    "downloadLink": "https://download.gimp.org/gimp/v3.0/windows/gimp-3.0.6-setup-1.exe",
+    "image": "/images/The_GIMP_icon_-_v3.0.svg.png"
+  },
+  {
+    "id": "lg-display-driver",
+    "name": "LG Display Driver",
+    "category": "drivers",
+    "tags": ["monitor", "lg", "screen"],
+    "description": "The LG OnScreen Control software allows you to easily control your monitor settings directly from your operating system without using the physical buttons on the monitor. It includes features like Screen Split to multitask efficiently, Monitor Setting control for brightness and contrast, and My Display Presets to automatically apply picture modes to specific applications. This software enhances productivity by providing quick access to essential monitor features and ensuring your display is always optimized for your current task.",
+    "downloadLink": "https://gscs-b2c.lge.com/downloadFile?fileId=BB5E3JDrhVrtQBNBNnumEQ",
+    "image": "/images/lg-driver.png"
+  },
+  {
+    "id": "msi-afterburner",
+    "name": "MSI Afterburner",
+    "category": "tools",
+    "tags": ["overclock", "gpu", "gaming"],
+    "description": "MSI Afterburner is the world’s most recognized and widely used graphics card overclocking utility. It provides complete control of your graphics cards. It also provides an incredibly detailed overview of your hardware and comes with some additional features such as customizing fan profiles, benchmarking and video recording. It is completely free and works with graphics cards from all brands. Whether you are a gamer looking for extra performance or a content creator needing stability, Afterburner delivers.",
+    "downloadLink": "https://download.msi.com/uti_exe/vga/MSIAfterburnerSetup.zip?__token__=exp=1763623419~acl=/*~hmac=234c08ab430f10ce640102a566f1d32bee358a5b60cf2331c720d93e58b5a31d",
+    "image": "/images/msiafterburner.png"
+  },
+  {
+    "id": "vlc-player",
+    "name": "VLC Player",
+    "category": "productivity",
+    "tags": ["video", "music", "player"],
+    "description": "VLC is a free and open source cross-platform multimedia player and framework that plays most multimedia files as well as DVDs, Audio CDs, VCDs, and various streaming protocols. It is completely free, has no spyware, no ads and no user tracking. VLC supports almost every codec layout imaginable without needing additional codec packs, making it the 'Swiss Army Knife' of media players. It is highly customizable and runs on all platforms including Windows, Linux, Mac, and mobile.",
+    "downloadLink": "https://mirror.ajl.albony.in/videolan-ftp/vlc/3.0.21/win64/vlc-3.0.21-win64.exe",
+    "image": "/images/vlclogo.png"
+  },
+  {
+    "id": "ear-trumpet",
+    "name": "Ear Trumpet",
+    "category": "tools",
+    "tags": ["audio", "volume", "mixer"],
+    "description": "EarTrumpet is a powerful volume control app for Windows. It replaces the default audio management interface with a modern, multi-channel volume mixer that allows you to control the volume of individual apps quickly and easily. It also supports moving apps between different playback devices on the fly, making it an essential tool for audiophiles and streamers. EarTrumpet is designed to blend seamlessly with the Windows aesthetic while providing advanced functionality that power users demand for audio control.",
+    "downloadLink": "https://apps.microsoft.com/store/detail/eartrumpet/9NBLGGH516XP?mode=full&cid=eartrumpet.landing",
+    "image": "/images/eartrumpet.jpg"
+  },
+  {
+    "id": "parsec-remote",
+    "name": "Parsec",
+    "category": "tools",
+    "tags": ["remote", "gaming", "streaming"],
+    "description": "Parsec connects you to your PC from anywhere, on any device. It provides low-latency, high-frame-rate streaming that is perfect for gaming, creative work, and collaboration. With Parsec, you can play local co-op games with friends online, access your work desktop from home, or troubleshoot a friend's computer with near-native performance. The technology is optimized to deliver smooth video and responsive controls, making it feel like you are sitting right in front of the host computer.",
+    "downloadLink": "https://builds.parsec.app/package/parsec-windows.exe",
+    "image": "/images/parsec.png"
+  },
+  {
+    "id": "hw-info",
+    "name": "HW Info",
+    "category": "tools",
+    "tags": ["monitoring", "sensors", "hardware"],
+    "description": "HWiNFO is a professional hardware information and diagnostic tool supporting latest components, industry technologies and standards. It provides comprehensive hardware analysis, monitoring, and reporting for Windows and DOS. Features include real-time system monitoring, extensive reporting, and customizable alerts for overheating or other hardware issues. It is widely used by enthusiasts and professionals to verify system stability and performance. HWiNFO provides in-depth information about every hardware component in your system, from CPU and GPU to memory and drives.",
+    "downloadLink": "https://www.hwinfo.com/files/hwi64_834.exe",
+    "image": "/images/hwinfo.png"
+  },
+  {
+    "id": "firefox-browser",
+    "name": "Firefox",
+    "category": "productivity",
+    "tags": ["internet", "browser", "privacy"],
+    "description": "Mozilla Firefox is a free and open-source web browser developed by the Mozilla Foundation. It uses the Gecko rendering engine to display web pages, which implements current and anticipated web standards. Firefox is known for its speed, privacy protection features like Enhanced Tracking Protection, and extensive library of add-ons and themes. It puts user control first, offering a customizable interface and robust security features to keep you safe while you browse the web.",
+    "downloadLink": "https://download.mozilla.org/?product=firefox-stub&os=win&lang=en-US",
+    "image": "/images/firefox-logo.png"
+  },
+  {
+    "id": "traffic-monitor",
+    "name": "Traffic Monitor",
+    "category": "drivers",
+    "tags": ["network", "speed", "taskbar"],
+    "description": "Traffic Monitor is a network monitoring tool software in Windows. It can display the current network speed, CPU and memory usage in the taskbar or in a floating window. It supports skin replacement, historical traffic statistics, and is extremely lightweight, making it perfect for keeping an eye on your system's network performance without using significant resources. The tool is highly customizable, allowing you to choose what information is displayed and how it looks on your desktop.",
+    "downloadLink": "https://github.com/zhongyang219/TrafficMonitor/releases/download/V1.85.1/TrafficMonitor_V1.85.1_x64.zip",
+    "image": "/images/trafficmonitor.png"
+  },
+  {
+    "id": "pc-remote",
+    "name": "PC Remote",
+    "category": "productivity",
+    "tags": ["remote", "mobile", "control"],
+    "description": "PC Remote allows you to control your PC from your phone or tablet. It simulates the mouse, keyboard, and gamepad on your mobile device, allowing you to play PC games, control presentations, or simply navigate your desktop from the comfort of your couch. It also supports file transfer and remote desktop viewing, making it a versatile tool for remote management. The app connects seamlessly over Wi-Fi or Bluetooth, ensuring a reliable and responsive connection.",
+    "downloadLink": "https://f002.backblazeb2.com/file/pc-remote/PCRemoteReceiverSetup_7_8_1.exe",
+    "image": "/images/pcremotelogo.png"
+  },
+  {
+    "id": "ddu-uninstaller",
+    "name": "DDU Uninstaller",
+    "category": "video",
+    "tags": ["driver", "cleaner", "gpu"],
+    "description": "Display Driver Uninstaller (DDU) is a driver removal utility that can help you completely uninstall AMD/NVIDIA graphics card drivers and packages from your system, without leaving leftovers behind. This is especially useful when upgrading your graphics card or troubleshooting driver conflicts to ensure a clean installation. DDU removes registry keys, folders, and files that standard uninstallers often miss, preventing potential issues with new driver installations and ensuring optimal performance for your graphics hardware.",
+    "downloadLink": "https://www.wagnardsoft.com/DDU/download/DDU%20v18.1.3.8_setup.exe",
+    "image": "/images/ddulogo.png"
+  },
+  {
+    "id": "cpu-z",
+    "name": "CPU-Z PC",
+    "category": "tools",
+    "tags": ["info", "specs", "hardware"],
+    "description": "CPU-Z is a freeware system profiling application for Microsoft Windows that detects the central processing unit, RAM, motherboard chipset, and other hardware features of a modern personal computer. It provides real-time measurement of each core's internal frequency and memory frequency. It is a must-have tool for hardware enthusiasts, overclockers, and anyone who needs detailed specifications of their system components in a lightweight, easy-to-read format. It provides comprehensive information about your system's hardware configuration.",
+    "downloadLink": "https://download.cpuid.com/cpu-z/cpu-z_2.17-en.exe",
+    "image": "/images/CPU-Z_Icon.svg.png"
+  },
+  {
+    "id": "ventoy-booter",
+    "name": "Ventoy Booter",
+    "category": "tools",
+    "tags": ["usb", "boot", "iso"],
+    "description": "Ventoy is an open source tool to create bootable USB drive for ISO/WIM/IMG/VHD(x)/EFI files. With Ventoy, you don't need to format the disk over and over again, you just need to copy the ISO/WIM/IMG/VHD(x)/EFI files to the USB drive and boot them directly. You can copy many files at a time and Ventoy will give you a boot menu to select them. It supports a wide range of operating systems and is incredibly easy to use.",
+    "downloadLink": "https://sourceforge.net/projects/ventoy/files/latest/download",
+    "image": "/images/ventoylogo.png"
+  },
+  {
+    "id": "arattai-chat",
+    "name": "Arattai",
+    "category": "desi",
+    "tags": ["chat", "india", "zoho"],
+    "description": "Arattai is an instant messaging app designed to help you stay connected with the people who matter most. It is built with a focus on simplicity, security, and privacy. Made in India by Zoho, it offers features like secure chats, voice and video calls, and document sharing, all in a clean and ad-free environment. Arattai prioritizes user privacy and data security, making it a trusted choice for personal and professional communication.",
+    "downloadLink": "https://downloads.zohocdn.com/arattai-desktop/windows/Arattai_1.0.7_x64.exe",
+    "image": "/images/arattai-logo.jpg"
+  },
+  {
+    "id": "telegram-pc",
+    "name": "Telegram PC",
+    "category": "social",
+    "tags": ["chat", "secure", "messaging"],
+    "description": "Telegram Desktop provides a fast and secure messaging experience on your computer. It seamlessly syncs with the Telegram app on your phone, allowing you to send and receive messages, photos, and files of any type. With support for large groups, channels, and bots, Telegram is a powerful communication tool for both personal and professional use. Its cloud-based architecture ensures you can access your messages from any device at any time.",
+    "downloadLink": "https://apps.microsoft.com/detail/9nztwsqntd0s?hl=en-US&gl=US",
+    "image": "/images/Telegram_logo.png"
+  },
+  {
+    "id": "whatsapp-pc",
+    "name": "Whatsapp PC",
+    "category": "social",
+    "tags": ["chat", "meta", "messaging"],
+    "description": "WhatsApp for Windows allows you to send and receive messages without using your browser. It syncs all your chats from your phone to your computer, so you can reply to messages quickly using your keyboard. It supports voice and video calling, file sharing, and desktop notifications, keeping you connected even when your phone is away. The desktop app offers a native experience with keyboard shortcuts and integrated system notifications.",
+    "downloadLink": "https://get.microsoft.com/installer/download/9NKSQGP7F2NH?cid=website_cta_psi",
+    "image": "/images/whatsapp-logo.png"
+  },
+  {
+    "id": "chatgpt-pc",
+    "name": "ChatGPT PC",
+    "category": "social",
+    "tags": ["ai", "bot", "openai"],
+    "description": "The ChatGPT desktop application brings the power of OpenAI's large language models directly to your Windows desktop. It allows you to have natural conversations, ask questions, generate creative content, and get assistance with coding or writing tasks. This unofficial wrapper provides a convenient way to access ChatGPT without keeping a browser tab open, integrating AI assistance seamlessly into your daily workflow. It supports all the features of the web version in a standalone app.",
+    "downloadLink": "https://apps.microsoft.com/detail/9nt1r1c2hh7j?ocid=webpdpshare",
+    "image": "/images/chatgpt.png"
+  },
+  {
+    "id": "canva-editor",
+    "name": "Canva Editor",
+    "category": "tools",
+    "tags": ["design", "photo", "graphics"],
+    "description": "Canva is a free-to-use online graphic design tool. Use it to create social media posts, presentations, posters, videos, logos and more. The desktop application brings the full power of Canva to your PC without needing a web browser, offering a focused environment for your creative work. It includes thousands of templates and a drag-and-drop interface that makes design easy for everyone. Create professional-quality designs in minutes with Canva's intuitive tools.",
+    "downloadLink": "https://www.canva.com/download/windows/canva-desktop/",
+    "image": "/images/canva-logot.jpeg"
+  },
+  {
+    "id": "dns-changer",
+    "name": "DNS Changer",
+    "category": "tools",
+    "tags": ["internet", "network", "dns"],
+    "description": "DNS Changer is a simple utility that allows you to change your system's DNS servers with a single click. Changing your DNS can help improve your internet browsing speed, bypass geo-restrictions, and enhance your privacy. The app comes with a list of popular and secure DNS providers like Google DNS, Cloudflare, and OpenDNS. It is lightweight and portable, making it easy to use on any computer without installation.",
+    "downloadLink": "https://github.com/DnsChanger/dnsChanger-desktop/releases/download/v2.3.5/DNS-Changer-win-x64-2.3.5.exe",
+    "image": "/images/dns.png"
+  },
+  {
+    "id": "ninite-all-apps",
+    "name": "Ninite All Apps",
+    "category": "tools",
+    "tags": ["installer", "bulk", "setup"],
+    "description": "Ninite is the easiest way to install and update all of your top programs at once. You simply pick the apps you want on the Ninite website, and it downloads and installs them automatically in the background. It says 'No' to toolbars and junkware, installs the latest stable versions, and saves you hours of setup time when configuring a new PC. Ninite handles the entire process securely and efficiently.",
+    "downloadLink": "https://ninite.com/",
+    "image": "/images/ninitelogo.jpeg"
+  },
+  {
+    "id": "nanazip",
+    "name": "NanaZip",
+    "category": "tools",
+    "tags": ["zip", "archiver", "7zip"],
+    "description": "NanaZip is an open-source file archiver intended for the modern Windows experience, forked from the source code of the well-known 7-Zip. It provides better integration with Windows 11, including context menu support, while maintaining the high compression ratio and format support of 7-Zip. It is lightweight, fast, and completely free. NanaZip offers a modern UI and essential features for managing your archives efficiently.",
+    "downloadLink": "https://apps.microsoft.com/detail/9n8g7tscl18r?hl=en-US&gl=IN",
+    "image": "/images/nanazip.png"
+  },
+  {
+    "id": "free-download-manager",
+    "name": "Free Download Manager",
+    "category": "tools",
+    "tags": ["download", "manager", "accelerator"],
+    "description": "Free Download Manager (FDM) is a powerful modern download accelerator and organizer for Windows, macOS, Android, and Linux. It allows you to adjust traffic usage, organize downloads, control file priorities for torrents, efficiently download large files, and resume broken downloads. FDM can boost all your downloads up to 10 times, process media files of various popular formats, and more. It is a comprehensive solution for all your downloading needs.",
+    "downloadLink": "https://files2.freedownloadmanager.org/6/latest/fdm_x64_setup.exe",
+    "image": "/images/fdm.png"
+  },
+  {
+    "id": "speedtest-pc",
+    "name": "SpeedTest PC",
+    "category": "tools",
+    "tags": ["internet", "network", "speed"],
+    "description": "Ookla Speedtest for Windows is the definitive way to test the speed and performance of your internet connection. It allows you to measure your download speed, upload speed, and ping with server-grade accuracy. The desktop app provides a quick and easy way to track your internet performance over time and troubleshoot connectivity issues. Get detailed insights into your network connection directly from your desktop.",
+    "downloadLink": "https://install.speedtest.net/app/windows/latest/speedtestbyookla_x64.msi",
+    "image": "/images/speedtest.png"
+  },
+  {
+    "id": "local-send",
+    "name": "Local Send",
+    "category": "opensource",
+    "tags": ["share", "wifi", "transfer"],
+    "description": "LocalSend is a free, open-source app that allows you to securely share files and messages with nearby devices over your local network without an internet connection. It is cross-platform, supporting Windows, macOS, Linux, Android, and iOS. LocalSend uses end-to-end encryption to ensure your data remains private and secure during transfer. It is a simple and effective way to transfer files between your devices wirelessly.",
+    "downloadLink": "https://github.com/localsend/localsend/releases/download/v1.17.0/LocalSend-1.17.0-windows-x86-64.exe",
+    "image": "/images/localsend-logo.png"
+  },
+  {
+    "id": "obs-studio",
+    "name": "OBS Studio",
+    "category": "opensource",
+    "tags": ["stream", "record", "broadcast"],
+    "description": "OBS Studio (Open Broadcaster Software) is free and open source software for video recording and live streaming. Optimized for high performance real-time video/audio capturing and mixing. Create scenes made up of multiple sources including window captures, images, text, browser windows, webcams, capture cards and more. Used by millions of streamers on Twitch, YouTube, and Facebook Gaming, OBS offers professional-grade features without the cost.",
+    "downloadLink": "https://cdn-fastly.obsproject.com/downloads/OBS-Studio-32.0.2-Windows-x64-Installer.exe",
+    "image": "/images/OBS_Studio_Logo.png"
+  },
+  {
+    "id": "ulaa-browser",
+    "name": "Ulaa Browser",
+    "category": "opensource",
+    "tags": ["browser", "privacy", "zoho"],
+    "description": "Ulaa is a privacy-first browser built by Zoho that blocks tracking and surveillance to respect your privacy. It is designed to be fast, secure, and distraction-free. Ulaa comes with built-in modes like Work, Personal, Kids, and Developer, allowing you to keep your browsing activities organized and secure. It does not collect or sell your data, ensuring a private browsing experience.",
+    "downloadLink": "https://ulaa.com/release/win/stable/online/msi/latest?isDownload=true",
+    "image": "/images/ulaa-browser-logo.png"
+  },
+  {
+    "id": "vscode-pc",
+    "name": "VS Code PC",
+    "category": "opensource",
+    "tags": ["code", "ide", "editor"],
+    "description": "Visual Studio Code is a code editor redefined and optimized for building and debugging modern web and cloud applications. It includes support for debugging, embedded Git control, syntax highlighting, intelligent code completion, snippets, and code refactoring. It is also customizable, so users can change the editor's theme, keyboard shortcuts, and preferences. Built on open source, it runs everywhere.",
+    "downloadLink": "https://code.visualstudio.com/sha/download?build=stable&os=win32-x64-user",
+    "image": "/images/Visual_Studio_Code_1.35_icon.svg.png"
+  },
+  {
+    "id": "sublime-text",
+    "name": "Sublime Text",
+    "category": "opensource",
+    "tags": ["code", "text", "editor"],
+    "description": "Sublime Text is a sophisticated text editor for code, markup, and prose. It is loved by developers for its slick user interface, extraordinary features, and amazing performance. Features include Goto Anything, Multiple Selections, Command Palette, and distraction-free mode. It is highly customizable via JSON settings and supports a vast ecosystem of plugins. Sublime Text is built for speed and efficiency.",
+    "downloadLink": "https://www.sublimetext.com/download_thanks?target=win-x64#direct-downloads",
+    "image": "/images/sublime_text.png"
+  },
+  {
+    "id": "ms-office",
+    "name": "MS Office",
+    "category": "office",
+    "tags": ["word", "excel", "productivity"],
+    "description": "Microsoft Office is the world's leading suite of productivity software. It includes essential applications like Word for document processing, Excel for spreadsheets, PowerPoint for presentations, and Outlook for email and calendar management. This version provides the classic desktop apps you know and trust to help you create, present, communicate, and publish professional-looking documents.",
+    "downloadLink": "https://www.microsoft.com/en-us/download/details.aspx?id=49117",
+    "image": "/images/Microsoft_Office_logo_(2013–2019).png"
+  },
+  {
+    "id": "office-config",
+    "name": "Office Config",
+    "category": "office",
+    "tags": ["setup", "deploy", "tool"],
+    "description": "The Office Configuration Tool is a utility that allows administrators and users to customize their installation of Microsoft Office. It enables you to select which specific applications to install, choose the update channel, and configure language settings. This is particularly useful for creating a lean installation of Office without unnecessary components, ensuring your system remains optimized.",
+    "downloadLink": "Library/Configuration.xml",
+    "image": "/images/office-active-logo.png"
+  },
+  {
+    "id": "zoho-mail",
+    "name": "Zoho Mail",
+    "category": "office",
+    "tags": ["email", "zoho", "secure"],
+    "description": "Zoho Mail is a secure and reliable business email solution tailored for your organization's communication needs. It offers a clean, ad-free interface, powerful search capabilities, and extensive integration with other Zoho apps. With features like Calendar, Tasks, Notes, and Bookmarks, it serves as a complete collaboration platform for your team. Zoho Mail prioritizes security and privacy.",
+    "downloadLink": "https://downloads.zohocdn.com/zmail-desktop/windows/zoho-mail-desktop-lite-installer-x64-v1.7.1.exe",
+    "image": "/images/zohomail-logo.png"
+  },
+  {
+    "id": "zoho-show",
+    "name": "Zoho Show",
+    "category": "office",
+    "tags": ["presentation", "zoho", "slides"],
+    "description": "Zoho Show is a collaborative presentation tool that helps you create, edit, and share visually striking slides. It offers a wide range of themes, templates, and design tools to make your presentations stand out. With real-time collaboration features, multiple users can work on the same slide deck simultaneously, making it perfect for team projects. Zoho Show simplifies the presentation creation process.",
+    "downloadLink": "https://downloads.zohocdn.com/show-desktop/AppPackages/Show_Release.appinstaller",
+    "image": "/images/zohoshow-logo.png"
+  },
+  {
+    "id": "zoho-writer",
+    "name": "Zoho Writer",
+    "category": "office",
+    "tags": ["doc", "zoho", "word"],
+    "description": "Zoho Writer is a powerful online word processor designed for collaborative work. It provides a clean writing interface with advanced formatting options and review tools like comments and track changes. Writer integrates seamlessly with other business apps and supports offline editing, ensuring you can work on your documents anytime, anywhere. It is a robust alternative to traditional word processors.",
+    "downloadLink": "https://files-accl.zohopublic.com/public/zohowriter/download/windows",
+    "image": "/images/Zoho-Writer-Logo.png"
+  },
+  {
+    "id": "epic-games",
+    "name": "Epic Games",
+    "category": "gaming",
+    "tags": ["store", "launcher", "fortnite"],
+    "description": "The Epic Games Store is a digital storefront for video games. It offers a curated selection of titles, including exclusive games and generous weekly free game giveaways. The launcher is required to play popular titles like Fortnite and Rocket League. It also provides a platform for developers to publish their games with a more favorable revenue split. Explore a vast library of games with Epic Games.",
+    "downloadLink": "https://apps.microsoft.com/detail/xp99vr1bpsbqj2?hl=en-US&gl=US",
+    "image": "/images/Epic_Games_logo.svg.png"
+  },
+  {
+    "id": "steam-client",
+    "name": "Steam",
+    "category": "gaming",
+    "tags": ["store", "launcher", "valve"],
+    "description": "Steam is the ultimate destination for playing, discussing, and creating games. With nearly 30,000 games from AAA to indie and everything in-between. Enjoy exclusive deals, automatic game updates, and other great perks. Join the community to meet new people, join groups, form clans, chat in-game and more! With over 100 million potential friends (or enemies), the fun never stops.",
+    "downloadLink": "https://cdn.akamai.steamstatic.com/client/installer/SteamSetup.exe",
+    "image": "/images//images.jpeg"
+  },
+  {
+    "id": "bluestacks-a13",
+    "name": "Bluestacks A13",
+    "category": "gaming",
+    "tags": ["emulator", "android", "mobile"],
+    "description": "BlueStacks 5 is the fastest and lightest Android emulator for PC. It allows you to play your favorite mobile games on a larger screen with keyboard and mouse controls. With the new Android 13 support, it offers better compatibility with the latest games and apps. Eco Mode reduces resource consumption, allowing you to run multiple instances smoothly. Experience mobile gaming on a new level with BlueStacks.",
+    "downloadLink": "https://ak-build.bluestacks.com/public/app-player/windows/nxt/5.22.140.1032/85f56b9487517a925bf86f2fa056df66/BlueStacksMicroInstaller_5.22.140.1032_native.exe?filename=BlueStacksInstaller_5.22.140.1032_native.exe",
+    "image": "/images/bluestacks.jpeg"
+  },
+  {
+    "id": "brave-browser",
+    "name": "Brave Browser",
+    "category": "office",
+    "tags": ["internet", "privacy", "crypto"],
+    "description": "Brave is a free and open-source web browser developed by Brave Software, Inc. based on the Chromium web browser. It blocks ads and website trackers, and provides a way for users to send cryptocurrency contributions in the form of Basic Attention Tokens to websites and content creators. Brave is known for its speed and strong privacy focus. Browse the web faster and safer with Brave.",
+    "downloadLink": "https://laptop-updates.brave.com/latest/winx64",
+    "image": "/images/brave-logo.png"
+  },
+  {
+    "id": "github-pc",
+    "name": "Github PC",
+    "category": "opensource",
+    "tags": ["git", "gui", "code"],
+    "description": "GitHub Desktop focuses on the important things, so you can focus on your code. It provides a simple, visual interface for managing your Git repositories, allowing you to commit changes, create branches, and sync with GitHub without using the command line. It simplifies the development workflow for both beginners and experienced developers. Manage your projects efficiently with GitHub Desktop.",
+    "downloadLink": "https://desktop.githubusercontent.com/releases/3.5.4-9dfb8d8d/GitHubDesktopSetup-x64.exe",
+    "image": "/images/github.png"
+  },
+  {
+    "id": "git-pc",
+    "name": "Git PC",
+    "category": "opensource",
+    "tags": ["code", "version", "cli"],
+    "description": "Git is a free and open source distributed version control system designed to handle everything from small to very large projects with speed and efficiency. It is the industry standard for version control, allowing developers to track changes in their code, collaborate with others, and manage project history securely. Git is an essential tool for modern software development.",
+    "downloadLink": "https://github.com/git-for-windows/git/releases/download/v2.52.0.windows.1/Git-2.52.0-64-bit.exe",
+    "image": "/images/Git_icon.png"
+  },
+  {
+    "id": "crystal-disk-info",
+    "name": "Crystal Disk Info",
+    "category": "tools",
+    "tags": ["health", "hdd", "ssd"],
+    "description": "CrystalDiskInfo is a HDD/SSD health monitoring utility. It displays basic HDD information, monitors S.M.A.R.T. values, and disk temperature. It can alert you if your drive is failing, giving you time to back up your data. It supports a wide range of storage devices and provides detailed information about their health status. Keep your data safe by monitoring your drive's health with CrystalDiskInfo.",
+    "downloadLink": "https://excellmedia.dl.sourceforge.net/project/crystaldiskinfo/9.7.2/CrystalDiskInfo9_7_2.exe?viasf=1",
+    "image": "/images/crsdisk-logo.png"
+  }
+]

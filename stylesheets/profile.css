@@ -1,0 +1,273 @@
+*{
+            font-family: Getnaro;
+        }
+        @font-face {
+            font-family: Getnaro;
+            src: url(/assests/Getnaro-medium.ttf);
+        }
+        .container{
+    margin-top: 100px;
+    padding: 25px;
+}
+.gn-dashboard {
+        display: grid;
+        grid-template-columns: 280px 1fr 1fr; /* Left (Profile), Middle (Downloads), Right (Favs) */
+        gap: 25px;
+        width: 95%;
+        max-width: 1400px;
+        margin: 40px auto;
+        min-height: 600px;
+        animation: fadeInUp 0.5s ease;
+    }
+
+    /* --- GLASSMORPHISM CARD STYLES --- */
+    .gn-card {
+        background: var(--box); /* Uses your existing theme variable */
+        border: 1px solid rgba(159, 0, 255, 0.2);
+        border-radius: 20px;
+        padding: 25px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        display: flex;
+        flex-direction: column;
+        transition: 0.3s;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .gn-card:hover {
+        box-shadow: 0 10px 40px rgba(159, 0, 255, 0.15);
+        border-color: rgba(159, 0, 255, 0.5);
+    }
+
+    /* --- LEFT PROFILE COLUMN --- */
+    .profile-col {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        height: 100%;
+    }
+
+    .brand-logo-mini {
+        width: 60px;
+        margin-bottom: 30px;
+        align-self: flex-start; /* Top Left as requested */
+        filter: drop-shadow(0 0 5px #9F00FF);
+    }
+
+    .profile-pic-wrapper {
+        position: relative;
+        margin-bottom: 20px;
+        /* Centered vertically in the "middle" section of the left col effectively */
+        margin-top: auto; 
+        margin-bottom: auto;
+    }
+
+    .profile-avatar {
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 3px solid #9F00FF;
+        box-shadow: 0 0 20px rgba(159, 0, 255, 0.4);
+    }
+
+    .user-details {
+        width: 100%;
+        text-align: left;
+        margin-bottom: auto; /* Pushes content to vertical center */
+        padding: 0 10px;
+    }
+
+    .user-detail-item {
+        margin-bottom: 15px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid rgba(159, 0, 255, 0.1);
+    }
+
+    .user-detail-item label {
+        font-size: 12px;
+        color: #9F00FF;
+        font-weight: bold;
+        display: block;
+        margin-bottom: 4px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    .user-detail-item span {
+        font-size: 16px;
+        color: var(--text);
+        font-weight: 500;
+        display: block;
+        word-break: break-all;
+    }
+
+    /* --- MIDDLE & RIGHT COLUMNS (LISTS) --- */
+    .section-header {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 20px;
+        padding-bottom: 15px;
+        border-bottom: 2px solid #9F00FF;
+    }
+
+    .section-header i {
+        font-size: 24px;
+        color: #9F00FF;
+    }
+
+    .section-header h3 {
+        font-size: 20px;
+        margin: 0;
+        color: var(--text);
+        font-weight: bold;
+    }
+
+    .scroll-list {
+        flex: 1;
+        overflow-y: auto;
+        padding-right: 10px;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    /* Custom Scrollbar */
+    .scroll-list::-webkit-scrollbar {
+        width: 6px;
+    }
+    .scroll-list::-webkit-scrollbar-thumb {
+        background: #9F00FF;
+        border-radius: 10px;
+    }
+    .scroll-list::-webkit-scrollbar-track {
+        background: rgba(0,0,0,0.05);
+    }
+
+    /* --- LIST ITEMS --- */
+    .list-item {
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 12px;
+        padding: 12px;
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        transition: 0.2s;
+        cursor: pointer;
+    }
+
+    /* Light mode specific fix for list items */
+    .light-mode .list-item {
+        background: rgba(0, 0, 0, 0.03);
+        border-color: rgba(0, 0, 0, 0.1);
+    }
+
+    .list-item:hover {
+        background: rgba(159, 0, 255, 0.1);
+        transform: translateX(5px);
+        border-color: #9F00FF;
+    }
+
+    .item-icon {
+        width: 45px;
+        height: 45px;
+        border-radius: 8px;
+        object-fit: cover;
+        background: #000;
+    }
+
+    .item-info {
+        flex: 1;
+    }
+
+    .item-info h4 {
+        margin: 0 0 4px 0;
+        font-size: 16px;
+        color: var(--text);
+    }
+
+    .item-info p {
+        margin: 0;
+        font-size: 12px;
+        opacity: 0.7;
+        color: var(--text);
+    }
+
+    .status-badge {
+        font-size: 10px;
+        padding: 4px 8px;
+        border-radius: 20px;
+        background: #9F00FF;
+        color: #fff;
+    }
+
+    /* --- EMPTY STATE --- */
+    .empty-state {
+        text-align: center;
+        margin-top: 50px;
+        opacity: 0.6;
+    }
+    .empty-state i {
+        font-size: 40px;
+        margin-bottom: 10px;
+        color: var(--text);
+    }
+    .empty-state p {
+        color: var(--text);
+    }
+
+    /* --- ANIMATIONS --- */
+    @keyframes fadeInUp {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* --- RESPONSIVE --- */
+    @media (max-width: 992px) {
+        .gn-dashboard {
+            grid-template-columns: 1fr; /* Stack everything */
+            grid-template-rows: auto auto auto;
+        }
+        
+        .profile-col {
+            flex-direction: row; /* Horizontal profile on tablet/mobile */
+            flex-wrap: wrap;
+            justify-content: space-between;
+            padding-bottom: 20px;
+        }
+
+        .brand-logo-mini {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            margin: 0;
+        }
+
+        .profile-pic-wrapper {
+            margin: 60px auto 20px auto; /* Push down below logo */
+        }
+
+        .user-details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+    }
+
+    @media (max-width: 600px) {
+        .user-details {
+            grid-template-columns: 1fr; /* Stack details on small screens */
+        }
+        .gn-dashboard {
+            width: 92%;
+            margin: 20px auto;
+        }
+        .scroll-list {
+            max-height: 300px; /* Force scroll on mobile */
+        }
+    }
