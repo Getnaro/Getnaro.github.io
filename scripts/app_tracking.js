@@ -1,8 +1,8 @@
-import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
-import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
-import { getDatabase, ref, update, onValue } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-database.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+import { getDatabase, ref, update, onValue } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-database.js";
 
-// --- Configuration ---
+// --- Configuration (Updated with your keys) ---
 const firebaseConfig = {
     apiKey: "AIzaSyAJrJnSQI7X1YJHLOfHZkknmoAoiOiGuEo",
     authDomain: "getnaroapp.firebaseapp.com",
@@ -39,24 +39,26 @@ export function initAppTracking() {
     console.log("Initializing App Tracking...");
     
     // --- APP CARD SETUP ---
-    const appCard = document.querySelector('.content-one');
-    if (!appCard) {
-        console.warn("App Tracking: No .content-one element found.");
+    // We target the dynamic content created in view.html
+    const appCard = document.querySelector('#app-card-root'); // Targeting the specific ID from view.html is safer
+    if (!appCard || appCard.style.display === 'none') {
+        console.warn("App Tracking: App card not visible or not found.");
         return;
     }
 
     const appId = appCard.dataset.app;
-    const rawAppName = appCard.querySelector('h1') ? appCard.querySelector('h1').textContent.trim() : "Unknown App";
+    const rawAppName = document.getElementById('d-app-title') ? document.getElementById('d-app-title').innerText : "Unknown App";
     const appName = rawAppName;
-    const appIconImg = appCard.querySelector('.gn-card-left img');
+    const appIconImg = document.getElementById('d-app-image');
     const appIcon = appIconImg ? appIconImg.src : "";
     
-    const btnDownload = appCard.querySelector('.gn-btn-download');
-    const btnUpdate = appCard.querySelector('.gn-btn-update');
-    const btnUninstall = appCard.querySelector('.gn-btn-uninstall');
+    // Select buttons inside the dynamic card
+    const btnDownload = document.getElementById('d-btn-download');
+    const btnUpdate = document.getElementById('d-btn-update');
+    const btnUninstall = document.getElementById('d-btn-uninstall');
     
-    const statusText = appCard.querySelector('[id^="install-status"]');
-    const locLink = appCard.querySelector('.fs-loc-link');
+    const statusText = document.getElementById('install-status-dynamic');
+    const locLink = document.getElementById('loc-path-dynamic');
     
     let isMonitoring = false;
     let cachedFirebaseData = {};
@@ -71,7 +73,7 @@ export function initAppTracking() {
             return {
                 appName: appName,
                 publisher: "Getnaro Team", 
-                version: appCard.querySelector('.fs-stats p')?.innerText || "N/A", 
+                version: document.getElementById('d-app-version')?.innerText || "N/A", 
                 platform: "Windows Desktop", 
                 accountStatus: auth.currentUser ? "Logged In" : "Logged Out",
                 installedDate: cachedFirebaseData.installedDate || status,
@@ -91,18 +93,19 @@ export function initAppTracking() {
         });
     }
 
-    // --- 1. HANDLE DOWNLOAD CLICK ---
+    // --- 1. HANDLE DOWNLOAD CLICK (Syncs History) ---
     if (btnDownload) {
-        // Remove old listeners to prevent duplicates if re-initialized
+        // Clone to remove old listeners
         const newBtn = btnDownload.cloneNode(true);
         btnDownload.parentNode.replaceChild(newBtn, btnDownload);
         
         newBtn.addEventListener("click", () => {
             const user = auth.currentUser;
             if (user) {
+                console.log("Saving download to history for:", user.uid);
                 saveToHistory(user.uid, appId, appName, appIcon, "Downloading...");
             } else {
-                showToast("Download started. Login for history tracking.");
+                showToast("Download started. Login to save history.");
             }
         });
     }
@@ -118,37 +121,48 @@ export function initAppTracking() {
 
     // --- CORE STATUS CHECK AND SYNC ---
     async function syncAppStatus(user, appId, appName, appIcon) {
+        // Syncs with: users/{uid}/history/{appId}
         const appRef = ref(db, `users/${user.uid}/history/${appId}`);
 
         onValue(appRef, async (snapshot) => {
             cachedFirebaseData = snapshot.val() || {};
-            const detectedPath = await window.appAPI.findAppPath(appName);
+            
+            // Check desktop local status
+            let detectedPath = null;
+            if (window.appAPI && window.appAPI.findAppPath) {
+                detectedPath = await window.appAPI.findAppPath(appName);
+            }
 
             if (detectedPath) {
                 updateUIInstalled(detectedPath); 
                 const dbData = snapshot.val();
+                // If DB says not installed but local IS installed, update DB
                 if (!dbData || dbData.status !== 'installed' || dbData.installLocation !== detectedPath) {
                     saveFinalInstallState(user.uid, appId, detectedPath);
                 }
             } else {
+                // If DB says installed, but local is NOT, we keep DB as record (history) 
+                // but UI shows not installed locally.
                 updateUINotInstalled();
             }
         });
         
         if (btnUninstall) {
-            // Remove old listeners
             const newUninstall = btnUninstall.cloneNode(true);
             btnUninstall.parentNode.replaceChild(newUninstall, btnUninstall);
 
             newUninstall.onclick = (e) => {
                 e.preventDefault();
-                window.appAPI.uninstallApp(appName);
-                update(ref(db, `users/${user.uid}/history/${appId}`), {
-                    status: 'uninstalled',
-                    installLocation: null,
-                    lastChecked: Date.now()
-                });
-                showToast(`Uninstall signal sent for ${appName}.`);
+                if (window.appAPI) {
+                    window.appAPI.uninstallApp(appName);
+                    // Update DB to reflect uninstall
+                    update(ref(db, `users/${user.uid}/history/${appId}`), {
+                        status: 'uninstalled',
+                        installLocation: null,
+                        lastChecked: Date.now()
+                    });
+                    showToast(`Uninstall signal sent for ${appName}.`);
+                }
             };
         }
     }
@@ -167,7 +181,7 @@ export function initAppTracking() {
         const poll = async () => {
             if (!window.appAPI || !window.appAPI.findAppPath) {
                 isMonitoring = false;
-                return showToast("System API not available.");
+                return;
             }
             
             const detectedPath = await window.appAPI.findAppPath(appName);
@@ -183,7 +197,7 @@ export function initAppTracking() {
                 setTimeout(poll, delay);
             } else {
                 isMonitoring = false;
-                showToast(`${appName} installation verification timed out.`);
+                // Timeout silently
             }
         };
         poll();
@@ -200,11 +214,23 @@ export function initAppTracking() {
         }
     }
 
+    // --- HISTORY SAVING LOGIC (The part that updates Profile) ---
     function saveToHistory(uid, id, name, icon, status) {
         const timestamp = Date.now();
         const dateString = new Date(timestamp).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+        
+        // Writes to the exact path Profile.js listens to
         update(ref(db, `users/${uid}/history/${id}`), {
-            appName: name, appId: id, icon: icon, timestamp: timestamp, installedDate: dateString, status: status || 'downloading'
+            appName: name, 
+            appId: id, 
+            icon: icon, 
+            timestamp: timestamp, 
+            installedDate: dateString, 
+            status: status || 'downloading'
+        }).then(() => {
+            console.log("History updated successfully.");
+        }).catch((err) => {
+            console.error("Failed to save history:", err);
         });
     }
     
@@ -212,17 +238,20 @@ export function initAppTracking() {
         const timestamp = Date.now();
         const dateString = new Date(timestamp).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
         update(ref(db, `users/${uid}/history/${id}`), {
-            status: 'installed', installLocation: location, timestamp: timestamp, installedDate: dateString, lastChecked: Date.now()
+            status: 'installed', 
+            installLocation: location, 
+            timestamp: timestamp, 
+            installedDate: dateString, 
+            lastChecked: Date.now()
         });
     }
 
     // --- UI UPDATERS ---
     const getButtons = () => {
-        // Re-query buttons in case they were replaced
         return {
-            dl: document.querySelector('.gn-btn-download'),
-            up: document.querySelector('.gn-btn-update'),
-            un: document.querySelector('.gn-btn-uninstall')
+            dl: document.getElementById('d-btn-download'),
+            up: document.getElementById('d-btn-update'),
+            un: document.getElementById('d-btn-uninstall')
         };
     };
 
@@ -240,6 +269,7 @@ export function initAppTracking() {
         if (locLink) {
             locLink.innerText = location;
             locLink.title = location; 
+            locLink.href = "#"; // Prevent navigation
         }
     }
 
@@ -254,10 +284,9 @@ export function initAppTracking() {
     }
 }
 
-// Auto-run on legacy static pages
+// Auto-run logic:
+// We ONLY auto-run if we are NOT on view.html, to allow view.html to call it manually when ready.
 document.addEventListener("DOMContentLoaded", () => {
-    // Only auto-run if we are NOT on the dynamic view.html page
-    // (view.html will call it manually after fetching data)
     if (!window.location.pathname.includes('view.html')) {
         initAppTracking();
     }
