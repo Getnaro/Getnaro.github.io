@@ -133,22 +133,13 @@
 </div>
 <!-- ========== END GN MOBILE HAMBURGER ========== -->
 
-<!-- REQUIRED: The FULLSCREEN SEARCH OVERLAY -->
-<div id="gn-search-overlay" class="gn-search-overlay">
-    <div class="gn-search-wrapper">
-        <i class="fa-solid fa-magnifying-glass search-icon"></i>
-        <!-- CRITICAL: Input field must have the ID 'gn-search-input' -->
-        <input type="text" id="gn-search-input" placeholder="Search here" style="overflow-x: hidden;" autocomplete="off">
-        <button id="gn-search-close" class="close-btn">
-            <i class="fa-solid fa-xmark"></i>
-        </button>
+<div id="gn-ai-root">
+    <!-- Floating Button -->
+    <div class="gn-ai-fab" id="gn-ai-trigger">
+        <i class="fa-solid fa-robot" style="color: white !important;"></i>
+        <span style="color: white !important;">Chat Now</span>
     </div>
 
-    <!-- CRITICAL: Results container must have the ID 'gn-search-results' -->
-    <div id="gn-search-results" class="gn-search-results">
-        <!-- Results will be dynamically injected here by search.js -->
-    </div>
-</div>
     <div class="gn-ai-overlay" id="gn-ai-overlay">
         <div class="gn-ai-box">
             
@@ -186,6 +177,23 @@
         </div>
     </div>
 </div>
+<!-- REQUIRED: The FULLSCREEN SEARCH OVERLAY -->
+<div id="gn-search-overlay" class="gn-search-overlay">
+    <div class="gn-search-wrapper">
+        <i class="fa-solid fa-magnifying-glass search-icon"></i>
+        <!-- CRITICAL: Input field must have the ID 'gn-search-input' -->
+        <input type="text" id="gn-search-input" placeholder="Search here" style="overflow-x: hidden;" autocomplete="off">
+        <button id="gn-search-close" class="close-btn">
+            <i class="fa-solid fa-xmark"></i>
+        </button>
+    </div>
+
+    <!-- CRITICAL: Results container must have the ID 'gn-search-results' -->
+    <div id="gn-search-results" class="gn-search-results">
+        <!-- Results will be dynamically injected here by search.js -->
+    </div>
+</div>
+
 
 <!-- ------------------ CAROUSEL ------------------ -->
 <div class="gn-carousel" aria-roledescription="carousel">
@@ -571,28 +579,28 @@
     document.addEventListener('DOMContentLoaded', fetchAndRenderApps);
 </script>
 <!-- YOUR ORIGINAL SCRIPTS RESTORED BELOW -->
+<script type="module">
+    // UPDATED TO STABLE 10.12.0
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import { getFirestore, collection, getDocs, query } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+    // IMPORT REALTIME DB FOR STATS UPDATE
+    import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+
+    // ... (rest of the script) ...
+</script>
 <script src="/scripts/tod.js"></script>
 <script src="/scripts/tod.js"></script>
 <script src="/scripts/tog.js"></script>
 <script src="/scripts/caro.js"></script>
 <script src="/scripts/particles.js"></script>
 <script src="/scripts/theme.js"></script>
-<script type="module" src="/scripts/ai_assistant.js"></script>
 <script src="/scripts/hamburger.js"></script>
 <script type="module" src="/scripts/appstats.js"></script>
 <script type="module" src="/scripts/app_tracking.js"></script>
 <script type="module" src="/scripts/header_auth.js"></script>
 <script type="module" src="/scripts/download-index.js"></script>
-<script type="module" src="/scripts/ai_assistant.js"></script>
 <script type="module" src="/scripts/stats.js"></script>
-<script src="/scripts/caro.js"></script>
-<script src="/scripts/particles.js"></script>
 <script type="module" src="/scripts/download-index.js"></script>
-<script type="module" src="/scripts/ai_assistant.js"></script>
-<script type="module" src="/scripts/stats.js"></script>
-<script src="/scripts/theme.js"></script>
 <script type="module" src="/scripts/search.js"></script>
-<script src="/scripts/hamburger.js"></script>
-<script type="module" src="/scripts/header_auth.js"></script>
 </body>
 </html>
