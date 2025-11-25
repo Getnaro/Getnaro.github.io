@@ -172,8 +172,9 @@ export function initAppTracking() {
     // --- 5. ELECTRON SIGNALS ---
     if (isElectron && window.appAPI.onInstallStartSignal) {
         window.appAPI.onInstallStartSignal((data) => {
-            const signalAppNameClean = getCleanPageAppName(data.appName);
-            if (signalAppNameClean && cleanPageName === signalAppNameClean) {
+            const cleanPageName = getCleanMatchName(rawAppName);
+            const signalAppNameClean = getCleanMatchName(data.appName);
+            if (signalAppNameClean === cleanPageName) {
                 startInstallMonitoring(rawAppName, appId);
             }
         });
@@ -187,6 +188,7 @@ export function initAppTracking() {
             const allHistory = snapshot.val() || {};
             let myEntry = allHistory[appId];
 
+            // Try Name Match if ID fails
             if (!myEntry) {
                 const targetName = getCleanMatchName(appName);
                 const foundKey = Object.keys(allHistory).find(key => {
@@ -225,7 +227,6 @@ export function initAppTracking() {
 
                 // If DB says "Installed" but file is missing, downgrade to Uninstalled
                 if (myEntry && (myEntry.status === 'Installed' || myEntry.status === 'installed')) {
-                    console.log("App missing locally. Updating DB to Uninstalled...");
                     update(ref(db, `users/${user.uid}/history/${appId}`), {
                         status: 'Uninstalled',
                         installLocation: null,
@@ -362,7 +363,7 @@ export function initAppTracking() {
 
     // Add aggressive polling for View Page
     setInterval(() => {
-        if(auth.currentUser && !auth.currentUser.isAnonymous) {
+        if(auth.currentUser && !auth.currentUser.isAnonymous && window.location.pathname.includes('view.html')) {
              syncAppStatus(auth.currentUser, appId, rawAppName);
         }
     }, 3000);

@@ -110,7 +110,7 @@ function renderList(dataObj, container, type) {
         if (type === 'download') {
             const status = item.status ? item.status.toLowerCase() : 'installed';
             if (status.includes('downloading')) {
-                statusLabel = "Downloading"; // or Downloading
+                statusLabel = "Downloading"; 
                 badgeColor = "#ff9800"; // Orange
             } else if (status === 'installed') {
                 statusLabel = "Installed";
