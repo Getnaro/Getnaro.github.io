@@ -14,7 +14,7 @@ const firebaseConfig = {
     measurementId: "G-FLBX24J98C"
 };
 
-const DOWNLOAD_LINK = "https://github.com/d9ab4718-fcbf-4676-96d1-2b081dc2f40f";
+const DOWNLOAD_LINK = "https://github.com/Getnaro/Getnaro.github.io/raw/refs/heads/main/application/Getnaro_Winx64_V1.4.exe";
 const COLLECTION_NAME = "app_data"; 
 const STATS_DOC_ID = "global_stats"; 
 
