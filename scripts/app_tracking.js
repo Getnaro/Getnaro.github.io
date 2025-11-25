@@ -64,16 +64,13 @@ export function initAppTracking() {
     // --- ELECTRON CHECK ---
     const isElectron = window.appAPI && window.appAPI.findAppPath;
 
-    // --- 1. HANDLE DOWNLOAD CLICK (FIXED: No Replacement) ---
+    // --- 1. HANDLE DOWNLOAD CLICK (History Save) ---
     if (btnDownload) {
-        // Remove any previous listeners we might have added (to be safe) by cloning ONE last time if needed, 
-        // OR better: just add the listener. Since page reloads, adding is fine.
-        // To prevent duplicate listeners if init is called twice, we check a flag.
         if (!btnDownload.dataset.trackingAttached) {
             btnDownload.addEventListener("click", () => {
                 const user = auth.currentUser;
                 if (user && !user.isAnonymous) {
-                    console.log("Saving to history...");
+                    console.log(`[AppTracking] Saving download: ${appName} for user ${user.uid}`);
                     saveToHistory(user.uid, appId, appName, appIcon, "Downloading");
                 } else {
                     showToast("Download started. Login to save history.");
@@ -170,7 +167,6 @@ export function initAppTracking() {
             cachedFirebaseData = snapshot.val() || {};
             
             if (!isElectron) {
-                // If just web, we don't change buttons to "Open", but we assume install is not verifiable locally
                 updateUINotInstalled(); 
                 return;
             }
@@ -186,12 +182,12 @@ export function initAppTracking() {
                     saveFinalInstallState(user.uid, appId, detectedPath, serverLastUpdated);
                 }
             } else {
+                // If DB says installed but file is gone, we keep DB history but reset UI
                 updateUINotInstalled();
             }
         });
 
         if (btnUninstall && isElectron) {
-            // Simple replacement for uninstall is fine as it has no other listeners
             const newUninstall = btnUninstall.cloneNode(true);
             btnUninstall.parentNode.replaceChild(newUninstall, btnUninstall);
 
@@ -253,13 +249,17 @@ export function initAppTracking() {
 
     function saveToHistory(uid, id, name, icon, status) {
         const timestamp = Date.now();
+        console.log(`[AppTracking] Writing to DB: users/${uid}/history/${id}`);
+        
         update(ref(db, `users/${uid}/history/${id}`), {
             appName: name, 
             appId: id, 
             icon: icon, 
             timestamp: timestamp, 
-            status: status || 'Downloading' // Ensure string value
-        }).catch((err) => console.error(err));
+            status: status || 'Downloading'
+        })
+        .then(() => console.log("[AppTracking] History saved successfully."))
+        .catch((err) => console.error("[AppTracking] Failed to save history:", err));
     }
     
     function saveFinalInstallState(uid, id, location, versionDate) {

@@ -105,6 +105,9 @@ onAuthStateChanged(auth, (user) => {
                  const separator = data.photoURL.includes('?') ? '&' : '?';
                  els.avatar.src = data.photoURL + separator + "db=" + Math.random(); 
             }
+            
+            console.log("Profile Data Loaded:", data); // DEBUG LOG
+            
             renderList(data.history || {}, els.history, 'download');
             renderList(data.favorites || {}, els.favs, 'heart');
         });
@@ -117,29 +120,51 @@ onAuthStateChanged(auth, (user) => {
 function renderList(dataObj, container, type) {
     if(!container) return;
     const items = Object.values(dataObj);
+    
     if (items.length === 0) {
         container.innerHTML = `<div class="empty-state"><i class="fa-solid ${type === 'download' ? 'fa-ghost' : 'fa-heart-crack'}"></i><p>No items.</p></div>`;
         return;
     }
+    
     container.innerHTML = '';
     items.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
+    
     items.forEach(item => {
         const icon = item.icon || 'https://cdn-icons-png.flaticon.com/512/3616/3616929.png';
         const name = item.appName || item.name || 'App';
         const date = item.timestamp ? new Date(item.timestamp).toLocaleDateString() : '';
         
-        // FIX: Use actual status from DB if available, otherwise default based on type
+        // Get correct status label
         let statusLabel = "Installed";
+        let badgeColor = "#9F00FF"; // Purple default
+
         if (type === 'download') {
-            // Capitalize first letter if it exists, otherwise default
-            statusLabel = item.status ? (item.status.charAt(0).toUpperCase() + item.status.slice(1)) : "Installed";
+            const status = item.status ? item.status.toLowerCase() : 'installed';
+            
+            if (status.includes('downloading')) {
+                statusLabel = "Downloading";
+                badgeColor = "#ff9800"; // Orange
+            } else if (status === 'installed') {
+                statusLabel = "Installed";
+                badgeColor = "#00e676"; // Green
+            } else {
+                statusLabel = item.status; // Custom or other status
+            }
         } else {
             statusLabel = "Liked";
+            badgeColor = "#ff4081"; // Pink
         }
 
         const div = document.createElement('div');
         div.className = 'list-item';
-        div.innerHTML = `<img src="${icon}" class="item-icon"><div class="item-info"><h4>${name}</h4><p>${date}</p></div><span class="status-badge">${statusLabel}</span>`;
+        div.innerHTML = `
+            <img src="${icon}" class="item-icon" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3616/3616929.png'">
+            <div class="item-info">
+                <h4>${name}</h4>
+                <p>${date}</p>
+            </div>
+            <span class="status-badge" style="background:${badgeColor}">${statusLabel}</span>
+        `;
         container.appendChild(div);
     });
 }
