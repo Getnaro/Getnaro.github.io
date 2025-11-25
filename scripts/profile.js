@@ -79,14 +79,14 @@
         }
     });
 
-
-    // 2. AUTH & DATA FETCHING
+// 2. AUTH & DATA FETCHING
     let dataLoaded = false;
 
     onAuthStateChanged(auth, (user) => {
-        dataLoaded = true; // Got a response from Firebase
+        dataLoaded = true; 
 
         if (user) {
+            // --- EXISTING CODE FOR LOGGED IN USER ---
             // Basic Auth Info
             els.name.textContent = user.displayName || "User";
             els.email.textContent = user.email;
@@ -101,7 +101,7 @@
                 // Fill Details
                 els.phone.textContent = data.phone || user.phoneNumber || "Not Linked";
                 els.user.textContent = data.username ? `@${data.username}` : (user.displayName ? `@${user.displayName.replace(/\s/g,'').toLowerCase()}` : "@user");
-                if(data.photoURL) els.avatar.src = data.photoURL; // DB takes precedence if set
+                if(data.photoURL) els.avatar.src = data.photoURL; 
 
                 // Render Lists
                 renderList(data.history || {}, els.history, 'download');
@@ -109,12 +109,16 @@
             });
 
         } else {
-            // User is NOT Logged In
-            els.name.textContent = "Guest";
-            els.email.textContent = "-";
-            els.phone.textContent = "-";
-            els.history.innerHTML = `<div class="empty-state"><p>Please <a href="/pages/login.html" style="color:#9F00FF">Login</a></p></div>`;
-            els.favs.innerHTML = `<div class="empty-state"><p>Please <a href="/pages/login.html" style="color:#9F00FF">Login</a></p></div>`;
+            // --- FIX STARTS HERE ---
+            // User is NOT Logged In: Force Redirect
+            
+            // Optional: Alert the user or log to console
+            console.log("User not authenticated. Redirecting...");
+
+            // Use .replace() so the user cannot click 'Back' to return to this page
+            window.location.replace("/pages/login.html");
+            
+            // --- FIX ENDS HERE ---
         }
     });
 
