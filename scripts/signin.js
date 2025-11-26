@@ -113,17 +113,6 @@ const generateOTP = () => {
 // Send OTP via Web3Forms
 const sendOTPEmail = async (email, otp, name) => {
     try {
-        const response = await fetch('https://api.web3forms.com/submit', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                access_key: '7387db01-2899-4364-b0b9-330c8dcc74d1',
-                subject: `Getnaro - Your Verification Code: ${otp}`,
-                from_name: 'Getnaro',
-                to: email,
-                message: `Hello ${name},\n\nYour Getnaro verification code is:\n\n🔐 ${otp}\n\nThis code will expire in 5 minutes.\n\nIf you didn't request this code, please ignore this email.\n\nBest regards,\nGetnaro Team`
-            })
-        });
         const data = await response.json();
         return data.success;
     } catch (error) {
