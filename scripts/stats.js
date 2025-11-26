@@ -95,3 +95,5 @@ bind("stats/total_visits",    "stat-total-visits"); // <--- FIX IS HERE (Changed
 bind("stats/peak_visitors",   "stat-peak");
 bind("stats/total_downloads", "stat-downloads");
 bind("stats/live_visitors",   "stat-viewing");
+import { initializeStatsFirebase } from './firebase-config.js';
+   const { statsDb } = initializeStatsFirebase();

@@ -1,28 +1,17 @@
-import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-import { getDatabase, ref, update, onValue, get, set, remove } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-database.js";
+/**
+ * APP TRACKING
+ * /scripts/app_tracking.js
+ */
 
-const firebaseConfig = {
-    apiKey: "AIzaSyAJrJnSQI7X1YJHLOfHZkknmoAoiOiGuEo",
-    authDomain: "getnaroapp.firebaseapp.com",
-    databaseURL: "https://getnaroapp-default-rtdb.asia-southeast1.firebasedatabase.app",
-    projectId: "getnaroapp",
-    storageBucket: "getnaroapp.firebasestorage.app",
-    messagingSenderId: "304744138530",
-    appId: "1:304744138530:web:8166344d61cdfa127ec77b",
-    measurementId: "G-FLBX24J98C"
-};
-
-const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
-const auth = getAuth(app);
-const db = getDatabase(app);
+import { mainAuth, mainDb } from './firebase-config.js';
+import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+import { ref, update, onValue, get, set, remove } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-database.js";
 
 const showToast = (message) => {
     if (typeof window.showToast === 'function') window.showToast(message);
     else console.log(`[TOAST]: ${message}`);
 };
 
-// --- FIX: AGGRESSIVE SYNC HELPERS ---
 function getCleanMatchName(rawName) {
     if (!rawName) return "";
     return rawName.toLowerCase()
@@ -81,18 +70,15 @@ export function initAppTracking() {
     
     let cachedFirebaseData = {};
 
-    // --- START OF EDIT: IMMEDIATE UI STATE FOR WEB/MOBILE ---
-    // Enforce Download-only UI instantly if not running in Electron
     if (!isElectron) {
         updateUINotInstalled();
     }
-    // --- END OF EDIT ---
 
     // --- 1. HANDLE DOWNLOAD CLICK ---
     if (btnDownload) {
         if (!btnDownload.dataset.trackingAttached) {
             btnDownload.addEventListener("click", () => {
-                const user = auth.currentUser;
+                const user = mainAuth.currentUser;
                 if (user && !user.isAnonymous) {
                     saveToHistory(user.uid, appId, rawAppName, appIcon, "Downloading");
                 } else {
@@ -121,12 +107,12 @@ export function initAppTracking() {
     // --- 3. HANDLE FAVORITES ---
     if (btnFav) {
         btnFav.onclick = async () => {
-            const user = auth.currentUser;
+            const user = mainAuth.currentUser;
             if(!user || user.isAnonymous) {
                 return showToast("Please Login to add to favorites.");
             }
             
-            const favRef = ref(db, `users/${user.uid}/favorites/${appId}`);
+            const favRef = ref(mainDb, `users/${user.uid}/favorites/${appId}`);
             const snap = await get(favRef);
             
             if(snap.exists()) {
@@ -161,10 +147,10 @@ export function initAppTracking() {
     }
 
     // --- 4. AUTH STATE & SYNC ---
-    onAuthStateChanged(auth, (user) => {
+    onAuthStateChanged(mainAuth, (user) => {
         if (user && !user.isAnonymous) {
             syncAppStatus(user, appId, rawAppName);
-            const favRef = ref(db, `users/${user.uid}/favorites/${appId}`);
+            const favRef = ref(mainDb, `users/${user.uid}/favorites/${appId}`);
             onValue(favRef, (snap) => updateFavUI(snap.exists()));
         } else {
             if (isElectron) {
@@ -189,7 +175,7 @@ export function initAppTracking() {
 
     // --- CORE LOGIC: SYNC STATUS ---
     async function syncAppStatus(user, appId, appName) {
-        const historyRef = ref(db, `users/${user.uid}/history`);
+        const historyRef = ref(mainDb, `users/${user.uid}/history`);
 
         onValue(historyRef, async (snapshot) => {
             const allHistory = snapshot.val() || {};
@@ -234,7 +220,7 @@ export function initAppTracking() {
                 // If DB says "Installed" but file is missing, downgrade to Uninstalled
                 if (myEntry && (myEntry.status === 'Installed' || myEntry.status === 'installed')) {
                     console.log("App missing locally. Updating DB to Uninstalled...");
-                    update(ref(db, `users/${user.uid}/history/${appId}`), {
+                    update(ref(mainDb, `users/${user.uid}/history/${appId}`), {
                         status: 'Uninstalled',
                         installLocation: null,
                         lastChecked: Date.now()
@@ -254,7 +240,7 @@ export function initAppTracking() {
                     const simpleName = appName.replace(/ PC$/i, "").replace(/ Edition$/i, "");
                     window.appAPI.uninstallApp(simpleName);
                     
-                    update(ref(db, `users/${user.uid}/history/${appId}`), {
+                    update(ref(mainDb, `users/${user.uid}/history/${appId}`), {
                         status: 'Uninstalled',
                         installLocation: null,
                         lastChecked: Date.now()
@@ -270,7 +256,7 @@ export function initAppTracking() {
         let attempts = 0;
         const maxAttempts = 30; 
         const delay = 2000;
-        const user = auth.currentUser;
+        const user = mainAuth.currentUser;
 
         showToast(`Installing ${appName}...`);
 
@@ -308,7 +294,7 @@ export function initAppTracking() {
 
     function saveToHistory(uid, id, name, icon, status) {
         const timestamp = Date.now();
-        update(ref(db, `users/${uid}/history/${id}`), {
+        update(ref(mainDb, `users/${uid}/history/${id}`), {
             appName: name, 
             appId: id, 
             icon: icon, 
@@ -320,7 +306,7 @@ export function initAppTracking() {
     function saveFinalInstallState(uid, id, location, versionDate) {
         const timestamp = Date.now();
         const dateString = versionDate || new Date(timestamp).toLocaleDateString();
-        update(ref(db, `users/${uid}/history/${id}`), {
+        update(ref(mainDb, `users/${uid}/history/${id}`), {
             status: 'Installed', 
             installLocation: location, 
             timestamp: timestamp, 
@@ -370,8 +356,8 @@ export function initAppTracking() {
 
     // Add aggressive polling for View Page
     setInterval(() => {
-        if(auth.currentUser && !auth.currentUser.isAnonymous && window.location.pathname.includes('view.html')) {
-             syncAppStatus(auth.currentUser, appId, rawAppName);
+        if(mainAuth.currentUser && !mainAuth.currentUser.isAnonymous && window.location.pathname.includes('view.html')) {
+             syncAppStatus(mainAuth.currentUser, appId, rawAppName);
         }
     }, 3000);
 }
@@ -382,9 +368,9 @@ export function initAppTracking() {
 export function initProfileSync() {
     if (!isElectron) return;
 
-    onAuthStateChanged(auth, (user) => {
+    onAuthStateChanged(mainAuth, (user) => {
         if (user && !user.isAnonymous) {
-            const historyRef = ref(db, `users/${user.uid}/history`);
+            const historyRef = ref(mainDb, `users/${user.uid}/history`);
             
             // Check ALL history items and update their status based on local machine
             onValue(historyRef, async (snapshot) => {
@@ -398,13 +384,13 @@ export function initProfileSync() {
                         const detectedPath = await smartFindAppPath(appName);
                         
                         if (detectedPath && item.status !== 'Installed') {
-                            update(ref(db, `users/${user.uid}/history/${key}`), {
+                            update(ref(mainDb, `users/${user.uid}/history/${key}`), {
                                 status: 'Installed',
                                 installLocation: detectedPath,
                                 lastChecked: Date.now()
                             });
                         } else if (!detectedPath && (item.status === 'Installed' || item.status === 'installed')) {
-                            update(ref(db, `users/${user.uid}/history/${key}`), {
+                            update(ref(mainDb, `users/${user.uid}/history/${key}`), {
                                 status: 'Uninstalled',
                                 installLocation: null,
                                 lastChecked: Date.now()

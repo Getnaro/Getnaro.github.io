@@ -287,3 +287,4 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
 });
+import { mainAuth, mainDb, mainFirestore, mainStorage } from './firebase-config.js';

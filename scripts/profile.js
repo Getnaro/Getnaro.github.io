@@ -1,24 +1,12 @@
-import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-import { getAuth, onAuthStateChanged, updateProfile, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-import { getDatabase, ref, onValue, update as updateDB } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-database.js";
-import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-storage.js";
+/**
+ * PROFILE PAGE
+ * /scripts/profile.js
+ */
 
-const firebaseConfig = {
-    apiKey: "AIzaSyAJrJnSQI7X1YJHLOfHZkknmoAoiOiGuEo",
-    authDomain: "getnaroapp.firebaseapp.com",
-    databaseURL: "https://getnaroapp-default-rtdb.asia-southeast1.firebasedatabase.app",
-    projectId: "getnaroapp",
-    storageBucket: "getnaroapp.firebasestorage.app",
-    messagingSenderId: "304744138530",
-    appId: "1:304744138530:web:8166344d61cdfa127ec77b",
-    measurementId: "G-FLBX24J98C"
-};
-
-// Safe Init
-const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
-const auth = getAuth(app);
-const db = getDatabase(app);
-const storage = getStorage(app);
+import { mainAuth, mainDb, mainStorage } from './firebase-config.js';
+import { onAuthStateChanged, updateProfile, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+import { ref, onValue, update as updateDB } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-database.js";
+import { ref as storageRef, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-storage.js";
 
 const els = {
     name: document.getElementById('u-name'),
@@ -35,15 +23,25 @@ const els = {
 
 const showToast = (msg) => {
     const t = document.getElementById('toast');
-    if(t) { t.textContent = msg; t.style.display = 'block'; setTimeout(() => t.style.display = 'none', 3000); }
+    if(t) { 
+        t.textContent = msg; 
+        t.style.display = 'block'; 
+        setTimeout(() => t.style.display = 'none', 3000); 
+    }
 };
 
 if(els.logoutBtn) {
     els.logoutBtn.addEventListener('click', () => {
         if(confirm("Are you sure you want to logout?")) {
-            signOut(auth).then(() => {
+            signOut(mainAuth).then(() => {
                 showToast("Logged out successfully!");
-                window.location.replace('/pages/login.html');
+                sessionStorage.clear();
+                setTimeout(() => {
+                    window.location.replace('/pages/login.html');
+                }, 500);
+            }).catch((error) => {
+                console.error("Logout error:", error);
+                showToast("Logout failed. Please try again.");
             });
         }
     });
@@ -53,29 +51,38 @@ if(els.wrapper && els.fileInput) {
     els.wrapper.addEventListener('click', () => els.fileInput.click());
     els.fileInput.addEventListener('change', async (e) => {
         const file = e.target.files[0];
-        const user = auth.currentUser;
+        const user = mainAuth.currentUser;
         if (!file || !user) return;
         els.wrapper.classList.add('uploading');
         try {
-            const picRef = storageRef(storage, 'profile_pics/' + user.uid);
+            const picRef = storageRef(mainStorage, 'profile_pics/' + user.uid);
             await uploadBytes(picRef, file);
             const url = await getDownloadURL(picRef);
             await updateProfile(user, { photoURL: url });
-            await updateDB(ref(db, 'users/' + user.uid), { photoURL: url });
+            await updateDB(ref(mainDb, 'users/' + user.uid), { photoURL: url });
             els.avatar.src = url + "?t=" + new Date().getTime();
             showToast("Profile picture updated!");
-        } catch (err) { showToast("Failed: " + err.message); }
-        finally { els.wrapper.classList.remove('uploading'); }
+        } catch (err) { 
+            showToast("Failed: " + err.message); 
+        }
+        finally { 
+            els.wrapper.classList.remove('uploading'); 
+        }
     });
 }
 
-onAuthStateChanged(auth, (user) => {
+if(els.name) els.name.textContent = "Loading...";
+if(els.email) els.email.textContent = "Loading...";
+
+onAuthStateChanged(mainAuth, (user) => {
+    console.log("Profile Auth:", user ? user.email : "Not logged in");
+    
     if (user && !user.isAnonymous) {
         if(els.name) els.name.textContent = user.displayName || "User";
         if(els.email) els.email.textContent = user.email;
         if(els.avatar && user.photoURL) els.avatar.src = user.photoURL;
 
-        const userRef = ref(db, 'users/' + user.uid);
+        const userRef = ref(mainDb, 'users/' + user.uid);
         onValue(userRef, (snapshot) => {
             const data = snapshot.val() || {};
             if(els.phone) els.phone.textContent = data.phone || user.phoneNumber || "Not Linked";
@@ -86,6 +93,7 @@ onAuthStateChanged(auth, (user) => {
             renderList(data.favorites || {}, els.favs, 'heart');
         });
     } else {
+        console.log("Redirecting to login...");
         window.location.replace("/pages/login.html");
     }
 });
@@ -105,19 +113,19 @@ function renderList(dataObj, container, type) {
         const date = item.timestamp ? new Date(item.timestamp).toLocaleDateString() : '';
         
         let statusLabel = "Installed";
-        let badgeColor = "#00e676"; // Green
+        let badgeColor = "#00e676";
 
         if (type === 'download') {
             const status = item.status ? item.status.toLowerCase() : 'installed';
             if (status.includes('downloading')) {
                 statusLabel = "Downloading"; 
-                badgeColor = "#ff9800"; // Orange
+                badgeColor = "#ff9800";
             } else if (status === 'installed') {
                 statusLabel = "Installed";
-                badgeColor = "#00e676"; // Green
+                badgeColor = "#00e676";
             } else if (status === 'uninstalled') {
                  statusLabel = "Uninstalled";
-                 badgeColor = "#d32f2f"; // Red
+                 badgeColor = "#d32f2f";
             } else {
                 statusLabel = item.status;
                 badgeColor = "#aaa";

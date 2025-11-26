@@ -1,5 +1,8 @@
+// complete-signup.js - Handles both email signup with OTP and social authentication
+// Place this as /scripts/complete-signup.js
+
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
-import { getAuth, createUserWithEmailAndPassword, updateProfile } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
+import { getAuth, createUserWithEmailAndPassword, updateProfile, signInWithPopup, GoogleAuthProvider, GithubAuthProvider, FacebookAuthProvider, OAuthProvider } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
 import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-database.js";
 
 const firebaseConfig = {
@@ -22,19 +25,99 @@ const showMsg = (text, type) => {
     statusMsg.className = `status-msg ${type}`;
 };
 
+// ============================================
+// SOCIAL AUTHENTICATION PROVIDERS
+// ============================================
+
+const googleProvider = new GoogleAuthProvider();
+const githubProvider = new GithubAuthProvider();
+const facebookProvider = new FacebookAuthProvider();
+const twitterProvider = new OAuthProvider('twitter.com');
+
+// Save user to database (for social auth)
+const saveUserToDB = async (user, additionalData = {}) => {
+    await set(ref(db, 'users/' + user.uid), {
+        name: user.displayName || additionalData.name || "User",
+        email: user.email,
+        username: additionalData.username || user.email.split('@')[0],
+        phone: "Not Linked",
+        joined: Date.now(),
+        emailVerified: true,
+        accountStatus: "active",
+        authProvider: additionalData.provider || "social",
+        photoURL: user.photoURL || null
+    });
+};
+
+// Google Signup
+document.getElementById('google-signup')?.addEventListener('click', async () => {
+    try {
+        showMsg("Signing up with Google...", "success");
+        const result = await signInWithPopup(auth, googleProvider);
+        await saveUserToDB(result.user, { provider: 'google' });
+        showMsg("Account created successfully!", "success");
+        setTimeout(() => window.location.href = '/index.html', 1500);
+    } catch (error) {
+        showMsg(error.message.replace("Firebase: ", ""), "error");
+    }
+});
+
+// GitHub Signup
+document.getElementById('github-signup')?.addEventListener('click', async () => {
+    try {
+        showMsg("Signing up with GitHub...", "success");
+        const result = await signInWithPopup(auth, githubProvider);
+        await saveUserToDB(result.user, { provider: 'github' });
+        showMsg("Account created successfully!", "success");
+        setTimeout(() => window.location.href = '/index.html', 1500);
+    } catch (error) {
+        showMsg(error.message.replace("Firebase: ", ""), "error");
+    }
+});
+
+// Facebook Signup
+document.getElementById('facebook-signup')?.addEventListener('click', async () => {
+    try {
+        showMsg("Signing up with Facebook...", "success");
+        const result = await signInWithPopup(auth, facebookProvider);
+        await saveUserToDB(result.user, { provider: 'facebook' });
+        showMsg("Account created successfully!", "success");
+        setTimeout(() => window.location.href = '/index.html', 1500);
+    } catch (error) {
+        showMsg(error.message.replace("Firebase: ", ""), "error");
+    }
+});
+
+// Twitter/X Signup
+document.getElementById('twitter-signup')?.addEventListener('click', async () => {
+    try {
+        showMsg("Signing up with X (Twitter)...", "success");
+        const result = await signInWithPopup(auth, twitterProvider);
+        await saveUserToDB(result.user, { provider: 'twitter' });
+        showMsg("Account created successfully!", "success");
+        setTimeout(() => window.location.href = '/index.html', 1500);
+    } catch (error) {
+        showMsg(error.message.replace("Firebase: ", ""), "error");
+    }
+});
+
+// ============================================
+// EMAIL SIGNUP WITH OTP VERIFICATION
+// ============================================
+
 // Generate 6-digit OTP
 const generateOTP = () => {
     return Math.floor(100000 + Math.random() * 900000).toString();
 };
 
-// Send OTP via Web3Forms (FREE - No setup required!)
+// Send OTP via Web3Forms
 const sendOTPEmail = async (email, otp, name) => {
     try {
         const response = await fetch('https://api.web3forms.com/submit', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-                access_key: '7387db01-2899-4364-b0b9-330c8dcc74d1', // Get free key from web3forms.com
+                access_key: '7387db01-2899-4364-b0b9-330c8dcc74d1',
                 subject: `Getnaro - Your Verification Code: ${otp}`,
                 from_name: 'Getnaro',
                 to: email,
@@ -80,6 +163,11 @@ const showOTPModal = (email, correctOTP, userData) => {
                         <i class="fa-solid fa-clock"></i>
                         <span id="timer">Code expires in <strong>5:00</strong></span>
                     </div>
+                    
+                    <div class="otp-help">
+                        <i class="fa-solid fa-circle-info"></i>
+                        <span>Check your email inbox. Code may take 1-2 minutes to arrive.</span>
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button id="resend-otp" class="gn-btn-secondary" disabled>
@@ -94,29 +182,18 @@ const showOTPModal = (email, correctOTP, userData) => {
     `;
     document.body.appendChild(modal);
 
-    // Add styles
+    // Add styles (same as before)
     const style = document.createElement('style');
     style.textContent = `
         #otp-modal .modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.85);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 10000;
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.85); display: flex;
+            align-items: center; justify-content: center; z-index: 10000;
             backdrop-filter: blur(8px);
         }
         #otp-modal .modal-content {
-            background: var(--bg-color, #1a1a1a);
-            border: 2px solid #9F00FF;
-            border-radius: 16px;
-            padding: 35px;
-            max-width: 500px;
-            width: 90%;
+            background: var(--box, #1a1a1a); border: 2px solid #9F00FF;
+            border-radius: 16px; padding: 35px; max-width: 500px; width: 90%;
             box-shadow: 0 15px 50px rgba(159, 0, 255, 0.4);
             animation: bounceIn 0.5s ease;
         }
@@ -125,107 +202,51 @@ const showOTPModal = (email, correctOTP, userData) => {
             50% { transform: scale(1.05); }
             100% { transform: scale(1); opacity: 1; }
         }
-        #otp-modal .modal-header {
-            text-align: center;
-            margin-bottom: 25px;
-        }
-        #otp-modal .modal-header h2 {
-            margin-top: 15px;
-            color: var(--text-color, #fff);
-            font-size: 24px;
-        }
-        #otp-modal .modal-body {
-            text-align: center;
-            color: var(--text-color, #ccc);
-        }
-        #otp-modal .otp-input-container {
-            display: flex;
-            gap: 10px;
-            justify-content: center;
-            margin: 25px 0;
-        }
+        #otp-modal .modal-header { text-align: center; margin-bottom: 25px; }
+        #otp-modal .modal-header h2 { margin-top: 15px; color: var(--text, #fff); font-size: 24px; }
+        #otp-modal .modal-body { text-align: center; color: var(--text, #ccc); }
+        #otp-modal .otp-input-container { display: flex; gap: 10px; justify-content: center; margin: 25px 0; }
         #otp-modal .otp-digit {
-            width: 50px;
-            height: 60px;
-            text-align: center;
-            font-size: 24px;
-            font-weight: bold;
-            border: 2px solid #9F00FF;
-            border-radius: 10px;
-            background: rgba(159, 0, 255, 0.05);
-            color: var(--text-color, #fff);
+            width: 50px; height: 60px; text-align: center; font-size: 24px; font-weight: bold;
+            border: 2px solid #9F00FF; border-radius: 10px;
+            background: rgba(159, 0, 255, 0.05); color: var(--text, #fff);
             transition: all 0.3s;
         }
         #otp-modal .otp-digit:focus {
-            outline: none;
-            border-color: #9F00FF;
-            background: rgba(159, 0, 255, 0.15);
-            transform: scale(1.1);
+            outline: none; border-color: #9F00FF;
+            background: rgba(159, 0, 255, 0.15); transform: scale(1.1);
             box-shadow: 0 0 20px rgba(159, 0, 255, 0.5);
         }
         #otp-modal .otp-error {
-            background: rgba(255, 68, 68, 0.1);
-            border: 1px solid #ff4444;
-            color: #ff4444;
-            padding: 12px;
-            border-radius: 8px;
-            margin: 15px 0;
-            font-weight: 500;
+            background: rgba(255, 68, 68, 0.1); border: 1px solid #ff4444;
+            color: #ff4444; padding: 12px; border-radius: 8px;
+            margin: 15px 0; font-weight: 500;
         }
-        #otp-modal .otp-timer {
-            background: rgba(159, 0, 255, 0.1);
-            border: 1px solid #9F00FF;
-            border-radius: 8px;
-            padding: 12px;
-            margin-top: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
+        #otp-modal .otp-timer, #otp-modal .otp-help {
+            background: rgba(159, 0, 255, 0.1); border: 1px solid #9F00FF;
+            border-radius: 8px; padding: 12px; margin-top: 15px;
+            display: flex; align-items: center; justify-content: center; gap: 10px;
         }
-        #otp-modal .otp-timer i {
-            color: #9F00FF;
-            font-size: 18px;
+        #otp-modal .otp-help {
+            background: rgba(33, 150, 243, 0.1); border-color: #2196F3;
+            font-size: 13px; text-align: left;
         }
-        #otp-modal .modal-footer {
-            display: flex;
-            gap: 10px;
-            justify-content: center;
-            margin-top: 25px;
+        #otp-modal .otp-timer i { color: #9F00FF; font-size: 18px; }
+        #otp-modal .otp-help i { color: #2196F3; font-size: 16px; flex-shrink: 0; }
+        #otp-modal .modal-footer { display: flex; gap: 10px; justify-content: center; margin-top: 25px; }
+        #otp-modal .gn-btn-primary, #otp-modal .gn-btn-secondary {
+            padding: 12px 24px; border: none; border-radius: 8px;
+            cursor: pointer; font-weight: 600; transition: all 0.3s;
+            display: flex; align-items: center; gap: 8px;
         }
-        #otp-modal .gn-btn-primary,
+        #otp-modal .gn-btn-primary { background: #9F00FF; color: white; }
+        #otp-modal .gn-btn-primary:hover { background: #8000CC; transform: translateY(-2px); }
         #otp-modal .gn-btn-secondary {
-            padding: 12px 24px;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: all 0.3s;
-            display: flex;
-            align-items: center;
-            gap: 8px;
+            background: transparent; border: 2px solid #666; color: #666;
         }
-        #otp-modal .gn-btn-primary {
-            background: #9F00FF;
-            color: white;
-        }
-        #otp-modal .gn-btn-primary:hover {
-            background: #8000CC;
-            transform: translateY(-2px);
-        }
-        #otp-modal .gn-btn-secondary {
-            background: transparent;
-            border: 2px solid #666;
-            color: #666;
-        }
-        #otp-modal .gn-btn-secondary:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
+        #otp-modal .gn-btn-secondary:disabled { opacity: 0.5; cursor: not-allowed; }
         #otp-modal .gn-btn-secondary:not(:disabled):hover {
-            background: rgba(159, 0, 255, 0.1);
-            border-color: #9F00FF;
-            color: #9F00FF;
+            background: rgba(159, 0, 255, 0.1); border-color: #9F00FF; color: #9F00FF;
         }
     `;
     document.head.appendChild(style);
@@ -237,12 +258,8 @@ const showOTPModal = (email, correctOTP, userData) => {
     otpInputs.forEach((input, index) => {
         input.addEventListener('input', (e) => {
             const value = e.target.value;
-            if (value && index < otpInputs.length - 1) {
-                otpInputs[index + 1].focus();
-            }
-            if (!/^\d$/.test(value)) {
-                e.target.value = '';
-            }
+            if (value && index < otpInputs.length - 1) otpInputs[index + 1].focus();
+            if (!/^\d$/.test(value)) e.target.value = '';
         });
 
         input.addEventListener('keydown', (e) => {
@@ -261,7 +278,7 @@ const showOTPModal = (email, correctOTP, userData) => {
         });
     });
 
-    // Timer countdown (5 minutes)
+    // Timer countdown
     let timeLeft = 300;
     const timerElement = modal.querySelector('#timer strong');
     const resendBtn = modal.querySelector('#resend-otp');
@@ -278,14 +295,11 @@ const showOTPModal = (email, correctOTP, userData) => {
             resendBtn.disabled = false;
         }
         
-        if (timeLeft <= 60) {
-            resendBtn.disabled = false;
-        }
+        if (timeLeft <= 60) resendBtn.disabled = false;
     }, 1000);
 
     // Verify OTP
-    const verifyBtn = modal.querySelector('#verify-otp');
-    verifyBtn.addEventListener('click', async () => {
+    modal.querySelector('#verify-otp').addEventListener('click', async () => {
         const enteredOTP = Array.from(otpInputs).map(input => input.value).join('');
         
         if (enteredOTP.length !== 6) {
@@ -295,11 +309,11 @@ const showOTPModal = (email, correctOTP, userData) => {
         }
 
         if (enteredOTP === correctOTP) {
+            const verifyBtn = modal.querySelector('#verify-otp');
             verifyBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Verifying...';
             verifyBtn.disabled = true;
 
             try {
-                // Save verified user to database
                 await set(ref(db, 'users/' + userData.uid), {
                     username: userData.username,
                     email: userData.email,
@@ -307,21 +321,19 @@ const showOTPModal = (email, correctOTP, userData) => {
                     phone: "Not Linked",
                     joined: Date.now(),
                     emailVerified: true,
-                    accountStatus: "active"
+                    accountStatus: "active",
+                    authProvider: "email"
                 });
 
-                otpError.style.display = 'none';
                 verifyBtn.innerHTML = '<i class="fa-solid fa-check"></i> Verified!';
                 verifyBtn.style.background = '#00ff00';
-                
                 clearInterval(countdown);
-                
                 showMsg("Email Verified Successfully!", "success");
+                
                 setTimeout(() => {
                     modal.remove();
                     window.location.href = '/index.html';
                 }, 1500);
-
             } catch (error) {
                 otpError.textContent = 'Verification failed. Please try again.';
                 otpError.style.display = 'block';
@@ -341,28 +353,34 @@ const showOTPModal = (email, correctOTP, userData) => {
     });
 
     // Resend OTP
-    let newOTP = correctOTP;
     resendBtn.addEventListener('click', async () => {
-        newOTP = generateOTP();
+        const newOTP = generateOTP();
+        resendBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Sending...';
+        resendBtn.disabled = true;
+        
         const sent = await sendOTPEmail(userData.email, newOTP, userData.name);
         
         if (sent) {
             correctOTP = newOTP;
             timeLeft = 300;
-            resendBtn.disabled = true;
+            console.log('New OTP:', newOTP);
             otpError.textContent = 'New OTP sent to your email!';
             otpError.style.background = 'rgba(0, 255, 0, 0.1)';
             otpError.style.borderColor = '#00ff00';
             otpError.style.color = '#00ff00';
             otpError.style.display = 'block';
-            setTimeout(() => otpError.style.display = 'none', 3000);
+            setTimeout(() => {
+                otpError.style.display = 'none';
+                resendBtn.innerHTML = '<i class="fa-solid fa-rotate-right"></i> Resend OTP';
+            }, 3000);
         }
     });
 
     otpInputs[0].focus();
 };
 
-document.getElementById('btn-signup').addEventListener('click', async () => {
+// Email Signup Handler
+document.getElementById('btn-signup')?.addEventListener('click', async () => {
     const name = document.getElementById('s-name').value.trim();
     const username = document.getElementById('s-username').value.trim();
     const email = document.getElementById('s-email').value.trim();
@@ -371,7 +389,6 @@ document.getElementById('btn-signup').addEventListener('click', async () => {
     const terms = document.getElementById('check-terms').checked;
     const captcha = document.getElementById('check-captcha').checked;
 
-    // Validation
     if(!name || !username || !email || !pass) return showMsg("Please fill all fields", "error");
     if(pass !== confirmPass) return showMsg("Passwords do not match", "error");
     if(pass.length < 6) return showMsg("Password must be at least 6 characters", "error");
@@ -381,31 +398,22 @@ document.getElementById('btn-signup').addEventListener('click', async () => {
     try {
         showMsg("Creating Account...", "success");
         
-        // Generate OTP
         const otp = generateOTP();
+        console.log('🔐 OTP:', otp);
         
-        // FOR TESTING: Show OTP in console and alert
-        console.log('🔐 VERIFICATION CODE:', otp);
-        alert(`⚠️ TESTING MODE\n\nYour OTP is: ${otp}\n\nCheck console for details.\n\n(Email sending will work after Web3Forms setup)`);
-        
-        // Try to send OTP email (will skip if not configured)
         showMsg("Sending verification code...", "success");
         const emailSent = await sendOTPEmail(email, otp, name);
         
-        if (!emailSent) {
-            console.warn('⚠️ Email not sent - using testing mode');
-            showMsg("Testing mode: Check console/alert for OTP", "success");
-            // Continue anyway for testing
+        if (emailSent) {
+            console.log('✅ Email sent');
+        } else {
+            console.warn('⚠️ Email failed - check console for OTP');
         }
 
-        // Create user account
         const userCredential = await createUserWithEmailAndPassword(auth, email, pass);
         const user = userCredential.user;
-
-        // Update Profile Name
         await updateProfile(user, { displayName: name });
 
-        // Prepare user data
         const userData = {
             uid: user.uid,
             username: username,
@@ -413,21 +421,15 @@ document.getElementById('btn-signup').addEventListener('click', async () => {
             name: name
         };
 
-        showMsg("Account created! Please verify your email.", "success");
-        
-        // Show OTP modal
-        setTimeout(() => {
-            showOTPModal(email, otp, userData);
-        }, 500);
+        showMsg("Account created! Verify your email now.", "success");
+        setTimeout(() => showOTPModal(email, otp, userData), 500);
 
     } catch (error) {
         let errorMsg = error.message.replace("Firebase: ", "");
         if (error.code === 'auth/email-already-in-use') {
-            errorMsg = "This email is already registered. Please login instead.";
+            errorMsg = "Email already registered. Please login.";
         } else if (error.code === 'auth/weak-password') {
-            errorMsg = "Password is too weak. Use at least 6 characters.";
-        } else if (error.code === 'auth/invalid-email') {
-            errorMsg = "Invalid email address format.";
+            errorMsg = "Password too weak. Use at least 6 characters.";
         }
         showMsg(errorMsg, "error");
     }

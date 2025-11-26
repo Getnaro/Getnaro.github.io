@@ -51,3 +51,4 @@ document.addEventListener("DOMContentLoaded", () => {
 
     draw();
 });
+import { mainAuth, mainDb, mainFirestore, mainStorage } from './firebase-config.js';

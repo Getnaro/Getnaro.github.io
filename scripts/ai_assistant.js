@@ -1,30 +1,17 @@
 /**
- * GETNARO AI ASSISTANT - DYNAMIC FIRESTORE VERSION
+ * GETNARO AI ASSISTANT
+ * /scripts/ai_assistant.js
  */
 
-import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-
-const firebaseConfig = {
-    apiKey: "AIzaSyAJrJnSQI7X1YJHLOfHZkknmoAoiOiGuEo",
-    authDomain: "getnaroapp.firebaseapp.com",
-    databaseURL: "https://getnaroapp-default-rtdb.asia-southeast1.firebasedatabase.app",
-    projectId: "getnaroapp",
-    storageBucket: "getnaroapp.firebasestorage.app",
-    messagingSenderId: "304744138530",
-    appId: "1:304744138530:web:8166344d61cdfa127ec77b",
-    measurementId: "G-FLBX24J98C"
-};
-
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
+import { mainApp, mainFirestore } from './firebase-config.js';
+import { collection, getDocs } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
 const WORKER_URL = "https://getnaro-ai.narotech.workers.dev/"; 
 
 const SETTINGS = {
     speechEnabled: true,     
     navDelay: 1000,          
-    localPath: "/pages/view.html?id=" // CHANGED: Correct path
+    localPath: "/pages/view.html?id="
 };
 
 const SITE_CONTEXT = `
@@ -55,7 +42,7 @@ const PAGES_DB = {
 
 async function fetchAppsFromDB() {
     try {
-        const querySnapshot = await getDocs(collection(db, "apps"));
+        const querySnapshot = await getDocs(collection(mainFirestore, "apps"));
         const dynamicApps = [];
         querySnapshot.forEach((doc) => {
             const data = doc.data();

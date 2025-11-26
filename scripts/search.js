@@ -14,14 +14,13 @@ let db = null;
 
 // --- FIREBASE CONFIG ---
 const firebaseConfig = {
-    apiKey: "AIzaSyAJrJnSQI7X1YJHLOfHZkknmoAoiOiGuEo",
-    authDomain: "getnaroapp.firebaseapp.com",
-    databaseURL: "https://getnaroapp-default-rtdb.asia-southeast1.firebasedatabase.app",
-    projectId: "getnaroapp",
-    storageBucket: "getnaroapp.firebasestorage.app",
-    messagingSenderId: "304744138530",
-    appId: "1:304744138530:web:8166344d61cdfa127ec77b",
-    measurementId: "G-FLBX24J98C"
+  apiKey: "AIzaSyCtX1G_OEXmkKtBNGzWQFEYiEWibrMIFrg",
+  authDomain: "user-getnaro.firebaseapp.com",
+  databaseURL: "https://user-getnaro-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "user-getnaro",
+  storageBucket: "user-getnaro.firebasestorage.app",
+  messagingSenderId: "264425704576",
+  appId: "1:264425704576:web:cfd98a1f627e9a59cc2a65"
 };
 
 // --- Get or Initialize Firestore ---
@@ -279,3 +278,4 @@ async function initSearch() {
 
 // Initialize on DOM ready
 document.addEventListener('DOMContentLoaded', initSearch);
+import { mainAuth, mainDb, mainFirestore, mainStorage } from './firebase-config.js';
