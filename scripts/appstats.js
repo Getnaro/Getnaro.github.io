@@ -13,9 +13,13 @@ const firebaseConfig = {
   appId: "1:129355115034:web:21c3c36ccb940d7fab7fa3"
 };
 
-const DOWNLOAD_LINK = "https://github.com/Getnaro/Getnaro.github.io/raw/refs/heads/main/application/Getnaro_Winx64_V1.5.exe";
-const COLLECTION_NAME = "app_data"; 
-const STATS_DOC_ID = "global_stats"; 
+const DOWNLOAD_LINKS = {
+    x64: "https://getnaro.github.io/getnaro/x64",
+    x32: "https://getnaro.github.io/getnaro/x32",
+    minimal: "https://getnaro.github.io/getnaro/minimal",
+    portable: "https://getnaro.github.io/getnaro/portable"
+};
+
 
 // --- 2. INIT FIREBASE ---
 const app = initializeApp(firebaseConfig, "stats-project");
@@ -135,49 +139,42 @@ async function handleRatingSubmit(rating) {
         console.error("Rating Save Failed:", e);
     }
 }
-
-function bindDownloadButton() {
-    const { downloadBtn, downloadCount } = getUI();
-    if (!downloadBtn) return;
-
-    downloadBtn.onclick = (e) => {
-        e.preventDefault();
-        
-        downloadBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Starting...';
-        downloadBtn.disabled = true;
-
-        // Optimistic UI update
-        if (downloadCount) {
-            let val = parseInt(downloadCount.innerText.replace(/,/g, '')) || 0;
-            downloadCount.innerText = (val + 1).toLocaleString();
-        }
-
-        // Update Firebase
-        if (firebaseOnline) {
-            const statsRef = doc(db, COLLECTION_NAME, STATS_DOC_ID);
-            updateDoc(statsRef, { downloads: increment(1) })
-                .then(() => console.log("Download count updated"))
-                .catch(e => console.error("Download increment failed:", e));
-        }
-
-        setTimeout(() => {
-            const link = document.createElement('a');
-            link.href = DOWNLOAD_LINK;
-            link.target = '_blank';
-            link.download = "GetNaro-Setup.exe";
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-
-            downloadBtn.innerHTML = '<i class="fa-solid fa-check"></i> Started';
-            downloadBtn.disabled = false;
-            
-            setTimeout(() => {
-                downloadBtn.innerHTML = '<i class="fa-brands fa-windows" style="color: white !important;"></i> Download Now';
-            }, 3000);
-        }, 1000);
+function bindDownloadButtons() {
+    const buttons = {
+        x64: document.getElementById("dl-x64"),
+        x32: document.getElementById("dl-x32"),
+        portable: document.getElementById("dl-portable"),
+        minimal: document.getElementById("dl-minimal")
     };
+
+    for (const [key, btn] of Object.entries(buttons)) {
+        if (!btn) continue;
+
+        btn.addEventListener("click", (e) => {
+            e.preventDefault();
+            startDownload(btn, key);
+        });
+    }
 }
+
+function startDownload(button, type) {
+    button.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Starting...';
+    button.disabled = true;
+
+    // Increase download count
+    if (firebaseOnline) {
+        const statsRef = doc(db, COLLECTION_NAME, STATS_DOC_ID);
+        updateDoc(statsRef, { downloads: increment(1) });
+    }
+
+    // Redirect to actual link
+    setTimeout(() => {
+        window.location.href = DOWNLOAD_LINKS[type];
+        button.innerHTML = '<i class="fa-solid fa-check"></i> Started';
+        button.disabled = false;
+    }, 800);
+}
+
 
 async function startFirebase() {
     const { downloadCount, ratingValue, totalRatings } = getUI();
@@ -263,7 +260,7 @@ document.addEventListener('DOMContentLoaded', () => {
     console.log("DOM Content Loaded");
     
     // Set up UI immediately
-    bindDownloadButton();
+    bindDownloadButtons();
     renderStars(0);
     initInteractiveRating();
 
