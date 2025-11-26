@@ -10,14 +10,13 @@ import {
 
 // 1. CONFIGURATION 
 const firebaseConfig = {
-    apiKey: "AIzaSyAJrJnSQI7X1YJHLOfHZkknmoAoiOiGuEo",
-    authDomain: "getnaroapp.firebaseapp.com",
-    databaseURL: "https://getnaroapp-default-rtdb.asia-southeast1.firebasedatabase.app",
-    projectId: "getnaroapp",
-    storageBucket: "getnaroapp.firebasestorage.app",
-    messagingSenderId: "304744138530",
-    appId: "1:304744138530:web:8166344d61cdfa127ec77b",
-    measurementId: "G-FLBX24J98C"
+  apiKey: "AIzaSyBwBvhi2FDUJEoOHWic-2Ka8nRWyj_7uzo",
+  authDomain: "stat-getnaroapp.firebaseapp.com",
+  databaseURL: "https://stat-getnaroapp-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "stat-getnaroapp",
+  storageBucket: "stat-getnaroapp.firebasestorage.app",
+  messagingSenderId: "129355115034",
+  appId: "1:129355115034:web:21c3c36ccb940d7fab7fa3"
 };
 
 const app = initializeApp(firebaseConfig);
