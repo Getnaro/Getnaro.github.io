@@ -28,7 +28,7 @@
     <meta property="og:url" content="https://getnaro.com/">
     <meta name="twitter:card" content="summary_large_image">
     <!-- FAVICON -->
-    <link rel="icon" type="image/x-icon" href="assests/Favicon.png">
+    <link rel="icon" type="image/x-icon" href="/assests/Favicon.png">
 </head>
 <body>
     <canvas id="gn-particles"></canvas>
