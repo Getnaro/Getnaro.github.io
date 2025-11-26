@@ -19,7 +19,7 @@ const firebaseConfig = {
   appId: "1:129355115034:web:21c3c36ccb940d7fab7fa3"
 };
 
-const app = initializeApp(firebaseConfig);
+const app = initializeApp(firebaseConfig, "stats-app");
 const rtdb = getDatabase(app);
 
 /* =========================================================

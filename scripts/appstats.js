@@ -18,7 +18,7 @@ const COLLECTION_NAME = "app_data";
 const STATS_DOC_ID = "global_stats"; 
 
 // --- 2. INIT FIREBASE ---
-const app = initializeApp(firebaseConfig);
+const app = initializeApp(firebaseConfig, "stats-firestore");
 const db = getFirestore(app);
 const auth = getAuth(app);
 let firebaseOnline = false;
