@@ -255,3 +255,173 @@
     50% { transform: translate(30px, 30px); }
 }
 @keyframes slideUp { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; transform: translateY(0); } }
+/* ... (Existing header.css content) ... */
+
+/* ------------------------------------------------------------------
+   NEW: Action Area Buttons (Patch Notes & YouTube) - Styles for Buttons
+   ------------------------------------------------------------------ */
+
+.gn-action-area {
+    display: flex;
+    gap: 8px; /* Small gap between the two new buttons */
+    width: 100%;
+}
+
+/* Ensure spacing when area is used on the left (gn-dl-info) */
+.gn-action-area-left {
+    margin-top: 25px; 
+    padding-top: 0; /* No separator line needed here */
+}
+
+.gn-action-btn {
+    flex: 1; /* Make both buttons equal width */
+    padding: 15px 15px;
+    font-size: 16px;
+    font-weight: 600;
+    border-radius: 8px;
+    text-decoration: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: 0.2s;
+}
+
+/* Patch Notes Button Style */
+.gn-patch-btn {
+    background: #1e1e1e;
+    border: 1px solid #9F00FF55;
+    color: #9F00FF;
+}
+
+.gn-patch-btn:hover {
+    background: #9F00FF;
+    color: white !important;
+    box-shadow: 0 0 10px #9F00FF;
+}
+
+/* YouTube Button Style */
+.gn-youtube-btn {
+    background: #cc0000; /* YouTube Red */
+    border: 1px solid #cc0000;
+    color: white !important;
+}
+
+.gn-youtube-btn:hover {
+    background: #ff0000;
+    box-shadow: 0 0 10px #ff0000;
+}
+
+.gn-action-btn i {
+    margin-right: 8px;
+    color: inherit;
+}
+
+/* Light mode adjustments for action buttons */
+.light-mode .gn-patch-btn {
+    background: white !important;
+    color: #9F00FF !important;
+    border-color: #9F00FF !important;
+}
+
+.light-mode .gn-patch-btn:hover {
+    background: #9F00FF !important;
+    color: white !important;
+}
+/* ... (Existing header.css content) ... */
+
+/* Always keep purple visible */
+.tab.active,
+.heading .dl,
+.content-one a:hover,
+.gn-feature-box:hover,
+/* Ensure new Patch Notes link is styled on hover */
+.heading li a:hover {
+    color: #fff !important;
+}
+
+/* ... (Existing styles for .heading, .heading ul, etc.) ... */
+
+/* ------------------------------------------------------------------
+   NEW: Download Button Styles for getnaro-app.html (must be in the right CSS file)
+   Using the glossy purple theme
+   ------------------------------------------------------------------ */
+
+.gn-dl-card-col {
+    /* Ensure right card is positioned correctly if necessary, or just center its content */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+.gn-download-options {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+    margin-top: 20px;
+}
+
+.gn-glossy-btn {
+    /* Main X64 Button */
+    background: linear-gradient(90deg, #9F00FF, #B72BFF);
+    border: none;
+    color: white;
+    padding: 16px 20px;
+    font-size: 20px;
+    font-weight: 800;
+    border-radius: 12px;
+    text-decoration: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: 0.3s;
+    box-shadow: 0 8px 25px rgba(159, 0, 255, 0.4);
+}
+
+.gn-glossy-btn:hover {
+    box-shadow: 0 8px 30px rgba(159, 0, 255, 0.6);
+    transform: translateY(-2px);
+}
+
+.gn-secondary-btn {
+    /* Other Download Options */
+    background: #1e1e1e; /* Dark background from var(--box) */
+    border: 2px solid #9F00FF55;
+    color: #e0e0e0;
+    padding: 12px 20px;
+    font-size: 17px;
+    font-weight: 600;
+    border-radius: 10px;
+    text-decoration: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: 0.2s;
+}
+
+.gn-secondary-btn:hover {
+    background: #9F00FF33;
+    border-color: #9F00FF;
+    color: white !important;
+}
+
+.gn-download-options i {
+    margin-right: 10px;
+    color: inherit; /* Inherit color from the parent link */
+}
+
+/* Light mode adjustments for secondary buttons */
+.light-mode .gn-secondary-btn {
+    background: #ffffff !important;
+    color: #111111 !important;
+    border-color: #9F00FF !important;
+}
+
+.light-mode .gn-secondary-btn:hover {
+    background: #9F00FF !important;
+    color: white !important;
+}
+
+.light-mode .gn-secondary-btn:hover i {
+    color: white !important;
+}

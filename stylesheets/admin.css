@@ -1,0 +1,78 @@
+        body { background-color: #050505; color: #e0e0e0;}
+        
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #1a1a1a; }
+        ::-webkit-scrollbar-thumb { background: #9F00FF; border-radius: 4px; }
+
+        .gn-border { border-color: #9F00FF; }
+        .gn-text { color: #9F00FF; }
+        .gn-bg { background-color: #9F00FF; }
+        .gn-bg:hover { background-color: #7a00c4; }
+        
+        .loader { border: 3px solid #333; border-top: 3px solid #9F00FF; border-radius: 50%; width: 24px; height: 24px; animation: spin 1s linear infinite; display: inline-block; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        #admin-toast {
+            visibility: hidden; min-width: 250px; background-color: #1a1a1a; color: #fff; text-align: center;
+            border-radius: 8px; padding: 16px; position: fixed; z-index: 5000; left: 50%; bottom: 30px;
+            transform: translateX(-50%); border: 1px solid #9F00FF; box-shadow: 0 4px 15px rgba(159, 0, 255, 0.3);
+            opacity: 0; transition: opacity 0.3s, bottom 0.3s ;
+        }
+        #admin-toast.show { visibility: visible; opacity: 1; bottom: 50px;  }
+        .container{
+            position: relative;
+            left: 0;
+            top: 120px;
+            right: 0;
+            margin: auto;
+            padding-bottom: 100px;
+        }
+        /* FIX: Ensure modal is centered and covers screen */
+        #custom-modal, #user-detail-modal {
+            display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); 
+            z-index: 5000; justify-content: center; align-items: center; backdrop-filter: blur(5px);
+        }
+        .modal-box {
+            background: #111; border: 1px solid #333; border-left: 4px solid #9F00FF; 
+            padding: 25px; width: 90%; max-width: 600px; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+            transform: scale(0.9); animation: popIn 0.2s forwards;
+            max-height: 90vh; overflow-y: auto;
+        }
+        @keyframes popIn { to { transform: scale(1); } }
+        
+        /* Dashboard Layout */
+        .tab-button.active {
+            background-color: #9F00FF !important;
+            color: white !important;
+            box-shadow: 0 4px 15px rgba(159, 0, 255, 0.3);
+        }
+        .data-card {
+            background: #111;
+            padding: 16px;
+            border-radius: 10px;
+            border-left: 3px solid #9F00FF;
+            margin-bottom: 12px;
+        }
+        .user-detail-line {
+             display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px dashed #222;
+        }
+        .user-detail-line span:last-child { color: #9F00FF; font-weight: bold; }
+        
+        /* FIX: User Database search icon positioning */
+        #tab-users .search-wrapper {
+             position: relative;
+             display: flex;
+             align-items: center;
+             width: 100%;
+        }
+        #tab-users .search-wrapper i.fa-search {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            pointer-events: none;
+        }
+
+        .lg\:col-span-2 .flex {
+            align-items: center;
+        }
