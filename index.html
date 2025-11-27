@@ -3,507 +3,692 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="/stylesheets/style.css">
-    <link rel="stylesheet" href="/stylesheets/ai_assistant.css">
-    <title>Getnaro.app</title>
-    <!-- FONTS & ICONS -->
+    <title>Getnaro - The Future of OS Interaction</title>
+    <!-- FontAwesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <!-- SEO + META -->
-    <meta name="title" content="Getnaro — Free Software, Drivers & Tools Download Hub">
-    <meta name="description"
-        content="Getnaro is your all-in-one download hub for Windows software, drivers, tools, utilities and essential apps. Fast, safe and direct downloads with no ads or redirects. Updated daily.">
-    <meta name="keywords"
-        content="Getnaro, software download, drivers download, free pc tools, windows apps download, downloader website, pc utilities, direct download hub">
-    <meta name="author" content="Getnaro Team">
-    <meta name="robots" content="index, follow">
-    <link rel="canonical" href="https://getnaro.com/">
-    <!-- SOCIAL -->
-
-    <meta property="og:type" content="website">
-    <meta property="og:title" content="Getnaro — Free Software, Drivers & Tools Download Hub">
-    <meta property="og:description"
-        content="Download software, drivers, utilities and PC tools safely from Getnaro. Direct downloads without ads or redirects.">
-    <meta property="og:image" content="https://getnaro.com/assets/getnaro-banner.jpg">
-    <meta property="og:url" content="https://getnaro.com/">
-    <meta name="twitter:card" content="summary_large_image">
-    <!-- FAVICON -->
-    <link rel="icon" type="image/x-icon" href="/assests/Favicon.png">
+    <!-- Fira Code Font for Code Block -->
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&display=swap" rel="stylesheet">
+    
     <style>
-        /* Loading State for Dynamic Grid */
-        .gn-grid-loader {
+        /* =========================================
+           1. CORE VARIABLES (VIVO/ORIGIN OS PALETTE)
+           ========================================= */
+        :root {
+            --bg: #ffffff;
+            --text: #1a1a1a;
+            /* Default Colors */
+            --primary: #9F00FF; 
+            --secondary: #00d4ff;
+            
+            --accent: #FF2A6D;
+            --glass: rgba(255, 255, 255, 0.8);
+            --border: rgba(0,0,0,0.05);
+            --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1); 
+            --ease-elastic: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
+        body.dark-mode {
+            --bg: #050505;
+            --text: #ffffff;
+            --glass: rgba(20, 20, 20, 0.8);
+            --border: rgba(255,255,255,0.1);
+        }
+
+        @font-face {
+            font-family: 'Getnaro';
+            src: url('/assests/Getnaro-medium.ttf');
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Getnaro', system-ui, -apple-system, sans-serif;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            scrollbar-width: none; /* Firefox */
+            -ms-overflow-style: none;  /* IE 10+ */
+        }
+        
+        html::-webkit-scrollbar { 
+            display: none;  /* Chrome/Safari/Webkit */
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            overflow-x: hidden;
+            transition: background-color 0.8s var(--ease-out-expo), color 0.8s var(--ease-out-expo);
+        }
+
+        /* =========================================
+           2. NAVIGATION (Transparent & Centered Blueprint)
+           ========================================= */
+        .navbar {
+            position: fixed;
+            top: 0; left: 0; width: 100%;
+            height: 100px;
+            display: flex; justify-content: center; align-items: center;
+            padding: 0 2%;
+            z-index: 1000;
+            background: transparent;
+            backdrop-filter: blur(0px);
+            transition: 0.4s var(--ease-out-expo);
+        }
+
+        .nav-center-container {
+            display: flex;
+            align-items: center;
+            gap: 40px;
+            background: rgba(255,255,255,0.05); 
+            padding: 15px 40px;
+            border-radius: 50px;
+            border: 1px solid rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .nav-link {
+            text-decoration: none; color: var(--text); font-size: 15px; font-weight: 600;
+            opacity: 0.7; transition: 0.3s; text-transform: uppercase; letter-spacing: 1px;
+        }
+        .nav-link:hover { opacity: 1; color: var(--primary); }
+
+        .naro-link-btn {
+            background: var(--text); color: var(--bg);
+            padding: 8px 20px; border-radius: 20px;
+            text-decoration: none; font-weight: 700; font-size: 12px;
+            letter-spacing: 1px; transition: 0.3s;
+        }
+        .naro-link-btn:hover { transform: scale(1.05); }
+
+        .brand-logo img { height: 50px; width: auto; transition: transform 0.5s; }
+        .brand-logo:hover img { transform: rotate(360deg) scale(1.1); }
+
+        /* Animated Interactive Toggle Switch */
+        .theme-switch {
+            position: relative;
+            width: 60px;
+            height: 30px;
+            background: var(--bg);
+            border: 2px solid var(--border);
+            border-radius: 30px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            padding: 2px;
+            transition: 0.4s;
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .theme-switch-knob {
+            width: 24px; height: 24px;
+            background: var(--primary);
+            border-radius: 50%;
+            transition: 0.4s var(--ease-elastic);
+            transform: translateX(0px);
+            display: flex; justify-content: center; align-items: center;
+            color: white; font-size: 12px;
+        }
+        body.dark-mode .theme-switch-knob { transform: translateX(30px); }
+
+        /* =========================================
+           3. ADVANCED 3D ANIMATION ENGINE
+           ========================================= */
+        .section {
+            min-height: 100vh;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            padding: 100px 8%;
+            overflow: hidden;
+            perspective: 2000px;
+            transform-style: preserve-3d;
+        }
+
+        .anim-element {
+            opacity: 0;
+            will-change: transform, opacity, filter;
+            transition: all 1.0s var(--ease-out-expo); /* Slightly faster for responsiveness */
+        }
+
+        /* Animations */
+        .anim-fly-in { transform: translateZ(-1200px) scale(0.2) rotateX(20deg); filter: blur(40px); }
+        .section.active .anim-fly-in { opacity: 1; transform: translateZ(0) scale(1) rotateX(0deg); filter: blur(0); }
+
+        .anim-rotate-left { transform: translateX(-200px) rotateY(45deg) translateZ(-100px); transform-origin: left center; filter: blur(10px); }
+        .section.active .anim-rotate-left { opacity: 1; transform: translateX(0) rotateY(0deg) translateZ(0); filter: blur(0); }
+
+        .anim-rotate-right { transform: translateX(200px) rotateY(-45deg) translateZ(-100px); transform-origin: right center; filter: blur(10px); }
+        .section.active .anim-rotate-right { opacity: 1; transform: translateX(0) rotateY(0deg) translateZ(0); filter: blur(0); }
+
+        .anim-up { transform: translateY(100px) scale(0.9); filter: blur(10px); }
+        .section.active .anim-up { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
+
+        .anim-blur-reveal { filter: blur(50px); transform: scale(1.2); letter-spacing: 10px; }
+        .section.active .anim-blur-reveal { opacity: 1; filter: blur(0); transform: scale(1); letter-spacing: normal; }
+        
+        .anim-pop-in { transform: scale(0.5); opacity: 0; }
+        .section.active .anim-pop-in { transform: scale(1); opacity: 1; transition-timing-function: var(--ease-elastic); }
+
+        /* Delays */
+        .d-1 { transition-delay: 0.1s; }
+        .d-2 { transition-delay: 0.2s; }
+        .d-3 { transition-delay: 0.3s; }
+        .d-4 { transition-delay: 0.4s; }
+        .d-5 { transition-delay: 0.5s; }
+        .d-6 { transition-delay: 0.6s; }
+
+        /* =========================================
+           4. LAYOUTS & TYPOGRAPHY
+           ========================================= */
+        .layout-hero { text-align: center; max-width: 1300px; margin: 0 auto; z-index: 2; transform-style: preserve-3d; }
+        .layout-split { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; width: 100%; max-width: 1600px; transform-style: preserve-3d; }
+        .layout-split.reversed { direction: rtl; } 
+        .layout-split.reversed .text-col { direction: ltr; }
+        .layout-center { text-align: center; max-width: 1000px; margin: 0 auto; transform-style: preserve-3d; }
+
+        h1 {
+            font-size: clamp(4rem, 9vw, 7rem);
+            line-height: 1;
+            font-weight: 800;
+            letter-spacing: -3px;
+            margin-bottom: 30px;
+            background: linear-gradient(180deg, var(--text) 20%, var(--primary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            transition: 1s var(--ease-out-expo);
+        }
+
+        /* Text Sizes */
+        .text-col h2 { font-size: clamp(3.5rem, 7vw, 6rem); font-weight: 900; margin-bottom: 30px; letter-spacing: -2.5px; line-height: 1.05; }
+        .text-col p { font-size: 1.8rem; line-height: 1.5; color: var(--text); opacity: 0.9; margin-bottom: 50px; font-weight: 500; }
+        
+        .layout-center h2 { font-size: clamp(3.5rem, 7vw, 6rem); font-weight: 900; margin-bottom: 30px; letter-spacing: -2.5px; line-height: 1.05; }
+        .layout-center p { font-size: 1.8rem; line-height: 1.5; color: var(--text); opacity: 0.9; margin-bottom: 50px; font-weight: 500; }
+
+        #hero h1 { font-size: clamp(4rem, 9vw, 7rem); } 
+        #hero p { font-size: 1.5rem; }
+        #final-cta h1 { font-size: clamp(4rem, 9vw, 7rem); }
+        #final-cta p { font-size: 1.5rem; }
+
+        .highlight-text { color: var(--primary); font-weight: 600; transition: color 1s; display: inline-block; position: relative; font-size: 1.6rem; }
+        .highlight-text::after {
+            content: ''; position: absolute; bottom: 0; left: 0; width: 100%; height: 30%; 
+            background: var(--primary); opacity: 0.2; z-index: -1; transform: skewX(-10deg);
+        }
+        
+        .visual-container { width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; transform-style: preserve-3d; }
+        
+        .glass-card {
+            background: rgba(255,255,255,0.03); border: 1px solid var(--border);
+            backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px);
+            border-radius: 40px; padding: 60px; width: 100%; transform: translateZ(40px);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.1); transition: transform 0.5s var(--ease-out-expo);
+        }
+        .glass-card:hover { transform: translateZ(60px) scale(1.02); }
+
+        .grid-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 40px; width: 100%; margin-top: 60px; }
+        .feature-item { padding: 40px; display: flex; flex-direction: column; gap: 20px; background: rgba(255,255,255,0.02); border-radius: 30px; border: 1px solid var(--border); transition: 0.3s; }
+        .feature-item:hover { background: rgba(255,255,255,0.05); transform: translateY(-10px); border-color: var(--primary); }
+        .feature-item i { font-size: 60px; color: var(--primary); margin-bottom: 10px; transition: color 1s; }
+        .feature-item h3 { font-size: 2rem; }
+        .feature-item p { font-size: 1.4rem; }
+        
+        .video-wrapper { width: 100%; max-width: 1400px; border-radius: 40px; overflow: hidden; box-shadow: 0 50px 100px -20px rgba(0,0,0,0.4); margin: 0 auto; position: relative; }
+
+        /* Abstract Backgrounds */
+        .bg-blob { 
+            position: absolute; border-radius: 50%; filter: blur(150px); z-index: 0; opacity: 0.25;
+            transition: background-color 1.5s var(--ease-out-expo), top 2s var(--ease-out-expo), left 2s var(--ease-out-expo), transform 5s linear;
+            animation: blobPulse 10s infinite alternate;
+        }
+        @keyframes blobPulse { 0% { transform: scale(1); } 100% { transform: scale(1.2); } }
+        .blob-p { width: 50vw; height: 50vw; background: var(--primary); top: -10%; right: -10%; }
+        .blob-s { width: 50vw; height: 50vw; background: var(--secondary); bottom: -10%; left: -10%; }
+
+        /* =========================================
+           5. DEVELOPER SECTION (Image Match)
+           ========================================= */
+        .dev-title {
+            font-size: clamp(3.5rem, 8vw, 6rem);
+            font-weight: 400; /* Thinner as per image */
+            margin-bottom: 20px;
+            line-height: 1.1;
+        }
+        .dev-title b { font-weight: 900; display: block; }
+
+        .contact-btn-outline {
+            display: inline-flex; align-items: center; gap: 10px;
+            padding: 15px 40px;
+            border: 1px solid var(--text);
+            color: var(--text);
+            text-decoration: none;
+            font-size: 18px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: 0.3s;
+            background: transparent;
+        }
+        .contact-btn-outline:hover { background: var(--text); color: var(--bg); }
+
+        /* Code Block (Sleek IDE Style) */
+        .code-block {
+            font-family: 'Fira Code', monospace;
+            background: #1e1e1e; /* Dark IDE bg */
+            padding: 40px 50px;
+            border-radius: 20px;
+            color: #f8f8f2;
+            font-size: 18px;
+            line-height: 1.8;
+            box-shadow: 0 30px 80px rgba(0,0,0,0.5);
+            position: relative;
+            border: 1px solid #333;
+        }
+        /* Top Gradient Bar like Image */
+        .code-block::before {
+            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 6px;
+            background: linear-gradient(90deg, #ff79c6, #8be9fd, #50fa7b);
+        }
+
+        /* =========================================
+           6. FOOTER (Image Match)
+           ========================================= */
+        .footer-main {
+            background: transparent;
+            padding: 80px 5%;
+            text-align: center;
+            position: relative; z-index: 2;
+        }
+        .footer-signature {
+            font-size: 22px;
+            color: var(--text);
+            opacity: 0.7;
+            font-weight: 600;
+            margin-bottom: 40px;
+        }
+        .footer-social {
             display: flex;
             justify-content: center;
-            align-items: center;
-            width: 100%;
-            grid-column: 1 / -1;
-            padding: 50px 0;
+            gap: 30px;
         }
-        .gn-spinner {
-            border: 4px solid #222;
-            border-top: 4px solid #9F00FF;
+        .footer-social a {
+            width: 65px; height: 65px;
+            border: 2px solid rgba(255,255,255,0.15);
             border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            animation: spin 1s linear infinite;
+            display: flex; justify-content: center; align-items: center;
+            color: var(--text);
+            font-size: 28px;
+            transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            background: rgba(255,255,255,0.03);
+            position: relative; overflow: hidden;
         }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        /* Brand Hovers */
+        .footer-social a:hover { transform: scale(1.15); border-color: transparent; color: white; }
+        .footer-social a.ig:hover { background: radial-gradient(circle at 30% 107%, #fdf497 0%, #fdf497 5%, #fd5949 45%, #d6249f 60%, #285AEB 90%); }
+        .footer-social a.dc:hover { background: #5865F2; }
+        .footer-social a.wa:hover { background: #25D366; }
+        .footer-social a.rd:hover { background: #FF4500; }
+        .footer-social a.yt:hover { background: #FF0000; }
+
+        /* Button Styles */
+        .download-pill {
+            flex: 0 0 auto; min-width: 160px; justify-content: center;
+            display: inline-flex; align-items: center; text-align: center;
+            color: var(--text); border: 1px solid var(--text); background: transparent;
+            text-decoration: none; transition: 0.3s ease;
+        }
+        .download-pill:hover { transform: scale(1.05); box-shadow: 0 5px 15px rgba(0,0,0,0.2); background: var(--text); color: var(--bg); }
+        .download-pill.primary { background: var(--primary); color: white; border-color: var(--primary); }
+        .download-pill.primary:hover { background: white; color: var(--primary); }
+
+        /* Actions Containers */
+        #hero-actions, .final-cta-actions { display: flex; gap: 20px; justify-content: center; flex-wrap: wrap; margin-top: 30px; }
+
+        @media (max-width: 1024px) {
+            .layout-split { grid-template-columns: 1fr; gap: 60px; text-align: center; }
+            .layout-split.reversed { direction: ltr; }
+            h1 { font-size: 3.5rem; }
+            .navbar { display: none; } 
+        }
     </style>
 </head>
-<body>
-    <canvas id="gn-particles"></canvas>
-    <!-- ------------------ HEADER ------------------ -->
-<div class="heading">
+<body class="dark-mode">
 
-    <a href="/index.html"><img src="/assests/logo-getnaro-nobg.png" class="logo"></a>
-    <h4>Getnaro</h4>
-    <ul>
-        <li><a href="/index.html" style="background-color:#9F00FF; color: white !important;
-        padding: 10px ; 
-        border-radius: 10px;"
-        >HOME</a></li>
-        <li><a href="/pages/community.html">COMMUNITY</a></li>
-        <li><a href="/pages/login.html">ACCOUNT</a></li>
-        <li><a href="/pages/about.html">ABOUT US</a></li>
-        <li><a href="/pages/faq.html">FAQ</a></li>
-    </ul>
-<button id="theme-toggle" class="theme-toggle">
-    <i id="theme-icon" class="fa-solid fa-moon"></i>
-</button>
-<div id="gn-search-btn" class="gn-search-btn">
-    <i class="fa-solid fa-magnifying-glass"></i>
-</div>
-    <a class="dl"
-        href="/pages/getnaro-app.html">
-        <i class="fa-solid fa-download"></i> DOWNLOAD APP
-    </a>
-</div>
-<!-- ========== GN MOBILE HAMBURGER (SAFE OUTSIDE HEADER) ========== -->
-<button id="gn-hamburger" class="gn-hamburger" aria-expanded="false" aria-label="Open menu">
-  <span class="gn-ham-box"><span class="gn-ham-inner"></span></span>
-</button>
+    <div class="bg-blob blob-p"></div>
+    <div class="bg-blob blob-s"></div>
 
-<nav id="gn-mobile-nav" class="gn-mobile-nav" aria-hidden="true">
-  <div class="gn-mobile-backdrop" data-close></div>
+    <nav class="navbar" id="navbar">
+        <div class="nav-center-container">
+            <a href="#features" class="nav-link">Features</a>
+            <a href="#security" class="nav-link">Safety</a>
+            <a href="https://narotech.in" target="_blank" class="naro-link-btn">NaroTech</a>
+            <a href="index.html" class="brand-logo"><img src="/assests/logo-getnaro-nobg.png" alt="Getnaro"></a>
+            <div class="theme-switch" id="theme-toggle"><div class="theme-switch-knob"><i class="fas fa-moon" id="theme-icon"></i></div></div>
+            <a href="#ecosystem" class="nav-link">Ecosystem</a>
+            <a href="#developers" class="nav-link">Devs</a>
+        </div>
+    </nav>
 
-  <div class="gn-mobile-panel" role="dialog" aria-modal="true">
-
-    <!-- Mobile Search — triggers existing #gn-search-btn -->
-    <button class="gn-mobile-btn gn-mobile-search" type="button" aria-label="Open search">
-      <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i> <span>Search</span>
-    </button>
-
-    <!-- Theme toggle — triggers existing #theme-toggle -->
-    <button class="gn-mobile-btn gn-mobile-theme" type="button" aria-label="Toggle theme">
-      <i class="fa-solid fa-moon" aria-hidden="true"></i> <span>Theme</span>
-    </button>
-
-    <!-- EXACT UL you provided -->
-    <ul class="gn-mobile-links" role="menu" aria-label="Mobile navigation">
-      <li role="none"><a role="menuitem" href="/index.html">Home</a></li>
-      <li role="none"><a role="menuitem" href="/pages/community.html">Community</a></li>
-      <li role="none"><a role="menuitem" href="/pages/login.html">Account</a></li>
-      <li role="none"><a role="menuitem" href="/pages/about.html">About Us</a></li>
-      <li role="none"><a role="menuitem" href="/pages/faq.html">FAQ</a></li>
-    </ul>
-
-    <!-- Download App -->
-     <a class="gn-mobile-download" href="/pages/getnaro-app.html">
-      <i class="fa-solid fa-download" aria-hidden="true"></i> <span>Download App</span>
-    </a>
-
-  </div>
-</nav>
-<!-- ========== END GN MOBILE HAMBURGER ========== -->
-
-<!-- REQUIRED: The FULLSCREEN SEARCH OVERLAY -->
-<div id="gn-search-overlay" class="gn-search-overlay">
-    <div class="gn-search-wrapper">
-        <i class="fa-solid fa-magnifying-glass search-icon"></i>
-        <!-- CRITICAL: Input field must have the ID 'gn-search-input' -->
-        <input type="text" id="gn-search-input" placeholder="Search here" style="overflow-x: hidden;" autocomplete="off">
-        <button id="gn-search-close" class="close-btn">
-            <i class="fa-solid fa-xmark"></i>
-        </button>
-    </div>
-
-    <!-- CRITICAL: Results container must have the ID 'gn-search-results' -->
-    <div id="gn-search-results" class="gn-search-results">
-        <!-- Results will be dynamically injected here by search.js -->
-    </div>
-</div>
-<!-- ========== END GN MOBILE HAMBURGER ========== -->
-
-<div id="gn-ai-root">
-    <!-- Floating Button -->
-    <div class="gn-ai-fab" id="gn-ai-trigger">
-        <i class="fa-solid fa-robot" style="color: white !important;"></i>
-        <span style="color: white !important;">Chat Now</span>
-    </div>
-
-    <div class="gn-ai-overlay" id="gn-ai-overlay">
-        <div class="gn-ai-box">
-            
-            <!-- Header -->
-            <div class="gn-ai-header">
-                <div class="gn-ai-title">
-                    <div class="gn-bot-avatar">
-                        <i class="fa-solid fa-brain" style="color: aliceblue !important;"></i>
-                    </div>
-                    <div class="gn-ai-info">
-                        <h3>Getnaro Assistant</h3>
-                        <p>AI Powered • Voice Enabled</p>
-                    </div>
-                </div>
-                <button class="gn-ai-close" id="gn-ai-close"><i class="fa-solid fa-xmark"></i></button>
+    <!-- 1. HERO -->
+    <section class="section active" id="hero" data-primary="#9F00FF" data-secondary="#00d4ff">
+        <div class="layout-hero">
+            <div class="visual-container anim-element anim-fly-in d-1" style="margin-bottom: 40px;">
+                <img src="/assests/logo-getnaro-nobg.png" style="width: 180px; filter: drop-shadow(0 0 100px var(--primary)); animation: float 6s ease-in-out infinite;" alt="Getnaro Logo">
             </div>
+            <h1 class="anim-element anim-fly-in d-2">Welcome To<br>Getnaro</h1>
+            <p class="anim-element anim-fly-in d-3">Your all-in-one download hub for Windows. Clean, safe, and direct downloads without ads or redirects.</p>
+            <div id="hero-actions" class="anim-element anim-pop-in d-4"></div>
+        </div>
+    </section>
 
-            <!-- Chat Area -->
-            <div class="gn-ai-messages" id="gn-ai-chat">
-                <!-- Intro Message -->
-                <div class="msg bot">
-                    Hello! I'm your Getnaro Assistant. I can help you find software, answer FAQs, or navigate the site.<br><br>
-                    Try saying <b>"Install AMD Drivers"</b> or <b>"Open Profile"</b>.
+    <!-- 2. FEATURES -->
+    <section class="section" id="features" data-primary="#FF0055" data-secondary="#FFD700">
+        <div class="layout-split">
+            <div class="text-col">
+                <h2 class="anim-element anim-rotate-left d-1">Direct.<br>Fast.<br>Safe.</h2>
+                <p class="anim-element anim-rotate-left d-2">Getnaro is a redirection hub that connects you directly to official developer sources. Zero ads. Zero waiting time.</p>
+                <div class="anim-element anim-rotate-left d-3">
+                    <h1 style="font-size: 140px; color: var(--secondary); margin: 0; line-height: 0.8;">0%</h1>
+                    <span style="font-size: 32px; opacity: 0.6; display: block; margin-top: 10px; letter-spacing: 2px;">ADS & TRACKERS</span>
                 </div>
             </div>
-
-            <!-- Input Area -->
-            <div class="gn-ai-input-area">
-                <button class="gn-ai-btn" id="btn-mic" title="Speak"><i class="fa-solid fa-microphone"></i></button>
-                <button class="gn-ai-btn" id="btn-speaker" title="Text-to-Speech Toggle"><i class="fa-solid fa-volume-high"></i></button>
-                <input type="text" class="gn-ai-input" id="gn-ai-input" placeholder="Type a message or ask a question..">
-                <button class="gn-ai-btn" id="btn-send"><i class="fa-solid fa-paper-plane" style="color: aliceblue !important;"></i></button>
-            </div>
-
-        </div>
-    </div>
-</div>
-<!-- REQUIRED: The FULLSCREEN SEARCH OVERLAY -->
-<div id="gn-search-overlay" class="gn-search-overlay">
-    <div class="gn-search-wrapper">
-        <i class="fa-solid fa-magnifying-glass search-icon"></i>
-        <!-- CRITICAL: Input field must have the ID 'gn-search-input' -->
-        <input type="text" id="gn-search-input" placeholder="Search here" style="overflow-x: hidden;" autocomplete="off">
-        <button id="gn-search-close" class="close-btn">
-            <i class="fa-solid fa-xmark"></i>
-        </button>
-    </div>
-
-    <!-- CRITICAL: Results container must have the ID 'gn-search-results' -->
-    <div id="gn-search-results" class="gn-search-results">
-        <!-- Results will be dynamically injected here by search.js -->
-    </div>
-</div>
-
-
-<!-- ------------------ CAROUSEL ------------------ -->
-<div class="gn-carousel" aria-roledescription="carousel">
-
-    <div class="gn-carousel-track">
-
-        <div class="gn-slide">
-            <img src="/images/crimage-one.png">
-            <div class="slide-content">
-                <h5>Font Pack V1</h5>
-                <a style="background-color:#9F00FF; color: white !important;" href="#"><i class="fa-solid fa-download" style="color: white !important;"></i> Download Now</a>
+            <div class="visual-container anim-element anim-blur-reveal d-2">
+                 <i class="fas fa-bolt" style="font-size: 400px; color: var(--text); opacity: 0.05; filter: drop-shadow(0 0 50px var(--secondary));"></i>
             </div>
         </div>
+    </section>
 
-        <div class="gn-slide">
-            <img src="/images/crimage-two.png">
-            <div class="slide-content" >
-                <h5>RTSS Overlay</h5>
-                <a style="background-color:#9F00FF; color: white !important;" href="Library/Gn-Specials-ModernRTSSOverlay.ovx" download=""><i class="fa-solid fa-download" style="color: white !important;"></i> Download Now</a>
+    <!-- 3. SECURITY -->
+    <section class="section" id="security" data-primary="#00FF9D" data-secondary="#0088FF">
+        <div class="layout-split reversed">
+            <div class="text-col">
+                <h2 class="anim-element anim-rotate-right d-1">Verified<br>Sources.</h2>
+                <p class="anim-element anim-rotate-right d-2">We act as "courier boys" delivering you to the official download pages. Guaranteed virus-free.</p>
+                <div class="anim-element anim-rotate-right d-3">
+                    <div class="glass-card" style="padding: 40px;">
+                        <span class="highlight-text" style="font-size: 24px; margin-bottom: 20px; display: block;"><i class="fas fa-check-circle"></i> Official Links Only</span>
+                        <span class="highlight-text" style="font-size: 24px; display: block;"><i class="fas fa-shield-alt"></i> No Third-Party Hosting</span>
+                    </div>
+                </div>
+            </div>
+            <div class="visual-container anim-element anim-fly-in d-2">
+                <i class="fas fa-shield-halved" style="font-size: 350px; color: var(--primary); filter: drop-shadow(0 0 80px var(--primary)); animation: float 4s infinite ease-in-out;"></i>
             </div>
         </div>
+    </section>
 
-        <div class="gn-slide">
-            <img src="/images/crimage-three.png" style="object-position: center 0px;">
-            <div class="slide-content">
-                <h5>Our Discord</h5>
-                <a style="background-color:#9F00FF; color: white !important;" href="https://discord.gg/mcxbEsxXcQ"><i class="fa fa-external-link" aria-hidden="true" style="color: white !important;"></i> Join Now</a>
+    <!-- 4. PRIVACY -->
+    <section class="section" id="privacy" data-primary="#FFFFFF" data-secondary="#888888">
+        <div class="layout-center">
+            <div class="anim-element anim-fly-in d-1" style="margin-bottom: 40px;">
+                <i class="fas fa-user-secret" style="font-size: 140px; color: var(--text); filter: drop-shadow(0 0 30px rgba(255,255,255,0.5));"></i>
+            </div>
+            <h2 class="anim-element anim-fly-in d-2">No Accounts Needed.</h2>
+            <p class="anim-element anim-fly-in d-3">Privacy is default. No sign-ups, no logins, no tracking. Everything is open and accessible.</p>
+            <div class="anim-element anim-up d-4" style="margin-top: 50px; display: flex; gap: 60px; justify-content: center;">
+                <div style="text-align: center;"><i class="fas fa-ban" style="font-size: 50px; margin-bottom: 15px; color: #FF4444;"></i><p style="margin: 0; font-size: 18px;">No Logs</p></div>
+                <div style="text-align: center;"><i class="fas fa-cookie-bite" style="font-size: 50px; margin-bottom: 15px; color: #FFAA00;"></i><p style="margin: 0; font-size: 18px;">No Cookies</p></div>
+                <div style="text-align: center;"><i class="fas fa-envelope-open-text" style="font-size: 50px; margin-bottom: 15px; color: #00CCFF;"></i><p style="margin: 0; font-size: 18px;">No Spam</p></div>
             </div>
         </div>
+    </section>
 
-        <div class="gn-slide">
-            <img src="/images/crimage-four.png">
-            <div class="slide-content">
-                <h5>Awesome Cursors</h5>
-                <a style="background-color:#9F00FF; color: white !important;" href="Library/Blue Neon By Getnaro.zip" download=""><i class="fa-solid fa-download" style="color: white !important;"></i> Download Now</a>
+    <!-- 5. HUB -->
+    <section class="section" id="hub" data-primary="#FF2A6D" data-secondary="#05D9E8">
+        <div class="layout-split">
+            <div class="text-col">
+                <h2 class="anim-element anim-rotate-left d-1">The All-In-One<br>Hub.</h2>
+                <p class="anim-element anim-rotate-left d-2">Find essential Windows drivers, system utilities, PC tools, and software in one place.</p>
+            </div>
+            <div class="visual-container anim-element anim-blur-reveal d-2">
+                <div class="glass-card" style="display: flex; justify-content: center; flex-direction: column; align-items: center; text-align: center; border: 2px solid rgba(255,255,255,0.1);">
+                    <i class="fab fa-windows" style="font-size: 120px; margin-bottom: 30px; background: -webkit-linear-gradient(#0078D7, #00BCF2); -webkit-background-clip: text; -webkit-text-fill-color: transparent;"></i>
+                    <h3>Windows Ready</h3>
+                    <p style="font-size: 20px; margin: 0; opacity: 0.7;">Optimized for Win 10 & 11</p>
+                </div>
             </div>
         </div>
+    </section>
 
-    </div>
-
-    <button class="gn-prev">&#10094;</button>
-    <button class="gn-next">&#10095;</button>
-
-</div>
-<!-- ================= STATS BAR ================= -->
-<div class="stats-container">
-    
-    <div class="stat-box">
-        <div class="stat-number" id="stat-total-apps">0</div>
-        <div class="stat-label">Total Apps</div>
-    </div>
-
-    <div class="stat-box">
-        <div class="stat-number" id="stat-total-visits">0</div>
-        <div class="stat-label">Total Visits</div>
-    </div>
-
-    <div class="stat-box">
-        <div class="stat-number" id="stat-peak">0</div>
-        <div class="stat-label">All-Time Peak Visitors</div>
-    </div>
-
-    <div class="stat-box">
-        <div class="stat-number" id="stat-downloads">0</div>
-        <div class="stat-label">Total Downloads</div>
-    </div>
-
-    <div class="stat-box">
-        <div class="stat-number" id="stat-viewing">0</div>
-        <div class="stat-label">Live Visitors</div>
-    </div>
-</div>
-
-<!-- ================= CATEGORY TABS ================= -->
-<div class="tabs">
-    <button class="tab active" data-category="all">
-        <i class="fa-solid fa-border-all"></i> All
-    </button>
-
-    <button class="tab" data-category="social">
-        <i class="fa-brands fa-instagram"></i> Social Media
-    </button>
-
-    <button class="tab" data-category="tools">
-        <i class="fa-solid fa-screwdriver-wrench"></i> Tools / Utilities
-    </button>
-
-    <button class="tab" data-category="opensource">
-        <i class="fa-solid fa-code"></i> Open Source
-    </button>
-
-    <button class="tab" data-category="desi">
-        <i class="fa-solid fa-indian-rupee-sign"></i> Desi Apps
-    </button>
-
-    <button class="tab" data-category="gaming">
-        <i class="fa-solid fa-gamepad"></i> Gaming
-    </button>
-
-    <button class="tab" data-category="office">
-        <i class="fa-solid fa-briefcase"></i> Office / Productivity
-    </button>
-
-    <button class="tab" data-category="drivers">
-        <i class="fa-solid fa-microchip"></i> Drivers / System
-    </button>
-
-    <button class="tab" data-category="video">
-        <i class="fa-solid fa-film"></i> Video / Graphics
-    </button>
-</div>
-
-<!-- ------------------ DOWNLOAD GRID ------------------ -->
-<!-- DYNAMIC CONTENT CONTAINER (This is where DB apps load) -->
- <div class="container" id="apps-container">
-        <div class="gn-grid-loader">
-            <div class="gn-spinner"></div>
-        </div>
-        <!-- Apps will be injected here by JavaScript -->
-    </div>
-
-<!-- ================= FEATURE HIGHLIGHTS ================= -->
-<section class="gn-features">
-    <h2 class="gn-features-title">Why Choose Getnaro?</h2>
-
-    <div class="gn-features-grid">
-
-        <div class="gn-feature-box">
-            <i class="fa-solid fa-bolt"></i>
-            <h3>Direct Fast Downloads</h3>
-            <p>No ads, no redirects — just clean, safe, instant downloads.</p>
-        </div>
-
-        <div class="gn-feature-box">
-            <i class="fa-solid fa-shield-halved"></i>
-            <h3>100% Safe & Verified</h3>
-            <p>Every file is scanned and trusted to keep your PC secure.</p>
-        </div>
-
-        <div class="gn-feature-box">
-            <i class="fa-solid fa-cloud-arrow-down"></i>
-            <h3>Always Up-to-Date</h3>
-            <p>We track new releases and update apps daily.</p>
-        </div>
-
-        <div class="gn-feature-box">
-            <i class="fa-solid fa-laptop"></i>
-            <h3>Wide App Collection</h3>
-            <p>Drivers, Tools, Office, Social, Gaming… everything in one place.</p>
-        </div>
-
-    </div>
-</section>
-<footer class="footer">
-    <div class="footer-container">
-
-        <div class="footer-col">
-            <h3>Getnaro</h3>
-            <p>Official download redirection hub for Windows software, tools, utilities and drivers—clean, safe & ad-free.</p>
-        </div>
-        <div class="footer-col">
-            <h3>Quick Links</h3>
-            <a href="/pages/t&c.html">Terms & Conditions</a><br>
-            <a href="/pages/coc.html">Code Of Conduct</a><br>
-            <a href="/pages/privacypolicy.html">Privacy Policy</a><br>
-            <a href="/pages/contact.html">Contact</a>
-        </div>
-
-        <div class="footer-col">
-            <h3>Follow Us</h3>
-            <div class="footer-social">
-                 <a href="https://www.instagram.com/narotech.india" target="_blank"><i class="fa-brands fa-instagram"></i></a>
-                <a href="https://discord.gg/mcxbEsxXcQ" target="_blank"><i class="fa-brands fa-discord"></i></a>
-                <a href="https://whatsapp.com/channel/0029Vb7IFu7HwXbKP3roZa0E" target="_blank"><i class="fa-brands fa-whatsapp"></i></a>
-                <a href="https://www.reddit.com/r/narotech" target="_blank"><i class="fa-brands fa-reddit" ></i></a>
-                <a href="https://www.youtube.com/@narotechofc" target="_blank"><i class="fa-brands fa-youtube"></i></a>
+    <!-- 6. FLUID -->
+    <section class="section" data-primary="#FF7F50" data-secondary="#6A5ACD">
+        <div class="layout-split reversed">
+            <div class="text-col">
+                <h2 class="anim-element anim-rotate-right d-1">Fluid Motion<br>Interface.</h2>
+                <p class="anim-element anim-rotate-right d-2">Inspired by OriginOS. Our interface breathes with your interactions, offering smooth transitions.</p>
+            </div>
+            <div class="visual-container anim-element anim-fly-in d-2">
+                <i class="fas fa-layer-group" style="font-size: 350px; opacity: 0.1; transform: rotate(-15deg);"></i>
             </div>
         </div>
-    </div>
-    <div class="footer-bottom">
-        © 2025 Getnaro — Developed by NaroTech • Hosted on GitHub • Domain by BigRock
-    </div>
-</footer>
-<script type="module">
-    // UPDATED TO STABLE 10.12.0
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-    import { getFirestore, collection, getDocs, query } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-    // IMPORT REALTIME DB FOR STATS UPDATE
-    import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+    </section>
 
-    const firebaseConfig = {
-    apiKey: "AIzaSyCtX1G_OEXmkKtBNGzWQFEYiEWibrMIFrg",
-    authDomain: "user-getnaro.firebaseapp.com",
-    databaseURL: "https://user-getnaro-default-rtdb.asia-southeast1.firebasedatabase.app",
-    projectId: "user-getnaro",
-    storageBucket: "user-getnaro.firebasestorage.app",
-    messagingSenderId: "264425704576",
-    appId: "1:264425704576:web:cfd98a1f627e9a59cc2a65"
-};
+    <!-- 7. COMMUNITY -->
+    <section class="section" id="community" data-primary="#5865F2" data-secondary="#7289DA">
+        <div class="layout-center">
+            <h2 class="anim-element anim-up d-1">Community Driven</h2>
+            <p class="anim-element anim-up d-2">We are an indie project built by NaroTech. Join our active community on Discord.</p>
+            <div class="visual-container anim-element anim-blur-reveal d-3">
+                <div style="position: relative;">
+                    <i class="fab fa-discord" style="font-size: 250px; color: var(--secondary); opacity: 0.8;"></i>
+                    <div style="position: absolute; top: 0; right: -30px; background: #FF4444; color: white; padding: 10px 25px; border-radius: 30px; font-size: 24px; font-weight: bold; animation: bounce 2s infinite;">Active</div>
+                </div>
+            </div>
+        </div>
+    </section>
 
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
-    const rtdb = getDatabase(app); // Initialize Realtime DB for stats updates
-    const container = document.getElementById('apps-container');
+    <!-- 8. UPDATES -->
+    <section class="section" data-primary="#F12711" data-secondary="#F5AF19">
+        <div class="layout-split">
+            <div class="text-col">
+                <h2 class="anim-element anim-rotate-left d-1">Always<br>Updated.</h2>
+                <p class="anim-element anim-rotate-left d-2">We track official release cycles. Broken links fixed rapidly.</p>
+                <div class="anim-element anim-up d-3">
+                    <div style="display: flex; align-items: center; gap: 20px; background: rgba(255,255,255,0.1); padding: 25px; border-radius: 20px;">
+                        <i class="fas fa-clock" style="color: var(--primary); font-size: 40px;"></i>
+                        <div><span style="display: block; font-weight: bold; font-size: 24px;">Rapid Response</span><span style="font-size: 16px; opacity: 0.7;">Links fixed within 24h</span></div>
+                    </div>
+                </div>
+            </div>
+            <div class="visual-container anim-element anim-fly-in d-2">
+                <i class="fas fa-sync" style="font-size: 300px; color: var(--secondary); animation: spin 10s linear infinite;"></i>
+            </div>
+        </div>
+    </section>
 
-    async function fetchAndRenderApps() {
-        try {
-            const q = query(collection(db, "apps")); 
-            const querySnapshot = await getDocs(q);
-            
-            container.innerHTML = ''; 
+    <!-- 9. DRIVERS -->
+    <section class="section" id="drivers" data-primary="#CB356B" data-secondary="#BD3F32">
+        <div class="layout-split reversed">
+            <div class="text-col">
+                <h2 class="anim-element anim-rotate-right d-1">Essential<br>Drivers.</h2>
+                <p class="anim-element anim-rotate-right d-2">Getnaro indexes official driver pages for major hardware vendors. Keep your system smooth.</p>
+            </div>
+            <div class="visual-container anim-element anim-blur-reveal d-2">
+                <i class="fas fa-microchip" style="font-size: 300px; color: var(--accent); opacity: 0.8; text-shadow: 0 0 80px var(--accent);"></i>
+            </div>
+        </div>
+    </section>
 
-            if (querySnapshot.empty) {
-                container.innerHTML = '<p style="text-align:center; width:100%; color: #aaa;">Maintainence Mode.</p>';
-                return;
-            }
+    <!-- 10. GLOBAL -->
+    <section class="section" data-primary="#3A1C71" data-secondary="#D76D77">
+        <div class="layout-center">
+            <h2 class="anim-element anim-fly-in d-1">Indie Spirit</h2>
+            <p class="anim-element anim-fly-in d-2">Developed in India, engineered for the world.</p>
+            <div class="anim-element anim-up d-3" style="width: 100%; height: 550px; background: radial-gradient(circle, #222, #000); border-radius: 50px; display: flex; justify-content: center; align-items: center; border: 1px solid #333; position: relative; overflow: hidden;">
+                <img src="https://flagcdn.com/w320/in.png" style="width: 200px; opacity: 0.8; border-radius: 20px; box-shadow: 0 0 80px rgba(255,153,51,0.5);">
+            </div>
+        </div>
+    </section>
 
-            let apps = [];
-            querySnapshot.forEach((doc) => {
-                apps.push({ id: doc.id, ...doc.data() });
-            });
-            
-            // --- FIX FOR TOTAL APPS COUNT ---
-            set(ref(rtdb, "stats/total_apps"), apps.length);
-            // --------------------------------
+    <!-- 11. DEVELOPERS (FIXED CSS & CONTENT) -->
+    <section class="section" id="developers" data-primary="#11998e" data-secondary="#38ef7d">
+        <div class="layout-split">
+            <div class="text-col">
+                <!-- Huge Typography Fix -->
+                <div class="dev-title anim-element anim-rotate-left d-1">
+                    Open<br><b>Collaboration.</b>
+                </div>
+                <p class="anim-element anim-rotate-left d-2">
+                    Have a tool you want listed? We welcome submissions from developers. 
+                    Our goal is to build the most comprehensive, safe directory for Windows tools.
+                </p>
+                <!-- Fixed Contact Button -->
+                <a href="/pages/contact.html" class="contact-btn-outline anim-element anim-up d-3">
+                    <i class="fas fa-envelope"></i> Contact Us
+                </a>
+            </div>
+            <!-- Fixed Code Block Style -->
+            <div class="visual-container anim-element anim-rotate-right d-2">
+                <div class="code-block">
+                    <span style="color: #FF79C6">function</span> <span style="color: #50FA7B">submitApp</span>() {<br>
+                    &nbsp;&nbsp;<span style="color: #8BE9FD">return</span> {<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;name: <span style="color: #F1FA8C">"Your App"</span>,<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;status: <span style="color: #BD93F9">"Verified"</span><br>
+                    &nbsp;&nbsp;};<br>
+                    }
+                </div>
+            </div>
+        </div>
+    </section>
 
-            apps.sort((a, b) => a.name.localeCompare(b.name));
+    <!-- 12. LEGACY -->
+    <section class="section" data-primary="#607D8B" data-secondary="#CFD8DC">
+        <div class="layout-split reversed">
+            <div class="text-col">
+                <h2 class="anim-element anim-rotate-right d-1">Legacy<br>Support.</h2>
+                <p class="anim-element anim-rotate-right d-2">We don't leave older systems behind. Find archived versions for Windows 7 and 8.</p>
+            </div>
+            <div class="visual-container anim-element anim-fly-in d-2">
+                <i class="fas fa-archive" style="font-size: 300px; opacity: 0.4;"></i>
+            </div>
+        </div>
+    </section>
 
-            apps.forEach(app => {
-                const imgSrc = app.image || '/assests/logo-getnaro-nobg.png';
-                const category = (app.category || 'tools').toLowerCase();
+    <!-- 13. BETA -->
+    <section class="section" data-primary="#E91E63" data-secondary="#F8BBD0">
+        <div class="layout-center">
+            <h2 class="anim-element anim-up d-1">Join the Beta</h2>
+            <p class="anim-element anim-up d-2">Get early access to the next version of the Getnaro app.</p>
+            <div class="glass-card anim-element anim-scale-up d-3" style="max-width: 800px; margin: 0 auto;">
+                <div style="display: flex; align-items: center; justify-content: space-between;">
+                    <span style="font-size: 24px; font-weight: bold;">Getnaro v2.0 (Preview)</span>
+                    <span style="background: var(--primary); padding: 8px 15px; border-radius: 15px; font-size: 16px; color: white;">Coming Soon</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 14. SUMMARY -->
+    <section class="section" style="flex-direction: column; text-align: center;" data-primary="#8E2DE2" data-secondary="#4A00E0">
+        <h2 class="anim-element anim-blur-reveal d-1">The Getnaro Promise</h2>
+        <div class="grid-container">
+            <div class="feature-item anim-element anim-up d-1"><i class="fas fa-ban"></i><h3>Zero Ads</h3><p>No popups. No banners.</p></div>
+            <div class="feature-item anim-element anim-up d-2"><i class="fas fa-user-shield"></i><h3>No Tracking</h3><p>We respect your data.</p></div>
+            <div class="feature-item anim-element anim-up d-3"><i class="fas fa-check-double"></i><h3>Official Only</h3><p>Original sources.</p></div>
+            <div class="feature-item anim-element anim-up d-4"><i class="fas fa-infinity"></i><h3>Forever Free</h3><p>Open access always.</p></div>
+        </div>
+    </section>
+
+    <!-- 15. FINAL CTA -->
+    <section class="section" id="final-cta" style="background: linear-gradient(to top, rgba(159,0,255,0.1), transparent);" data-primary="#9F00FF" data-secondary="#00d4ff">
+        <div class="layout-hero">
+            <h1 class="anim-element anim-fly-in d-1">Ready to Upgrade?</h1>
+            <p class="anim-element anim-fly-in d-2">Download the Getnaro App for the best experience.</p>
+            <div class="final-cta-actions anim-element anim-pop-in d-3">
+                <a href="/pages/getnaro-app.html" class="download-pill primary" style="padding: 25px 80px; font-size: 24px; box-shadow: 0 20px 50px rgba(0,0,0,0.3);">
+                    <i class="fas fa-download" style="margin-right: 15px;"></i> Download Getnaro
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER (Fixed Styles & Icons) -->
+    <footer class="footer-main">
+        <div class="footer-signature">Getnaro By NaroTech India</div>
+        <div class="footer-social" style="text-decoration: none;">
+            <a style="text-decoration: none;" href="https://www.instagram.com/narotech.india" target="_blank" class="ig"><i class="fab fa-instagram"></i></a>
+            <a style="text-decoration: none;" href="https://discord.gg/mcxbEsxXcQ" target="_blank" class="dc"><i class="fab fa-discord"></i></a>
+            <a style="text-decoration: none;" href="https://whatsapp.com/channel/0029Vb7IFu7HwXbKP3roZa0E" target="_blank" class="wa"><i class="fab fa-whatsapp"></i></a>
+            <a style="text-decoration: none;" href="https://www.reddit.com/r/narotech" target="_blank" class="rd"><i class="fab fa-reddit"></i></a>
+            <a style="text-decoration: none;" href="https://www.youtube.com/@narotechofc" target="_blank" class="yt"><i class="fab fa-youtube"></i></a>
+        </div>
+    </footer>
+
+    <script>
+        // --- FORCE SCROLL TO TOP ---
+        if (history.scrollRestoration) { history.scrollRestoration = 'manual'; }
+        window.onbeforeunload = function () { window.scrollTo(0, 0); }
+        window.onload = function() { window.scrollTo(0,0); };
+
+        // --- ELECTRON LOGIC ---
+        const heroActions = document.getElementById('hero-actions');
+        const isElectron = /Electron/i.test(navigator.userAgent);
+
+        if (isElectron) {
+            heroActions.innerHTML = `
+                <a href="/pages/store.html" class="download-pill" style="padding: 20px 45px; font-size: 18px; background: transparent; border: 1px solid var(--text); color: var(--text);"><i class="fas fa-store"></i> View Store</a>
+                <a href="#" onclick="alert('Checking for updates...')" class="download-pill" style="padding: 20px 45px; font-size: 18px; background: transparent; border: 1px solid var(--text); color: var(--text);"><i class="fas fa-sync"></i> Update</a>
+                <a href="/pages/patch-notes.html" class="download-pill primary" style="padding: 20px 50px; font-size: 18px; box-shadow: 0 0 30px var(--primary);"><i class="fas fa-scroll"></i> Patch Notes</a>
+            `;
+        } else {
+            heroActions.innerHTML = `
+
+                <a href="/pages/getnaro-app.html" class="download-pill primary" style="padding: 20px 50px; font-size: 18px; box-shadow: 0 0 30px var(--primary);"><i class="fas fa-download"></i> Download App</a>
+                                <a href="#features" class="download-pill" style="padding: 20px 45px; font-size: 18px; background: transparent; border: 1px solid var(--text); color: var(--text);"><i class="fas fa-compass"></i> Explore</a>
                 
-                const card = document.createElement('div');
-                card.className = 'content-one';
-                card.setAttribute('data-category', category); 
-                
-                card.innerHTML = `
-                    <img src="${imgSrc}" alt="${app.name}" onerror="this.src='/assests/logo-getnaro-nobg.png'">
-                    <span class="tet">
-                        <h5>${app.name}</h5>
-                        <a href="/pages/view.html?id=${app.id}">DOWNLOAD</a>
-                    </span>
+                <a href="/pages/store.html" class="download-pill" style="padding: 20px 45px; font-size: 18px; background: transparent; border: 1px solid var(--text); color: var(--text);"><i class="fas fa-store"></i> View Store</a>
                 `;
-                
-                container.appendChild(card);
-            });
-
-            initTabs();
-
-        } catch (error) {
-            console.error("Error fetching apps:", error);
-            container.innerHTML = '<p style="text-align:center; width:100%; color: red;">Failed to load apps. Check console.</p>';
         }
-    }
 
-    // ... rest of the functions (initTabs) ...
+        // --- THEME LOGIC ---
+        const themeSwitch = document.getElementById('theme-toggle');
+        const icon = document.getElementById('theme-icon');
+        let currentTheme = localStorage.getItem('theme') || 'dark';
+        
+        function applyTheme(theme) {
+            if (theme === 'light') {
+                document.body.classList.remove('dark-mode');
+                icon.classList.replace('fa-sun', 'fa-moon');
+            } else {
+                document.body.classList.add('dark-mode');
+                icon.classList.replace('fa-moon', 'fa-sun');
+            }
+        }
+        applyTheme(currentTheme);
 
-    function initTabs() {
-        const tabs = document.querySelectorAll(".tab");
-        const items = document.querySelectorAll(".content-one");
+        themeSwitch.addEventListener('click', () => {
+            currentTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            localStorage.setItem('theme', currentTheme);
+            applyTheme(currentTheme);
+        });
 
-        tabs.forEach(tab => {
-            tab.addEventListener("click", () => {
-                const category = tab.dataset.category;
-                tabs.forEach(t => t.classList.remove("active"));
-                tab.classList.add("active");
-
-                if (category === "all") {
-                    container.classList.remove("filtered");
-                    items.forEach(item => item.style.display = "flex");
-                } else {
-                    container.classList.add("filtered");
-                    items.forEach(item => {
-                        const itemCat = item.getAttribute('data-category');
-                        if (itemCat && itemCat.includes(category)) {
-                            item.style.display = "flex";
-                        } else {
-                            item.style.display = "none";
-                        }
-                    });
+        // --- FIXED ANIMATION REPLAY LOGIC ---
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                // If card enters view: PLAY animation & update theme
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                    
+                    const primary = entry.target.getAttribute('data-primary');
+                    const secondary = entry.target.getAttribute('data-secondary');
+                    
+                    if (primary && secondary) {
+                        document.documentElement.style.setProperty('--primary', primary);
+                        document.documentElement.style.setProperty('--secondary', secondary);
+                        document.documentElement.style.setProperty('--accent', secondary);
+                    }
+                } 
+                // If card leaves view: RESET animation immediately
+                else {
+                    entry.target.classList.remove('active');
                 }
             });
-        });
-    }
+        }, { threshold: 0.2 }); // Trigger when 20% is visible
 
-    document.addEventListener('DOMContentLoaded', fetchAndRenderApps);
-</script>
-<!-- YOUR ORIGINAL SCRIPTS RESTORED BELOW -->
-<script type="module" src="/scripts/ai_assistant.js">
-    // UPDATED TO STABLE 10.12.0
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-    import { getFirestore, collection, getDocs, query } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-    // IMPORT REALTIME DB FOR STATS UPDATE
-    import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
-
-    // ... (rest of the script) ...
-</script>
-<script src="/scripts/tod.js"></script>
-<script src="/scripts/tod.js"></script>
-<script src="/scripts/tog.js"></script>
-<script src="/scripts/caro.js"></script>
-<script src="/scripts/particles.js"></script>
-<script src="/scripts/theme.js"></script>
-<script src="/scripts/hamburger.js"></script>
-<script type="module" src="/scripts/appstats.js"></script>
-<script type="module" src="/scripts/app_tracking.js"></script>
-<script type="module" src="/scripts/header_auth.js"></script>
-<script type="module" src="/scripts/download-index.js"></script>
-<script type="module" src="/scripts/stats.js"></script>
-<script type="module" src="/scripts/download-index.js"></script>
-<script type="module" src="/scripts/search.js"></script>
+        document.querySelectorAll('.section').forEach(sec => observer.observe(sec));
+    </script>
 </body>
 </html>
