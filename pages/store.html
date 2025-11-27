@@ -378,36 +378,47 @@
     </div>
 </footer>
 <script type="module">
-    // UPDATED TO STABLE 10.12.0
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-    import { getFirestore, collection, getDocs, query } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-    // IMPORT REALTIME DB FOR STATS UPDATE
-    import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+    // UPDATED TO MATCH VIEW.HTML (v11.6.1)
+    import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+    import { getFirestore, collection, getDocs, query } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+    import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-database.js";
 
     const firebaseConfig = {
-    apiKey: "AIzaSyCtX1G_OEXmkKtBNGzWQFEYiEWibrMIFrg",
-    authDomain: "user-getnaro.firebaseapp.com",
-    databaseURL: "https://user-getnaro-default-rtdb.asia-southeast1.firebasedatabase.app",
-    projectId: "user-getnaro",
-    storageBucket: "user-getnaro.firebasestorage.app",
-    messagingSenderId: "264425704576",
-    appId: "1:264425704576:web:cfd98a1f627e9a59cc2a65"
-};
+        apiKey: "AIzaSyCtX1G_OEXmkKtBNGzWQFEYiEWibrMIFrg",
+        authDomain: "user-getnaro.firebaseapp.com",
+        databaseURL: "https://user-getnaro-default-rtdb.asia-southeast1.firebasedatabase.app",
+        projectId: "user-getnaro",
+        storageBucket: "user-getnaro.firebasestorage.app",
+        messagingSenderId: "264425704576",
+        appId: "1:264425704576:web:cfd98a1f627e9a59cc2a65"
+    };
 
-    const app = initializeApp(firebaseConfig);
+    // --- FIX: SAFE INITIALIZATION (Prevents Electron Crash) ---
+    // This checks if Firebase is already running before starting it again.
+    const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
+    
     const db = getFirestore(app);
-    const rtdb = getDatabase(app); // Initialize Realtime DB for stats updates
+    const rtdb = getDatabase(app);
     const container = document.getElementById('apps-container');
 
     async function fetchAndRenderApps() {
+        // Show loader immediately
+        if(container) {
+            container.innerHTML = `
+                <div class="gn-grid-loader">
+                    <div class="gn-spinner"></div>
+                </div>`;
+        }
+
         try {
+            console.log("Fetching apps from Firestore..."); // Debug log
             const q = query(collection(db, "apps")); 
             const querySnapshot = await getDocs(q);
             
             container.innerHTML = ''; 
 
             if (querySnapshot.empty) {
-                container.innerHTML = '<p style="text-align:center; width:100%; color: #aaa;">Maintainence Mode.</p>';
+                container.innerHTML = '<p style="text-align:center; width:100%; color: #aaa;">Maintenance Mode.</p>';
                 return;
             }
 
@@ -416,9 +427,8 @@
                 apps.push({ id: doc.id, ...doc.data() });
             });
             
-            // --- FIX FOR TOTAL APPS COUNT ---
+            // Stats update
             set(ref(rtdb, "stats/total_apps"), apps.length);
-            // --------------------------------
 
             apps.sort((a, b) => a.name.localeCompare(b.name));
 
@@ -445,11 +455,9 @@
 
         } catch (error) {
             console.error("Error fetching apps:", error);
-            container.innerHTML = '<p style="text-align:center; width:100%; color: red;">Failed to load apps. Check console.</p>';
+            container.innerHTML = `<p style="text-align:center; width:100%; color: red;">Failed to load apps.<br><small>${error.message}</small></p>`;
         }
     }
-
-    // ... rest of the functions (initTabs) ...
 
     function initTabs() {
         const tabs = document.querySelectorAll(".tab");
