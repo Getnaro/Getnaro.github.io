@@ -717,9 +717,10 @@
 
         if (isElectron) {
             heroActions.innerHTML = `
-                <a href="/pages/patch-notes.html" class="download-pill primary" style="padding: 20px 50px; font-size: 18px; box-shadow: 0 0 30px var(--primary);"><i class="fas fa-scroll"></i> Patch Notes</a>
+                <a href="/pages/patch-notes.html" class="download-pill primary" style="padding: 20px 45px; font-size: 18px; background: transparent; border: 1px solid var(--text); color: var(--text);"><i class="fas fa-scroll"></i> Patch Notes</a>
+               <a href="/pages/store.html" class="download-pill" style="padding: 20px 50px; font-size: 18px; box-shadow: 0 0 30px var(--primary);"><i class="fas fa-store"></i> View Store</a>
                 <a href="#" onclick="alert('Checking for updates...')" class="download-pill" style="padding: 20px 45px; font-size: 18px; background: transparent; border: 1px solid var(--text); color: var(--text);"><i class="fas fa-sync"></i> Update</a>
-                <a href="/pages/store.html" class="download-pill" style="padding: 20px 45px; font-size: 18px; background: transparent; border: 1px solid var(--text); color: var(--text);"><i class="fas fa-store"></i> View Store</a>
+                
                 
             `;
         } else {
