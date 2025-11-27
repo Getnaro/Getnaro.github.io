@@ -81,7 +81,6 @@ const els = {
     stats: {
         apps: document.getElementById('total-apps-count'),
         downloads: document.getElementById('global-downloads-count'),
-        ratings: document.getElementById('total-ratings-count'),
         liveVisitors: document.getElementById('live-visitors-count'),
         peakVisitors: document.getElementById('peak-visitors-count'),
         rtdbStatus: document.getElementById('rtdb-status'),
@@ -167,13 +166,11 @@ let allUsers = [];
 // --- 1. AUTH & SECURITY FIX ---
 onAuthStateChanged(auth, (user) => {
     if (user) {
-        // STRICT CHECK: Is user in whitelist?
         if (ALLOWED_ADMINS.includes(user.email)) {
             els.loginSection.classList.add('hidden');
             els.dashboard.classList.remove('hidden');
             initDashboard();
         } else {
-            // Not authorized
             signOut(auth).then(() => {
                 els.loginMsg.textContent = "Access Denied: You are not an authorized admin.";
                 showToast("Unauthorized Account", "error");
@@ -220,97 +217,13 @@ function initDashboard() {
     loadRTDBStats();
     loadSiteConfig();
     loadPatchNotes();
-    setupImportWipeHandlers(); // NEW LINE
+    setupImportWipeHandlers();
+    
+    // --- 5. INITIALIZE ANNOUNCEMENT MANAGER ---
+    initAdvancedAnnouncement(); 
 }
-// Import & Wipe Handlers
-function setupImportWipeHandlers() {
-    // Show Import Modal
-    els.importToggleBtn.addEventListener('click', () => {
-        els.importSection.style.display = 'flex';
-    });
 
-    // Hide Import Modal
-    els.cancelImportBtn.addEventListener('click', () => {
-        els.importSection.style.display = 'none';
-        els.importJsonData.value = '';
-        els.importStatus.textContent = '';
-    });
-
-    // Import File Upload
-    els.importFileInput.addEventListener('change', (e) => {
-        const file = e.target.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = (evt) => {
-                els.importJsonData.value = evt.target.result;
-            };
-            reader.readAsText(file);
-        }
-    });
-
-    // Run Import
-    els.runImportBtn.addEventListener('click', async () => {
-        const jsonText = els.importJsonData.value.trim();
-        if (!jsonText) return showToast("No JSON data provided", "error");
-        
-        try {
-            const apps = JSON.parse(jsonText);
-            if (!Array.isArray(apps)) throw new Error("JSON must be an array");
-            
-            els.importStatus.textContent = "Importing...";
-            els.importStatus.style.color = "#fbbf24";
-            
-            let count = 0;
-            for (const app of apps) {
-                const docId = app.id || app._id;
-                if (!docId) continue;
-                await setDoc(doc(firestore, "apps", docId), app, { merge: true });
-                count++;
-            }
-            
-            els.importStatus.textContent = `✓ Imported ${count} apps successfully`;
-            els.importStatus.style.color = "#10b981";
-            showToast(`${count} Apps Imported`, "success");
-            
-            setTimeout(() => {
-                els.importSection.style.display = 'none';
-                els.importJsonData.value = '';
-                els.importStatus.textContent = '';
-                els.importFileInput.value = '';
-            }, 2000);
-        } catch (e) {
-            els.importStatus.textContent = "✗ Error: " + e.message;
-            els.importStatus.style.color = "#ef4444";
-            showToast("Import Failed", "error");
-        }
-    });
-
-    // Wipe All Apps
-    els.deleteAllBtn.addEventListener('click', () => {
-        showCustomPopup(
-            "⚠️ DANGER ZONE", 
-            `This will permanently delete ALL ${allApps.length} apps from the database. Type 'DELETE' to confirm.`, 
-            "prompt", 
-            async (input) => {
-                if (input === "DELETE") {
-                    try {
-                        const batch = writeBatch(firestore);
-                        allApps.forEach(app => {
-                            batch.delete(doc(firestore, "apps", app._id));
-                        });
-                        await batch.commit();
-                        showToast("All Apps Deleted", "success");
-                    } catch(e) {
-                        showToast("Delete Failed: " + e.message, "error");
-                    }
-                } else if (input) {
-                    showToast("Incorrect confirmation code", "error");
-                }
-            }
-        );
-    });
-}
-// --- RTDB STATS (Same as before) ---
+// --- RTDB STATS ---
 function loadRTDBStats() {
     const liveRef = dbRef(rtdb, "stats/live_visitors");
     const peakRef = dbRef(rtdb, "stats/peak_visitors");
@@ -433,24 +346,43 @@ function renderTable(apps) {
     document.querySelectorAll('.view-btn').forEach(b => b.addEventListener('click', (e) => window.open(`/pages/view.html?id=${e.currentTarget.dataset.id}`, '_blank')));
 }
 
+// --- APP EDIT LOGIC (FIXED) ---
 function editApp(id) {
     const app = allApps.find(a => a._id === id);
     if (!app) return;
-    els.inputs.docId.value = app._id; els.inputs.id.value = app.id; els.inputs.name.value = app.name;
-    els.inputs.category.value = app.category; els.inputs.version.value = app.version || '';
-    els.inputs.tags.value = (app.tags || []).join(', '); els.inputs.desc.value = app.description || '';
-    els.inputs.link.value = app.downloadLink || ''; els.inputs.image.value = app.image || '';
+    
+    // Populate simple fields
+    els.inputs.docId.value = app._id; 
+    els.inputs.id.value = app.id; 
+    els.inputs.name.value = app.name;
+    els.inputs.category.value = app.category; 
+    els.inputs.version.value = app.version || '';
+    els.inputs.tags.value = (app.tags || []).join(', '); 
+    els.inputs.desc.value = app.description || '';
+    els.inputs.link.value = app.downloadLink || ''; 
+    els.inputs.image.value = app.image || '';
+    
+    // Populate Screenshots (Carousel)
+    renderScreenshots(app.screenshots || []); 
+
+    // UI Updates
     els.inputs.id.disabled = true; 
     els.saveBtn.innerHTML = '<i class="fa-solid fa-pen"></i> Update App';
     window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
+// --- GLOBAL SAVE LISTENER (FIXED) ---
 els.saveBtn.addEventListener('click', async () => {
-    // Basic App Save Logic (Simplified for brevity as user focused on patch notes)
-    // Assume standard setDoc/updateDoc logic here
     const docId = els.inputs.docId.value || els.inputs.id.value;
-    if(!docId) return showToast("App ID required", "error");
     
+    if(!docId) return showToast("App ID required", "error");
+    if(!els.inputs.name.value) return showToast("App Name required", "error");
+
+    // Gather Screenshots
+    const screenshotsArr = Array.from(document.querySelectorAll('.screenshot-input'))
+        .map(input => input.value.trim())
+        .filter(val => val !== '');
+
     const payload = {
         id: els.inputs.id.value,
         name: els.inputs.name.value,
@@ -460,14 +392,21 @@ els.saveBtn.addEventListener('click', async () => {
         description: els.inputs.desc.value,
         downloadLink: els.inputs.link.value,
         image: els.inputs.image.value,
+        screenshots: screenshotsArr, // Saved here
         lastUpdated: new Date().toISOString()
     };
     
+    els.saveBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Saving...';
+
     try {
         await setDoc(doc(firestore, "apps", docId), payload, {merge: true});
-        showToast("App Saved!", "success");
+        showToast("App Saved Successfully!", "success");
         clearForm();
-    } catch(e) { showToast(e.message, 'error'); }
+    } catch(e) { 
+        console.error(e);
+        showToast("Error: " + e.message, 'error');
+        els.saveBtn.innerHTML = '<i class="fa-solid fa-save"></i> Save App';
+    }
 });
 
 async function deleteApp(id) {
@@ -482,11 +421,22 @@ async function deleteApp(id) {
 }
 
 function clearForm() {
-    els.inputs.docId.value=''; els.inputs.id.value=''; els.inputs.id.disabled=false;
-    els.inputs.name.value=''; els.inputs.version.value=''; els.inputs.tags.value='';
-    els.inputs.desc.value=''; els.inputs.link.value=''; els.inputs.image.value='';
+    els.inputs.docId.value=''; 
+    els.inputs.id.value=''; 
+    els.inputs.id.disabled=false;
+    els.inputs.name.value=''; 
+    els.inputs.version.value=''; 
+    els.inputs.tags.value='';
+    els.inputs.desc.value=''; 
+    els.inputs.link.value=''; 
+    els.inputs.image.value='';
+    
+    // Clear Screenshots
+    document.getElementById('app-screenshots-container').innerHTML = '';
+    
     els.saveBtn.innerHTML = '<i class="fa-solid fa-save"></i> Save App';
 }
+
 els.clearBtn.addEventListener('click', clearForm);
 
 els.search.addEventListener('input', (e) => {
@@ -495,7 +445,6 @@ els.search.addEventListener('input', (e) => {
 });
 
 // --- USER MANAGEMENT ---
-// Fixed logic for user search and details
 els.searchUserBtn.addEventListener('click', executeUserSearch);
 
 async function executeUserSearch() {
@@ -510,21 +459,17 @@ async function executeUserSearch() {
         let userData = null;
         let uid = null;
 
-        // Check if query contains '@' (likely an email)
         const isEmail = query.includes('@');
 
         if (!isEmail) {
-            // Assume it's a UID - try direct lookup
             const userRef = dbRef(rtdb, `users/${query}`);
             let snapshot = await get(userRef);
-            
             if (snapshot.exists()) {
                 userData = snapshot.val();
                 uid = query;
             }
         }
 
-        // If not found yet, search all users by email
         if (!userData) {
             const allUsersRef = dbRef(rtdb, 'users');
             const allUsersSnapshot = await get(allUsersRef);
@@ -533,7 +478,6 @@ async function executeUserSearch() {
                 const allUsers = allUsersSnapshot.val();
                 const searchEmail = query.toLowerCase().trim();
                 
-                // Scan through all users to find matching email or UID
                 for (const [userId, userInfo] of Object.entries(allUsers)) {
                     if (userInfo && userInfo.email) {
                         if (isEmail && userInfo.email.toLowerCase().trim() === searchEmail) {
@@ -551,13 +495,11 @@ async function executeUserSearch() {
         }
         
         if (userData && uid) {
-            // Update UI
             els.userDisplayName.textContent = userData.name || userData.email.split('@')[0];
             els.userEmailId.textContent = userData.email;
             els.userResultCard.classList.remove('hidden');
             els.userDataWarning.classList.remove('hidden');
             
-            // Populate Modal
             populateUserDetailModal(uid, userData);
             await loadUserHistory(uid);
             await loadUserFavorites(uid);
@@ -570,7 +512,6 @@ async function executeUserSearch() {
             showToast("User not found in database", 'error');
         }
     } catch (e) {
-        console.error("Error searching user:", e);
         els.userResultCard.classList.add('hidden');
         showToast("Error searching user: " + e.message, 'error');
     }
@@ -584,21 +525,15 @@ function populateUserDetailModal(uid, userData) {
     document.getElementById('modal-user-role').textContent = "User (Standard)";
     document.getElementById('modal-user-status').textContent = userData.banned ? 'Banned' : 'Active';
     
-    // Wire Revoke Button
     document.getElementById('modal-revoke-btn').onclick = () => {
-        showCustomPopup(
-            "Revoke Access", 
-            `Permanently ban ${userData.email}?`, 
-            "confirm", 
-            async (confirmed) => {
-                if (confirmed) {
-                    await setRTDB(dbRef(rtdb, `users/${uid}/banned`), true);
-                    userDetailModal.style.display = 'none';
-                    showToast("User Access Revoked", "success");
-                    executeUserSearch(); // Refresh data
-                }
+        showCustomPopup("Revoke Access", `Permanently ban ${userData.email}?`, "confirm", async (confirmed) => {
+            if (confirmed) {
+                await setRTDB(dbRef(rtdb, `users/${uid}/banned`), true);
+                userDetailModal.style.display = 'none';
+                showToast("User Access Revoked", "success");
+                executeUserSearch(); 
             }
-        );
+        });
     };
 }
 
@@ -625,7 +560,7 @@ async function loadUserHistory(uid) {
     });
     els.userDownloadHistory.innerHTML = html;
 }
-// (Helper for onclick above)
+
 window.deleteUserItem = async (uid, list, key) => {
     if(confirm("Delete this item?")) {
         await setRTDB(dbRef(rtdb, `users/${uid}/${list}/${key}`), null);
@@ -655,15 +590,22 @@ async function loadUserFavorites(uid) {
     });
     els.userFavourites.innerHTML = html;
 }
-async function deleteUserHistory(uid) { /* Logic exists in previous code, kept same */ }
+
+async function deleteUserHistory(uid) { 
+    showCustomPopup("Wipe Data", "Delete all user history and favorites?", "confirm", async (confirmed) => {
+        if(confirmed) {
+            await setRTDB(dbRef(rtdb, `users/${uid}/history`), null);
+            await setRTDB(dbRef(rtdb, `users/${uid}/favorites`), null);
+            showToast("User data wiped", "success");
+            executeUserSearch();
+        }
+    });
+}
 
 
 // ======================================================
-// --- 3. PATCH NOTES FEATURE (NEW & ADVANCED) ---
+// --- 3. PATCH NOTES FEATURE ---
 // ======================================================
-
-// Helper: Generate Unique ID
-const genId = () => Math.random().toString(36).substr(2, 9);
 
 function loadPatchNotes() {
     const q = query(collection(firestore, "patch_notes"), orderBy("releaseDate", "desc"));
@@ -778,7 +720,7 @@ els.patchForm.saveBtn.onclick = async () => {
         releaseDate: els.patchForm.date.value,
         mainCategory: els.patchForm.category.value,
         borderColor: els.patchForm.borderColor.value,
-        notes: currentPatchBlocks // Save the array of blocks
+        notes: currentPatchBlocks
     };
     
     const docId = els.patchForm.docId.value || `v-${version.replace(/\./g, '-')}`;
@@ -805,9 +747,6 @@ async function openPatchEditor(id) {
     els.patchForm.borderColor.value = data.borderColor || '#9F00FF';
     
     currentPatchBlocks = data.notes || [];
-    // Migrate old format if necessary (simple text to blocks)
-    // Note: If you have old data, you might need a migration check here.
-    
     renderBlocks();
     els.patchListSection.classList.add('hidden');
     els.patchEditorSection.classList.remove('hidden');
@@ -828,4 +767,273 @@ async function deletePatch(id) {
         await deleteDoc(doc(firestore, "patch_notes", id));
         showToast("Patch Deleted", "success");
     }
+}
+
+// --- APP SCREENSHOTS / CAROUSEL ---
+function renderScreenshots(list = []) {
+    const container = document.getElementById('app-screenshots-container');
+    container.innerHTML = '';
+    
+    if(!list || list.length === 0) return;
+
+    list.forEach(url => addScreenshotRow(url));
+}
+
+function addScreenshotRow(value = '') {
+    const container = document.getElementById('app-screenshots-container');
+    const row = document.createElement('div');
+    row.className = 'flex gap-2 items-center';
+    
+    row.innerHTML = `
+        <div class="relative flex-grow">
+            <input type="text" class="screenshot-input w-full bg-black border border-gray-700 rounded p-2 text-xs text-gray-300 focus:border-purple-500 outline-none pr-8" placeholder="Image Link or Upload ->" value="${value}">
+            <label class="absolute right-2 top-1.5 cursor-pointer text-gray-500 hover:text-blue-400" title="Upload Image">
+                <i class="fa-solid fa-upload"></i>
+                <input type="file" class="hidden screenshot-file-upload" accept="image/*">
+            </label>
+        </div>
+        <button class="bg-red-900/30 text-red-500 hover:text-white hover:bg-red-600 w-8 h-8 rounded flex items-center justify-center transition" onclick="this.parentElement.remove()">
+            <i class="fa-solid fa-times"></i>
+        </button>
+    `;
+
+    container.appendChild(row);
+
+    const fileInput = row.querySelector('.screenshot-file-upload');
+    const textInput = row.querySelector('.screenshot-input');
+
+    fileInput.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = (evt) => {
+                textInput.value = evt.target.result; 
+                textInput.style.borderColor = '#4ade80';
+                setTimeout(() => textInput.style.borderColor = '', 500);
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+}
+
+document.getElementById('add-screenshot-btn').addEventListener('click', (e) => {
+    e.preventDefault(); 
+    addScreenshotRow();
+});
+
+// Import & Wipe Handlers
+function setupImportWipeHandlers() {
+    // Show Import Modal
+    els.importToggleBtn.addEventListener('click', () => {
+        els.importSection.style.display = 'flex';
+    });
+
+    // Hide Import Modal
+    els.cancelImportBtn.addEventListener('click', () => {
+        els.importSection.style.display = 'none';
+        els.importJsonData.value = '';
+        els.importStatus.textContent = '';
+    });
+
+    // Import File Upload
+    els.importFileInput.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = (evt) => {
+                els.importJsonData.value = evt.target.result;
+            };
+            reader.readAsText(file);
+        }
+    });
+
+    // Run Import
+    els.runImportBtn.addEventListener('click', async () => {
+        const jsonText = els.importJsonData.value.trim();
+        if (!jsonText) return showToast("No JSON data provided", "error");
+        
+        try {
+            const apps = JSON.parse(jsonText);
+            if (!Array.isArray(apps)) throw new Error("JSON must be an array");
+            
+            els.importStatus.textContent = "Importing...";
+            els.importStatus.style.color = "#fbbf24";
+            
+            let count = 0;
+            for (const app of apps) {
+                const docId = app.id || app._id;
+                if (!docId) continue;
+                await setDoc(doc(firestore, "apps", docId), app, { merge: true });
+                count++;
+            }
+            
+            els.importStatus.textContent = `✓ Imported ${count} apps successfully`;
+            els.importStatus.style.color = "#10b981";
+            showToast(`${count} Apps Imported`, "success");
+            
+            setTimeout(() => {
+                els.importSection.style.display = 'none';
+                els.importJsonData.value = '';
+                els.importStatus.textContent = '';
+                els.importFileInput.value = '';
+            }, 2000);
+        } catch (e) {
+            els.importStatus.textContent = "✗ Error: " + e.message;
+            els.importStatus.style.color = "#ef4444";
+            showToast("Import Failed", "error");
+        }
+    });
+
+    // Wipe All Apps
+    els.deleteAllBtn.addEventListener('click', () => {
+        showCustomPopup(
+            "⚠️ DANGER ZONE", 
+            `This will permanently delete ALL ${allApps.length} apps from the database. Type 'DELETE' to confirm.`, 
+            "prompt", 
+            async (input) => {
+                if (input === "DELETE") {
+                    try {
+                        const batch = writeBatch(firestore);
+                        allApps.forEach(app => {
+                            batch.delete(doc(firestore, "apps", app._id));
+                        });
+                        await batch.commit();
+                        showToast("All Apps Deleted", "success");
+                    } catch(e) {
+                        showToast("Delete Failed: " + e.message, "error");
+                    }
+                } else if (input) {
+                    showToast("Incorrect confirmation code", "error");
+                }
+            }
+        );
+    });
+}
+
+// ======================================================
+// --- 4. ADVANCED ANNOUNCEMENT MANAGER (FIXED) ---
+// ======================================================
+
+let currentAnnounceBlocks = [];
+
+function initAdvancedAnnouncement() {
+    const announceRef = dbRef(rtdb, "site_config/announcement");
+
+    // UI Elements
+    const container = document.getElementById('announce-blocks-container');
+    const emptyMsg = document.getElementById('announce-empty-msg');
+    const enabledCheck = document.getElementById('announce-enabled');
+    const freqSelect = document.getElementById('announce-freq');
+    const pageChecks = document.querySelectorAll('.announce-page-check');
+
+    // 1. Load Data
+    onValue(announceRef, (snap) => {
+        const data = snap.val() || {};
+        
+        enabledCheck.checked = data.enabled || false;
+        freqSelect.value = data.frequency || 'once';
+        
+        // Pages (If empty array, uncheck all, but visually user sees nothing checked)
+        const activePages = data.pages || [];
+        pageChecks.forEach(cb => cb.checked = activePages.includes(cb.value));
+
+        // Content
+        currentAnnounceBlocks = data.content || [];
+        renderAnnounceBlocks();
+    });
+
+    // 2. Render Functions
+    function renderAnnounceBlocks() {
+        container.innerHTML = '';
+        if (currentAnnounceBlocks.length === 0) {
+            container.appendChild(emptyMsg);
+            emptyMsg.style.display = 'flex';
+        } else {
+            emptyMsg.style.display = 'none';
+            currentAnnounceBlocks.forEach((block, idx) => {
+                container.appendChild(createAnnounceBlockUI(block, idx));
+            });
+        }
+    }
+
+    function createAnnounceBlockUI(block, index) {
+        const div = document.createElement('div');
+        div.className = "bg-gray-900 border border-gray-700 p-3 rounded-lg relative group transition hover:border-purple-500";
+        
+        let innerHTML = `<div class="flex justify-between mb-2 text-[10px] uppercase font-bold text-gray-500 tracking-wider">
+            <span>${block.type}</span> 
+            <div class="flex gap-2">
+                <button class="text-gray-500 hover:text-white" onclick="moveAnnounceBlock(${index}, -1)"><i class="fa-solid fa-arrow-up"></i></button>
+                <button class="text-gray-500 hover:text-white" onclick="moveAnnounceBlock(${index}, 1)"><i class="fa-solid fa-arrow-down"></i></button>
+                <button class="text-red-500 hover:text-white" onclick="removeAnnounceBlock(${index})"><i class="fa-solid fa-times"></i></button>
+            </div>
+        </div>`;
+
+        if (block.type === 'heading') {
+            innerHTML += `
+                <input type="text" class="w-full bg-black border border-gray-700 rounded p-2 mb-2 text-white font-bold" placeholder="Heading Text" value="${block.content}" onchange="updateAnnounceBlock(${index}, 'content', this.value)">
+                <div class="flex items-center gap-2">
+                    <span class="text-xs text-gray-500">Color:</span>
+                    <input type="color" class="bg-transparent border-0 h-6 w-8 cursor-pointer" value="${block.color || '#ffffff'}" onchange="updateAnnounceBlock(${index}, 'color', this.value)">
+                </div>
+            `;
+        } else if (block.type === 'paragraph' || block.type === 'list-item') {
+            innerHTML += `<textarea class="w-full bg-black border border-gray-700 rounded p-2 text-sm text-gray-300 h-16" placeholder="Content..." onchange="updateAnnounceBlock(${index}, 'content', this.value)">${block.content}</textarea>`;
+        } else if (block.type === 'image') {
+            innerHTML += `<input type="text" class="w-full bg-black border border-gray-700 rounded p-2 text-xs text-green-400 font-mono" placeholder="Image URL" value="${block.url || ''}" onchange="updateAnnounceBlock(${index}, 'url', this.value)">`;
+        } else if (block.type === 'button') {
+            innerHTML += `
+                <div class="grid grid-cols-2 gap-2 mb-2">
+                    <input type="text" class="bg-black border border-gray-700 rounded p-2 text-sm text-white" placeholder="Button Label" value="${block.text || ''}" onchange="updateAnnounceBlock(${index}, 'text', this.value)">
+                    <input type="color" class="h-full w-full bg-black border border-gray-700 rounded cursor-pointer" value="${block.color || '#9F00FF'}" onchange="updateAnnounceBlock(${index}, 'color', this.value)">
+                </div>
+                <input type="text" class="w-full bg-black border border-gray-700 rounded p-2 text-xs text-blue-400 font-mono" placeholder="Link URL (/pages/...)" value="${block.link || ''}" onchange="updateAnnounceBlock(${index}, 'link', this.value)">
+            `;
+        }
+
+        div.innerHTML += innerHTML;
+        return div;
+    }
+
+    // 3. Add Block Listeners
+    document.getElementById('ann-add-heading').onclick = () => { currentAnnounceBlocks.push({type:'heading', content:'', color:'#ffffff'}); renderAnnounceBlocks(); };
+    document.getElementById('ann-add-text').onclick = () => { currentAnnounceBlocks.push({type:'paragraph', content:''}); renderAnnounceBlocks(); };
+    document.getElementById('ann-add-list').onclick = () => { currentAnnounceBlocks.push({type:'list-item', content:''}); renderAnnounceBlocks(); };
+    document.getElementById('ann-add-image').onclick = () => { currentAnnounceBlocks.push({type:'image', url:''}); renderAnnounceBlocks(); };
+    document.getElementById('ann-add-btn').onclick = () => { currentAnnounceBlocks.push({type:'button', text:'Click Me', link:'#', color:'#9F00FF'}); renderAnnounceBlocks(); };
+
+    // 4. Global Helpers (for inline HTML onclicks)
+    window.removeAnnounceBlock = (idx) => { currentAnnounceBlocks.splice(idx, 1); renderAnnounceBlocks(); };
+    window.updateAnnounceBlock = (idx, field, val) => { currentAnnounceBlocks[idx][field] = val; };
+    window.moveAnnounceBlock = (idx, dir) => {
+        if ((dir === -1 && idx > 0) || (dir === 1 && idx < currentAnnounceBlocks.length - 1)) {
+            const temp = currentAnnounceBlocks[idx];
+            currentAnnounceBlocks[idx] = currentAnnounceBlocks[idx + dir];
+            currentAnnounceBlocks[idx + dir] = temp;
+            renderAnnounceBlocks();
+        }
+    };
+
+    // 5. Save Handler
+    document.getElementById('save-announce-btn').addEventListener('click', async () => {
+        const pages = [];
+        pageChecks.forEach(cb => { if(cb.checked) pages.push(cb.value); });
+        
+        // IMPORTANT: If pages array is empty, it means ALL PAGES are targeted.
+        // We save exactly what the user selected. The client script (announcement.js)
+        // handles [] as "Show Everywhere".
+
+        try {
+            await updateRTDB(announceRef, {
+                enabled: enabledCheck.checked,
+                frequency: freqSelect.value,
+                pages: pages, // Save the array (empty or populated)
+                content: currentAnnounceBlocks,
+                lastUpdated: Date.now() // Forces popup to show again if it's new
+            });
+            showToast("Announcement Published!", "success");
+        } catch (e) {
+            showToast(e.message, "error");
+        }
+    });
 }
