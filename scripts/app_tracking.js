@@ -1,12 +1,6 @@
 /**
- * APP TRACKING - COMPLETE FIXED VERSION
+ * APP TRACKING
  * /scripts/app_tracking.js
- * Logic:
- * - Browser: Only Download button visible
- * - Electron (Not Installed): Only Download button visible
- * - Electron (Installed): Download hidden, Open/Update/Uninstall/Favorites visible
- * - Update button: Grey if dates match, colored if update available
- * - Anyone can download, but tracking requires login (shows popup)
  */
 
 import { mainAuth, mainDb } from './firebase-config.js';
@@ -16,13 +10,6 @@ import { ref, update, onValue, get, set, remove } from "https://www.gstatic.com/
 const showToast = (message) => {
     if (typeof window.showToast === 'function') window.showToast(message);
     else console.log(`[TOAST]: ${message}`);
-};
-
-// Helper: Prompt for login (Advertisement style)
-const promptLogin = () => {
-    if(confirm("🚀 Sign in to unlock Getnaro App features!\n\n✓ Track your downloads\n✓ Sync across devices\n✓ One-click open & uninstall\n✓ Save favorites\n\nWould you like to sign in now?")) {
-        window.location.href = '/pages/login.html';
-    }
 };
 
 function getCleanMatchName(rawName) {
@@ -67,18 +54,11 @@ export function initAppTracking() {
     if (!appCard || appCard.style.display === 'none') return;
 
     const appId = appCard.dataset.app;
-    
-    if (!appId) {
-        console.warn("App ID missing. Waiting for data load...");
-        return;
-    }
-
     const serverLastUpdated = appCard.getAttribute('data-last-updated') || "";
     const rawAppName = document.getElementById('d-app-title') ? document.getElementById('d-app-title').innerText : "Unknown App";
     const appIconImg = document.getElementById('d-app-image');
     const appIcon = appIconImg ? appIconImg.src : "";
     
-    // Elements
     const btnDownload = document.getElementById('d-btn-download');
     const btnOpen = document.getElementById('d-btn-open');
     const btnUpdate = document.getElementById('d-btn-update');
@@ -89,171 +69,100 @@ export function initAppTracking() {
     const locLink = document.getElementById('loc-path-dynamic');
     
     let cachedFirebaseData = {};
-    let currentUser = null;
 
-    // --- INITIAL STATE: BROWSER OR ELECTRON NOT INSTALLED ---
     if (!isElectron) {
-        // Browser: Only download button
-        updateUINotInstalled();
-    } else {
-        // Electron: Start with download button, check local after
         updateUINotInstalled();
     }
 
-    // --- 1. HANDLE DOWNLOAD CLICK (No login required, just optional tracking) ---
+    // --- 1. HANDLE DOWNLOAD CLICK ---
     if (btnDownload) {
-        const newBtn = btnDownload.cloneNode(true);
-        btnDownload.parentNode.replaceChild(newBtn, btnDownload);
-        
-        newBtn.addEventListener("click", () => {
-            const user = mainAuth.currentUser;
-            // Anyone can download, but only logged-in users get tracking
-            if (user && !user.isAnonymous) {
-                saveToHistory(user.uid, appId, rawAppName, appIcon, "Downloading");
-                showToast("Download started & tracked!");
-            } else {
-                showToast("Download started.");
-            }
-        });
-    }
-
-    // --- 2. HANDLE OPEN CLICK (Requires login) ---
-    if (btnOpen && isElectron) {
-        const newOpen = btnOpen.cloneNode(true);
-        btnOpen.parentNode.replaceChild(newOpen, btnOpen);
-        
-        newOpen.onclick = async () => {
-            const user = mainAuth.currentUser;
-            if(!user || user.isAnonymous) {
-                promptLogin();
-                return;
-            }
-            
-            if(window.appAPI.openApp) {
-                let opened = await window.appAPI.openApp(rawAppName);
-                if (!opened) {
-                    const simpleName = rawAppName.replace(/ PC$/i, "").replace(/ Edition$/i, "");
-                    opened = await window.appAPI.openApp(simpleName);
-                }
-                if(opened) showToast(`Opening ${rawAppName}...`);
-            } else {
-                showToast("Cannot open app: API missing.");
-            }
-        };
-    }
-
-    // --- 3. HANDLE UPDATE CLICK (Requires login) ---
-    if (btnUpdate) {
-        const newUpdate = btnUpdate.cloneNode(true);
-        btnUpdate.parentNode.replaceChild(newUpdate, btnUpdate);
-        
-        newUpdate.onclick = () => {
-            const user = mainAuth.currentUser;
-            if(!user || user.isAnonymous) {
-                promptLogin();
-                return;
-            }
-            
-            // Redirect to download link (same as download button)
-            const dlBtn = document.getElementById('d-btn-download');
-            if(dlBtn && dlBtn.href) {
-                window.open(dlBtn.href, '_blank');
-                showToast("Downloading update...");
-            }
-        };
-    }
-
-    // --- 4. HANDLE FAVORITES (Requires login) ---
-    if (btnFav) {
-        const newFavBtn = btnFav.cloneNode(true);
-        btnFav.parentNode.replaceChild(newFavBtn, btnFav);
-
-        newFavBtn.onclick = async () => {
-            const user = mainAuth.currentUser;
-            
-            if(!user || user.isAnonymous) {
-                promptLogin();
-                return;
-            }
-            
-            newFavBtn.style.pointerEvents = "none";
-
-            try {
-                const favRef = ref(mainDb, `users/${user.uid}/favorites/${appId}`);
-                const snap = await get(favRef);
-                
-                if(snap.exists()) {
-                    await remove(favRef);
-                    updateFavUI(false); 
-                    showToast("Removed from favorites");
+        if (!btnDownload.dataset.trackingAttached) {
+            btnDownload.addEventListener("click", () => {
+                const user = mainAuth.currentUser;
+                if (user && !user.isAnonymous) {
+                    saveToHistory(user.uid, appId, rawAppName, appIcon, "Downloading");
                 } else {
-                    await set(favRef, {
-                        appName: rawAppName,
-                        appId: appId,
-                        icon: appIcon,
-                        timestamp: Date.now()
-                    });
-                    updateFavUI(true);
-                    showToast("Added to favorites");
+                    showToast("Download started. Login to save history.");
                 }
-            } catch (err) {
-                console.error("Fav Error:", err);
-                showToast("Error updating favorites");
-            } finally {
-                newFavBtn.style.pointerEvents = "auto";
+            });
+            btnDownload.dataset.trackingAttached = "true";
+        }
+    }
+
+    // --- 2. HANDLE OPEN CLICK ---
+    if (btnOpen && isElectron) {
+        btnOpen.onclick = async () => {
+             if(window.appAPI.openApp) {
+                 let opened = await window.appAPI.openApp(rawAppName);
+                 if (!opened) {
+                     const simpleName = rawAppName.replace(/ PC$/i, "").replace(/ Edition$/i, "");
+                     window.appAPI.openApp(simpleName);
+                 }
+             } else {
+                 showToast("Cannot open app: API missing.");
+             }
+        };
+    }
+
+    // --- 3. HANDLE FAVORITES ---
+    if (btnFav) {
+        btnFav.onclick = async () => {
+            const user = mainAuth.currentUser;
+            if(!user || user.isAnonymous) {
+                return showToast("Please Login to add to favorites.");
+            }
+            
+            const favRef = ref(mainDb, `users/${user.uid}/favorites/${appId}`);
+            const snap = await get(favRef);
+            
+            if(snap.exists()) {
+                await remove(favRef);
+                updateFavUI(false);
+                showToast("Removed from favorites");
+            } else {
+                await set(favRef, {
+                    appName: rawAppName,
+                    appId: appId,
+                    icon: appIcon,
+                    timestamp: Date.now()
+                });
+                updateFavUI(true);
+                showToast("Added to favorites");
             }
         };
     }
     
     function updateFavUI(isFav) {
-        const targetBtn = document.getElementById('d-btn-fav');
-        if(!targetBtn) return;
-        
-        const icon = targetBtn.querySelector('i');
-        if (!icon) return;
-
+        if(!btnFav) return;
+        const icon = btnFav.querySelector('i');
         if(isFav) {
-            targetBtn.classList.add('active');
+            btnFav.classList.add('active');
             icon.classList.remove('fa-regular');
             icon.classList.add('fa-solid');
-            icon.style.color = "#ff4757";
         } else {
-            targetBtn.classList.remove('active');
+            btnFav.classList.remove('active');
             icon.classList.remove('fa-solid');
             icon.classList.add('fa-regular');
-            icon.style.color = "";
         }
     }
 
-    // --- 5. AUTH STATE & SYNC ---
+    // --- 4. AUTH STATE & SYNC ---
     onAuthStateChanged(mainAuth, (user) => {
-        currentUser = user;
-
         if (user && !user.isAnonymous) {
-            // User is signed in: Enable tracking and check favorites
             syncAppStatus(user, appId, rawAppName);
-            
-            // Set up listener for favorites button state
             const favRef = ref(mainDb, `users/${user.uid}/favorites/${appId}`);
-            onValue(favRef, (snap) => {
-                updateFavUI(snap.exists());
-            });
-
+            onValue(favRef, (snap) => updateFavUI(snap.exists()));
         } else {
-            // User NOT signed in:
-            // 1. Reset Favorite UI
-            updateFavUI(false);
-            
-            // 2. If Electron, check local status (just for UI, no DB sync)
             if (isElectron) {
-                checkLocalOnlyNoTracking(rawAppName);
+                checkLocalOnly(rawAppName);
             } else {
                 updateUINotInstalled();
             }
+            updateFavUI(false);
         }
     });
 
-    // --- 6. ELECTRON INSTALL SIGNALS ---
+    // --- 5. ELECTRON SIGNALS ---
     if (isElectron && window.appAPI.onInstallStartSignal) {
         window.appAPI.onInstallStartSignal((data) => {
             const cleanPageName = getCleanMatchName(rawAppName);
@@ -264,10 +173,8 @@ export function initAppTracking() {
         });
     }
 
-    // --- CORE LOGIC: SYNC STATUS (Only for logged-in users) ---
+    // --- CORE LOGIC: SYNC STATUS ---
     async function syncAppStatus(user, appId, appName) {
-        if (!user || user.isAnonymous) return;
-
         const historyRef = ref(mainDb, `users/${user.uid}/history`);
 
         onValue(historyRef, async (snapshot) => {
@@ -287,7 +194,6 @@ export function initAppTracking() {
             cachedFirebaseData = myEntry || {};
             
             if (!isElectron) {
-                // Browser: Check DB only
                 if (myEntry && (myEntry.status && myEntry.status.toLowerCase() === 'installed')) {
                     updateUIInstalled(myEntry.installLocation || "On Desktop", false);
                 } else {
@@ -300,10 +206,7 @@ export function initAppTracking() {
             let detectedPath = await smartFindAppPath(appName);
 
             if (detectedPath) {
-                // App is installed locally
-                const installedDate = cachedFirebaseData.installedDate || "";
-                const needsUpdate = (serverLastUpdated && installedDate && serverLastUpdated !== installedDate);
-                
+                const needsUpdate = (serverLastUpdated && cachedFirebaseData.installedDate && serverLastUpdated !== cachedFirebaseData.installedDate);
                 updateUIInstalled(detectedPath, needsUpdate); 
 
                 // If DB says uninstalled/downloading but it IS installed locally, update DB
@@ -326,15 +229,13 @@ export function initAppTracking() {
             }
         });
 
-        // --- UNINSTALL BUTTON (Requires login, already checked in syncAppStatus call) ---
-        const currentUninstall = document.getElementById('d-btn-uninstall');
-        if (currentUninstall && isElectron) {
-            const newUninstall = currentUninstall.cloneNode(true);
-            currentUninstall.parentNode.replaceChild(newUninstall, currentUninstall);
+        // Uninstall Hook
+        if (btnUninstall && isElectron) {
+            const newUninstall = btnUninstall.cloneNode(true);
+            btnUninstall.parentNode.replaceChild(newUninstall, btnUninstall);
 
             newUninstall.onclick = (e) => {
                 e.preventDefault();
-                
                 if (window.appAPI.uninstallApp) {
                     const simpleName = appName.replace(/ PC$/i, "").replace(/ Edition$/i, "");
                     window.appAPI.uninstallApp(simpleName);
@@ -344,13 +245,12 @@ export function initAppTracking() {
                         installLocation: null,
                         lastChecked: Date.now()
                     });
-                    showToast(`Uninstall signal sent for ${appName}`);
+                    showToast(`Uninstall signal sent.`);
                 }
             };
         }
     }
 
-    // --- Install Monitoring (After download in Electron) ---
     async function startInstallMonitoring(appName, appId) {
         let isMonitoring = true;
         let attempts = 0;
@@ -366,39 +266,32 @@ export function initAppTracking() {
             let detectedPath = await smartFindAppPath(appName);
 
             if (detectedPath) {
-                const needsUpdate = false; // Fresh install, no update needed
-                updateUIInstalled(detectedPath, needsUpdate); 
-                
+                updateUIInstalled(detectedPath, false); 
                 if (user && !user.isAnonymous) {
                     saveFinalInstallState(user.uid, appId, detectedPath, serverLastUpdated); 
                 }
-                isMonitoring = false;
-                showToast(`${appName} installed successfully!`);
+                isMonitoring = false; 
             } else if (attempts < maxAttempts) {
                 attempts++;
                 setTimeout(poll, delay);
             } else {
                 isMonitoring = false;
-                showToast("Installation monitoring timed out");
             }
         };
         poll();
     }
 
-    // --- Local Check (Guest users in Electron, UI only, no DB) ---
-    async function checkLocalOnlyNoTracking(appName) {
+    async function checkLocalOnly(appName) {
         if (!isElectron) return;
         let detectedPath = await smartFindAppPath(appName);
 
         if (detectedPath) {
-            // Show installed UI but buttons require login
-            updateUIInstalledButNoAccess(detectedPath);
+            updateUIInstalled(detectedPath, false);
         } else {
             updateUINotInstalled();
         }
     }
 
-    // --- Database Helpers ---
     function saveToHistory(uid, id, name, icon, status) {
         const timestamp = Date.now();
         update(ref(mainDb, `users/${uid}/history/${id}`), {
@@ -422,48 +315,22 @@ export function initAppTracking() {
         });
     }
 
-    // --- UI UPDATERS ---
     const getButtons = () => {
         return {
             dl: document.getElementById('d-btn-download'),
             op: document.getElementById('d-btn-open'),
             up: document.getElementById('d-btn-update'),
-            un: document.getElementById('d-btn-uninstall'),
-            fav: document.getElementById('d-btn-fav')
+            un: document.getElementById('d-btn-uninstall')
         };
     };
 
     function updateUIInstalled(location, needsUpdate) {
-        const { dl, op, up, un, fav } = getButtons();
-        
-        // Hide download, show others
+        const { dl, op, up, un } = getButtons();
         if (dl) dl.style.display = "none";
         if (op) op.style.display = "inline-flex";
+        if (up) up.style.display = needsUpdate ? "inline-flex" : "none";
         if (un) un.style.display = "inline-flex";
-        if (fav) fav.style.display = "inline-flex";
-        
-        // Update button logic
-        if (up) {
-            up.style.display = "inline-flex";
-            
-            if (needsUpdate) {
-                // Update available - colored button
-                up.style.opacity = "1";
-                up.style.filter = "none";
-                up.style.cursor = "pointer";
-                up.disabled = false;
-                up.title = "Update Available";
-            } else {
-                // No update - grey button
-                up.style.opacity = "0.4";
-                up.style.filter = "grayscale(100%)";
-                up.style.cursor = "not-allowed";
-                up.disabled = true;
-                up.title = "Already up to date";
-            }
-        }
 
-        // Update status text
         if (statusText) {
             const date = cachedFirebaseData.installedDate || "Verified";
             statusText.innerHTML = `<span style="color:#00e676; font-weight:bold;">Installed (${date})</span>`;
@@ -476,51 +343,23 @@ export function initAppTracking() {
         }
     }
 
-    function updateUIInstalledButNoAccess(location) {
-        const { dl, op, up, un, fav } = getButtons();
-        
-        // Show all buttons but they'll prompt login
-        if (dl) dl.style.display = "none";
-        if (op) op.style.display = "inline-flex";
-        if (up) up.style.display = "none"; // Hide update for guests
-        if (un) un.style.display = "inline-flex";
-        if (fav) fav.style.display = "inline-flex";
-
-        if (statusText) {
-            statusText.innerHTML = `<span style="color:#ffa726; font-weight:bold;">Installed (Sign in to manage)</span>`;
-        }
-
-        if (locLink) {
-            locLink.innerText = location;
-            locLink.title = "Sign in to access features"; 
-        }
-    }
-
     function updateUINotInstalled() {
-        const { dl, op, up, un, fav } = getButtons();
-        
-        // Only download button visible
+        const { dl, op, up, un } = getButtons();
         if (dl) dl.style.display = "inline-flex";
         if (op) op.style.display = "none";
         if (up) up.style.display = "none";
         if (un) un.style.display = "none";
         
-        // Fav button visible but requires login
-        if (fav) fav.style.display = "inline-flex";
-        
         if (statusText) statusText.innerText = "Not Installed";
         if (locLink) locLink.innerText = "—";
     }
 
-    // --- Aggressive polling for View Page (Only for logged-in users) ---
+    // Add aggressive polling for View Page
     setInterval(() => {
-        if(window.location.pathname.includes('view.html')) {
-            const user = mainAuth.currentUser;
-            if(user && !user.isAnonymous && isElectron) {
-                syncAppStatus(user, appId, rawAppName);
-            }
+        if(mainAuth.currentUser && !mainAuth.currentUser.isAnonymous && window.location.pathname.includes('view.html')) {
+             syncAppStatus(mainAuth.currentUser, appId, rawAppName);
         }
-    }, 5000);
+    }, 3000);
 }
 
 // =========================================================
@@ -533,6 +372,7 @@ export function initProfileSync() {
         if (user && !user.isAnonymous) {
             const historyRef = ref(mainDb, `users/${user.uid}/history`);
             
+            // Check ALL history items and update their status based on local machine
             onValue(historyRef, async (snapshot) => {
                 const history = snapshot.val();
                 if (!history) return;
@@ -567,7 +407,9 @@ export function initProfileSync() {
 // 3. ROUTER
 // =========================================================
 document.addEventListener("DOMContentLoaded", () => {
-    if (window.location.pathname.includes('profile.html')) {
+    if (window.location.pathname.includes('view.html')) {
+        initAppTracking();
+    } else if (window.location.pathname.includes('profile.html')) {
         initProfileSync();
     }
 });
