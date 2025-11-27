@@ -119,7 +119,7 @@
             --text: #ffffff;
             --glass: rgba(20, 20, 20, 0.8);
             --border: rgba(255,255,255,0.1);
-            overflow: hidden;
+            overflow-x: hidden;
         }
 
         @font-face {
@@ -192,7 +192,7 @@
         .naro-link-btn:hover { transform: scale(1.05); }
 
         .brand-logo img { height: 50px; width: auto; transition: transform 0.5s; }
-        .brand-logo:hover img { transform: rotate(360deg) scale(1.1); }
+        
 
         /* Animated Interactive Toggle Switch */
         .theme-switch {
@@ -717,21 +717,18 @@
 
         if (isElectron) {
             heroActions.innerHTML = `
-                <a href="/pages/patch-notes.html" class="download-pill primary" style="padding: 20px 45px; font-size: 18px; background: transparent; border: 1px solid var(--text); color: var(--text);"><i class="fas fa-scroll"></i> Patch Notes</a>
-               <a href="/pages/store.html" class="download-pill" style="padding: 20px 50px; font-size: 18px; box-shadow: 0 0 30px var(--primary);"><i class="fas fa-store"></i> View Store</a>
-                <a href="#" onclick="alert('Checking for updates...')" class="download-pill" style="padding: 20px 45px; font-size: 18px; background: transparent; border: 1px solid var(--text); color: var(--text);"><i class="fas fa-sync"></i> Update</a>
-                
-                
+                <a href="/pages/patch-notes.html" class="download-pill primary" style="padding: 20px 45px; font-size: 18px; background: transparent; border: 1px solid var(--text); color: var(--text);gap : 10px;"><i class="fas fa-scroll"></i> Patch Notes</a>
+                <a href="/pages/store.html" class="download-pill" style="padding: 20px 50px; font-size: 18px; box-shadow: 0 0 30px var(--primary);gap : 10px;" ><i class="fas fa-store"></i> View Store</a>
+                <a href="#" onclick="alert('Checking for updates...')" class="download-pill" style="padding: 20px 45px; font-size: 18px; background: transparent; border: 1px solid var(--text); color: var(--text);gap : 10px;"><i class="fas fa-sync"></i> Update</a>
             `;
         } else {
             heroActions.innerHTML = `
-
-                <a href="/pages/getnaro-app.html" class="download-pill primary" style="padding: 20px 50px; font-size: 18px; box-shadow: 0 0 30px var(--primary);"><i class="fas fa-download"></i> Download App</a>
-                <a href="/pages/store.html" class="download-pill"  style="padding: 20px 50px; font-size: 18px; box-shadow: 0 0 30px var(--primary);"><i class="fas fa-store" ><i class="fas fa-store"></i> View Store</a>
-                <a href="#features" class="download-pill"><i class="fas fa-compass" style="padding: 20px 45px; font-size: 18px; background: transparent; border: 1px solid var(--text); color: var(--text);" ><i class="fas fa-store"></i> Explore</a>
+                <a href="/pages/getnaro-app.html" class="download-pill primary" style="padding: 20px 45px; font-size: 18px; background: transparent; border: 1px solid var(--text); color: var(--text);gap : 10px;"><i class="fas fa-download"></i> Download App</a>
+                <a href="/pages/store.html" class="download-pill" style="padding: 20px 50px; font-size: 18px; gap : 10px; box-shadow: 0 0 30px var(--primary);"><i class="fas fa-store"></i> View Store</a>
+                <a href="#features" class="download-pill" style="padding: 20px 45px; font-size: 18px; background: transparent; border: 1px solid var(--text); color: var(--text);gap : 10px;"><i class="fas fa-compass"></i> Explore</a>
                 
                 
-                `;
+            `;
         }
 
         // --- THEME LOGIC ---
