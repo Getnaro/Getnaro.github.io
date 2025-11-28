@@ -377,28 +377,17 @@
         © 2025 Getnaro — Developed by NaroTech • Hosted on GitHub • Domain by BigRock
     </div>
 </footer>
+<!-- Replace the TWO Firebase script blocks in store.html with this SINGLE one -->
+
 <script type="module">
-    // UPDATED TO MATCH VIEW.HTML (v11.6.1)
-    import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+    // ✅ FIXED: Use centralized Firebase config (same as view.html)
+    import { mainApp } from "/scripts/firebase-config.js";
     import { getFirestore, collection, getDocs, query } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
     import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-database.js";
 
-    const firebaseConfig = {
-        apiKey: "AIzaSyCtX1G_OEXmkKtBNGzWQFEYiEWibrMIFrg",
-        authDomain: "user-getnaro.firebaseapp.com",
-        databaseURL: "https://user-getnaro-default-rtdb.asia-southeast1.firebasedatabase.app",
-        projectId: "user-getnaro",
-        storageBucket: "user-getnaro.firebasestorage.app",
-        messagingSenderId: "264425704576",
-        appId: "1:264425704576:web:cfd98a1f627e9a59cc2a65"
-    };
-
-    // --- FIX: SAFE INITIALIZATION (Prevents Electron Crash) ---
-    // This checks if Firebase is already running before starting it again.
-    const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
-    
-    const db = getFirestore(app);
-    const rtdb = getDatabase(app);
+    // ✅ Use the already-initialized app from firebase-config.js
+    const db = getFirestore(mainApp);
+    const rtdb = getDatabase(mainApp);
     const container = document.getElementById('apps-container');
 
     async function fetchAndRenderApps() {
@@ -411,7 +400,7 @@
         }
 
         try {
-            console.log("Fetching apps from Firestore..."); // Debug log
+            console.log("Fetching apps from Firestore..."); 
             const q = query(collection(db, "apps")); 
             const querySnapshot = await getDocs(q);
             
@@ -489,17 +478,8 @@
 
     document.addEventListener('DOMContentLoaded', fetchAndRenderApps);
 </script>
-<!-- YOUR ORIGINAL SCRIPTS RESTORED BELOW -->
-<script type="module" src="/scripts/ai_assistant.js">
-    // UPDATED TO STABLE 10.12.0
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-    import { getFirestore, collection, getDocs, query } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-    // IMPORT REALTIME DB FOR STATS UPDATE
-    import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
-    // ... (rest of the script) ...
-</script>
-<script src="/scripts/tod.js"></script>
+<!-- ✅ Keep all your other scripts BELOW (but REMOVE the duplicate Firebase init for ai_assistant) -->
 <script src="/scripts/tod.js"></script>
 <script src="/scripts/tog.js"></script>
 <script src="/scripts/caro.js"></script>
@@ -512,7 +492,9 @@
 <script type="module" src="/scripts/announcement.js"></script>
 <script type="module" src="/scripts/download-index.js"></script>
 <script type="module" src="/scripts/stats.js"></script>
-<script type="module" src="/scripts/download-index.js"></script>
 <script type="module" src="/scripts/search.js"></script>
+<script type="module" src="/scripts/ai_assistant.js"></script>
+</body>
+</html>
 </body>
 </html>
