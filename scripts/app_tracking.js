@@ -12,69 +12,37 @@ const showToast = (message) => {
     else console.log(`[TOAST]: ${message}`);
 };
 
-// ✅ NEW: Check if Firebase is available
-function isFirebaseAvailable() {
-    return mainAuth && mainDb && typeof mainAuth.currentUser !== 'undefined';
+function getCleanMatchName(rawName) {
+    if (!rawName) return "";
+    return rawName.toLowerCase()
+        .replace(/ pc$/i, '')
+        .replace(/ edition$/i, '')
+        .replace(/ app$/i, '')
+        .replace(/ software$/i, '')
+        .replace(/[^a-z0-9]/g, '');
 }
 
-// ✅ NEW: Guard for all Firebase operations
-function requireAuth(callback) {
-    return function(...args) {
-        if (!isFirebaseAvailable()) {
-            console.log('🔒 Firebase not available - operation skipped');
-            return;
-        }
+const isElectron = window.appAPI && window.appAPI.findAppPath;
+
+async function smartFindAppPath(originalName) {
+    if (!isElectron) return null;
+
+    let path = await window.appAPI.findAppPath(originalName);
+    if (path) return path;
+
+    const simpleName = originalName
+        .replace(/ PC$/i, "")
+        .replace(/ Edition$/i, "")
+        .replace(/ Software$/i, "")
+        .replace(/ App$/i, "");
         
-        const user = mainAuth.currentUser;
-        if (!user || user.isAnonymous) {
-            console.log('👤 Guest user - Firebase operation skipped');
-            return;
-        }
-        
-        return callback.apply(this, args);
-    };
-}
-
-// ... rest of existing code, but wrap Firebase operations with requireAuth
-
-// app_tracking.js - Update smartFindAppPath function:
-
-   get: async () => {
-        try {
-            const settings = await safeInvoke("get-app-settings");
-            
-            // ✅ ADD: Merge with localStorage sync settings
-            const merged = settings || {
-                popupBeforeInstall: true,
-                autoInstall: false,
-                runAsAdmin: false,
-                startupLaunch: false,
-                minimizeToTray: false,
-                ecoMode: false,
-                theme: 'default'
-            };
-            
-            // Add sync settings from localStorage
-            merged.syncEnabled = localStorage.getItem('syncEnabled') === 'true';
-            merged.syncAggression = parseInt(localStorage.getItem('syncAggression') || '5');
-            
-            return merged;
-        } catch (error) {
-            console.error('[Preload] Failed to get settings:', error);
-            return {
-                popupBeforeInstall: true,
-                autoInstall: false,
-                runAsAdmin: false,
-                startupLaunch: false,
-                minimizeToTray: false,
-                ecoMode: false,
-                theme: 'default',
-                syncEnabled: false,
-                syncAggression: 5
-            };
-        }
+    if (simpleName !== originalName) {
+        path = await window.appAPI.findAppPath(simpleName);
+        if (path) return path;
     }
 
+    return null;
+}
 
 // =========================================================
 // 1. VIEW PAGE LOGIC (Single App)
@@ -207,17 +175,7 @@ export function initAppTracking() {
 
     // --- CORE LOGIC: SYNC STATUS ---
     async function syncAppStatus(user, appId, appName) {
-    // ✅ Guard against guest users
-    if (!user || user.isAnonymous || !isFirebaseAvailable()) {
-        console.log('👤 Guest mode - using local status only');
-        
-        if (isElectron) {
-            await checkLocalOnly(appName);
-        } else {
-            updateUINotInstalled();
-        }
-        return;
-    }
+        const historyRef = ref(mainDb, `users/${user.uid}/history`);
 
         onValue(historyRef, async (snapshot) => {
             const allHistory = snapshot.val() || {};
@@ -323,24 +281,16 @@ export function initAppTracking() {
         poll();
     }
 
+    async function checkLocalOnly(appName) {
+        if (!isElectron) return;
+        let detectedPath = await smartFindAppPath(appName);
 
-async function checkLocalOnly(appName) {
-    if (!isElectron) return;
-    
-    // 🔴 FIX: Guest users should NEVER see installed state
-    // Even if app exists locally, show download button if not logged in
-    updateUINotInstalled(); 
-    return;
-    
-    /* REMOVE THIS LOGIC FOR GUESTS:
-    let detectedPath = await smartFindAppPath(appName);
-    if (detectedPath) {
-        updateUIInstalled(detectedPath, false);
-    } else {
-        updateUINotInstalled();
+        if (detectedPath) {
+            updateUIInstalled(detectedPath, false);
+        } else {
+            updateUINotInstalled();
+        }
     }
-    */
-}
 
     function saveToHistory(uid, id, name, icon, status) {
         const timestamp = Date.now();
