@@ -264,11 +264,14 @@
     import { mainApp } from "/scripts/firebase-config.js";
     import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
     import { getDatabase, ref, runTransaction, onValue, onDisconnect } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-database.js";
-    import { initAppTracking } from "/scripts/app_tracking.js";
+    
+    // NOTE: app_tracking.js is now standalone. We don't import it here.
+    // It will detect the DOM ready state and run itself.
 
-    // Use the already-initialized app
     const db = getFirestore(mainApp);      
     const rtdb = getDatabase(mainApp);     
+
+    console.log("🔥 Firebase initialized in View Page");
 
     // --- STATS TRACKING ---
     const visitRef = ref(rtdb, "stats/total_visits");
@@ -291,24 +294,32 @@
 
     // --- APP LOADER ---
     async function loadApp() {
+        console.log("🚀 Starting App Load...");
+        
         const urlParams = new URLSearchParams(window.location.search);
         const appId = urlParams.get('id');
 
         if (!appId) {
+            console.error('❌ No app ID provided in URL');
             document.getElementById('page-loader').style.display = 'none';
-            console.error('No app ID provided');
+            // Optional: Redirect to home
+            // window.location.href = '/index.html';
             return;
         }
+
+        console.log(`🔎 Fetching data for ID: ${appId}`);
 
         try {
             const docRef = doc(db, "apps", appId);
             const docSnap = await getDoc(docRef);
 
             if (docSnap.exists()) {
+                console.log("✅ Document found:", docSnap.data());
                 const data = docSnap.data();
                 
-                document.getElementById('d-app-title').innerText = data.name;
-                document.getElementById('d-app-desc').innerText = data.description;
+                // Populate DOM
+                document.getElementById('d-app-title').innerText = data.name || "Unknown App";
+                document.getElementById('d-app-desc').innerText = data.description || "No description available.";
                 document.getElementById('d-app-category').innerText = data.category || "Software";
                 document.getElementById('d-app-version').innerText = data.version || "Latest";
                 document.getElementById('d-app-updated').innerText = data.lastUpdated || "Recently";
@@ -320,7 +331,7 @@
 
                 // CAROUSEL LOGIC
                 const carouselTrack = document.getElementById('fs-carousel-track');
-                const screenshots = data.screenshots || [mainImgSrc, mainImgSrc, mainImgSrc]; 
+                const screenshots = data.screenshots || [mainImgSrc]; 
                 
                 if (screenshots && screenshots.length > 0) {
                     carouselTrack.innerHTML = '';
@@ -335,47 +346,62 @@
                     });
                 }
 
+                // Download Button Logic
                 const dlBtn = document.getElementById('d-btn-download');
-                dlBtn.href = data.downloadLink || "#";
+                if (data.downloadLink) {
+                    dlBtn.href = data.downloadLink;
+                    // Stats recording
+                    dlBtn.addEventListener("click", () => {
+                        const totalDlRef = ref(rtdb, "stats/total_downloads");
+                        runTransaction(totalDlRef, (current) => (current || 0) + 1);
+                        const safeName = data.name.replace(/[.#$/\[\]]/g, "_"); 
+                        const appDlRef = ref(rtdb, `app_downloads/${safeName}`);
+                        runTransaction(appDlRef, (current) => (current || 0) + 1);
+                    }, { once: false });
+                } else {
+                    dlBtn.style.opacity = "0.5";
+                    dlBtn.innerText = "Unavailable";
+                    dlBtn.href = "#";
+                }
 
-                // Stats recording
-                dlBtn.addEventListener("click", () => {
-                    const totalDlRef = ref(rtdb, "stats/total_downloads");
-                    runTransaction(totalDlRef, (current) => (current || 0) + 1);
-                    const safeName = data.name.replace(/[.#$/\[\]]/g, "_"); 
-                    const appDlRef = ref(rtdb, `app_downloads/${safeName}`);
-                    runTransaction(appDlRef, (current) => (current || 0) + 1);
-                }, { once: false });
-
+                // Initialize Wrapper
                 const wrapper = document.getElementById('app-card-root');
                 wrapper.setAttribute('data-app', appId);
                 wrapper.setAttribute('data-category', data.category || "tools");
-                wrapper.setAttribute('data-last-updated', data.lastUpdated || "");
+                wrapper.setAttribute('data-last-updated', data.lastUpdated || ""); // Essential for tracking script
                 
                 document.title = `${data.name} - Download at Getnaro`;
 
-                // CUSTOM LOADING: 3 Second Delay, then START TRACKING
+                // REVEAL UI
                 setTimeout(() => {
+                    console.log("✨ Revealing UI");
                     document.getElementById('page-loader').style.display = 'none';
                     wrapper.style.display = 'flex';
+                    // Force reflow
                     void wrapper.offsetWidth; 
                     wrapper.style.opacity = '1';
-                    
-                    // START TRACKING AFTER UI IS VISIBLE
-                    initAppTracking();
-                }, 3000);
+                }, 1000); // Reduced to 1s for better UX, tracking script handles the rest
 
             } else {
+                console.error('❌ App document does not exist in Firestore "apps" collection.');
                 document.getElementById('page-loader').style.display = 'none';
-                console.error('App not found');
+                document.getElementById('d-app-title').innerText = "App Not Found";
+                document.getElementById('app-card-root').style.display = 'flex';
+                document.getElementById('app-card-root').style.opacity = '1';
             }
         } catch (error) {
-            console.error("Error loading app:", error);
+            console.error("❌ Critical Error loading app:", error);
             document.getElementById('page-loader').style.display = 'none';
+            alert("Failed to load app data. Check console for details.");
         }
     }
     
-    document.addEventListener('DOMContentLoaded', loadApp);
+    // Ensure DOM is ready before running
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', loadApp);
+    } else {
+        loadApp();
+    }
 </script>
 </body>
 </html>
