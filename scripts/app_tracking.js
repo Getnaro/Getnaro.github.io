@@ -12,15 +12,30 @@ const showToast = (message) => {
     else console.log(`[TOAST]: ${message}`);
 };
 
-function getCleanMatchName(rawName) {
-    if (!rawName) return "";
-    return rawName.toLowerCase()
-        .replace(/ pc$/i, '')
-        .replace(/ edition$/i, '')
-        .replace(/ app$/i, '')
-        .replace(/ software$/i, '')
-        .replace(/[^a-z0-9]/g, '');
+// ✅ NEW: Check if Firebase is available
+function isFirebaseAvailable() {
+    return mainAuth && mainDb && typeof mainAuth.currentUser !== 'undefined';
 }
+
+// ✅ NEW: Guard for all Firebase operations
+function requireAuth(callback) {
+    return function(...args) {
+        if (!isFirebaseAvailable()) {
+            console.log('🔒 Firebase not available - operation skipped');
+            return;
+        }
+        
+        const user = mainAuth.currentUser;
+        if (!user || user.isAnonymous) {
+            console.log('👤 Guest user - Firebase operation skipped');
+            return;
+        }
+        
+        return callback.apply(this, args);
+    };
+}
+
+// ... rest of existing code, but wrap Firebase operations with requireAuth
 
 // app_tracking.js - Update smartFindAppPath function:
 
@@ -192,7 +207,17 @@ export function initAppTracking() {
 
     // --- CORE LOGIC: SYNC STATUS ---
     async function syncAppStatus(user, appId, appName) {
-        const historyRef = ref(mainDb, `users/${user.uid}/history`);
+    // ✅ Guard against guest users
+    if (!user || user.isAnonymous || !isFirebaseAvailable()) {
+        console.log('👤 Guest mode - using local status only');
+        
+        if (isElectron) {
+            await checkLocalOnly(appName);
+        } else {
+            updateUINotInstalled();
+        }
+        return;
+    }
 
         onValue(historyRef, async (snapshot) => {
             const allHistory = snapshot.val() || {};
