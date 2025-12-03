@@ -1,6 +1,7 @@
 /**
- * ADVANCED ANNOUNCEMENT SYSTEM
+ * ADVANCED ANNOUNCEMENT SYSTEM (UPDATED)
  * /scripts/announcement.js
+ * Features: Block Renderer, Floating Minimize, Persistent Dismissal
  */
 
 import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-database.js";
@@ -32,86 +33,144 @@ function renderBlocks(blocks) {
         switch(block.type) {
             case 'heading':
                 return `<h2 style="color: ${block.color || '#fff'}; font-size: 24px; font-weight: bold; margin: 15px 0 10px 0;">${block.content}</h2>`;
-            
             case 'paragraph':
                 return `<p style="color: #ccc; font-size: 16px; line-height: 1.6; margin-bottom: 15px;">${block.content}</p>`;
-            
             case 'list-item':
                 return `<div style="display:flex; gap:10px; margin-bottom:8px; align-items:start; text-align:left;">
                     <i class="fa-solid fa-check" style="color:#00e676; margin-top:5px;"></i>
                     <span style="color:#ddd; font-size:15px;">${block.content}</span>
                 </div>`;
-            
             case 'image':
-                return `<img src="${block.url}" alt="Announcement Image" style="width:100%; border-radius:10px; margin: 15px 0; border:1px solid #333;">`;
-            
+                return `<img src="${block.url}" alt="Announcement" style="width:100%; border-radius:10px; margin: 15px 0; border:1px solid #333;">`;
             case 'button':
                 return `<a href="${block.link}" target="_blank" style="
-                    display: inline-block;
-                    background: ${block.color || '#9F00FF'};
-                    color: white;
-                    text-decoration: none;
-                    padding: 12px 30px;
-                    border-radius: 8px;
-                    font-weight: bold;
-                    margin-top: 15px;
-                    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-                    transition: transform 0.2s;
+                    display: inline-block; background: ${block.color || '#9F00FF'}; color: white;
+                    text-decoration: none; padding: 12px 30px; border-radius: 8px; font-weight: bold;
+                    margin-top: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.3); transition: transform 0.2s;
                 " onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">${block.text}</a>`;
-            
             default: return '';
         }
     }).join('');
 }
 
-function showAnnouncementPopup(data) {
-    // Prevent duplicates
-    if (document.getElementById('gn-announcement-overlay')) return;
+// Global reference to store data for restoring
+let currentAnnouncementData = null;
 
+function showAnnouncementPopup(data) {
+    // 1. Check if elements already exist
+    if (document.getElementById('gn-announcement-overlay')) return;
+    
+    currentAnnouncementData = data;
+
+    // --- A. THE FLOATING BAR (Hidden by default) ---
+    const floatBar = document.createElement('div');
+    floatBar.id = 'gn-announce-float';
+    floatBar.style.cssText = `
+        position: fixed; bottom: 20px; right: 20px; 
+        background: #111; border: 1px solid #9F00FF; border-radius: 50px;
+        padding: 10px 20px; display: flex; align-items: center; gap: 10px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.5); z-index: 99998; cursor: pointer;
+        transform: translateY(100px); opacity: 0; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        max-width: 300px;
+    `;
+    floatBar.innerHTML = `
+        <i class="fa-solid fa-bell" style="color: #9F00FF; animation: swing 2s infinite;"></i>
+        <span style="color: #fff; font-size: 14px; font-weight: 600;">New Announcement</span>
+        <i class="fa-solid fa-chevron-up" style="color: #666; font-size: 12px; margin-left: auto;"></i>
+    `;
+    
+    // Restore logic when clicking float bar
+    floatBar.onclick = () => {
+        const overlay = document.getElementById('gn-announcement-overlay');
+        const box = overlay.querySelector('.gn-announce-box');
+        
+        // Hide float
+        floatBar.style.transform = 'translateY(100px)';
+        floatBar.style.opacity = '0';
+        
+        // Show overlay
+        overlay.style.display = 'flex';
+        // Small delay to allow display:flex to apply before opacity transition
+        setTimeout(() => {
+            overlay.style.opacity = '1';
+            box.style.transform = 'translateY(0) scale(1)';
+        }, 10);
+    };
+
+    document.body.appendChild(floatBar);
+
+
+    // --- B. THE MAIN OVERLAY ---
     const overlay = document.createElement('div');
     overlay.id = 'gn-announcement-overlay';
     overlay.style.cssText = `
-        position: fixed; inset: 0; background: rgba(0, 0, 0, 0.9);
-        backdrop-filter: blur(8px); z-index: 99999;
+        position: fixed; inset: 0; background: rgba(0, 0, 0, 0.85);
+        backdrop-filter: blur(5px); z-index: 99999;
         display: flex; justify-content: center; align-items: center;
         opacity: 0; transition: opacity 0.3s ease;
     `;
 
     const box = document.createElement('div');
+    box.className = 'gn-announce-box';
     box.style.cssText = `
         background: #111; border: 1px solid #333; border-top: 4px solid #9F00FF;
-        border-radius: 16px; padding: 0; max-width: 550px; width: 90%;
-        box-shadow: 0 25px 50px rgba(0,0,0,0.5); transform: translateY(20px);
-        transition: transform 0.3s ease; max-height: 85vh; display: flex; flex-direction: column;
+        border-radius: 16px; width: 90%; max-width: 550px;
+        box-shadow: 0 25px 50px rgba(0,0,0,0.5); transform: translateY(20px) scale(0.95);
+        transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+        max-height: 85vh; display: flex; flex-direction: column; overflow: hidden;
     `;
 
     // Header
     const header = document.createElement('div');
     header.style.cssText = "padding: 20px; border-bottom: 1px solid #222; display: flex; justify-content: space-between; align-items: center;";
-    header.innerHTML = `<span style="color:#9F00FF; font-weight:bold; letter-spacing:1px; text-transform:uppercase;"><i class="fa-solid fa-bell"></i> Announcement</span>`;
+    header.innerHTML = `<span style="color:#9F00FF; font-weight:bold; letter-spacing:1px; text-transform:uppercase; display:flex; align-items:center; gap:10px;"><i class="fa-solid fa-bullhorn"></i> Announcement</span>`;
     
-    // Close X button
+    // Close (Minimize) Icon
     const closeX = document.createElement('button');
-    closeX.innerHTML = '&times;';
-    closeX.style.cssText = "background:none; border:none; color:#666; font-size:24px; cursor:pointer;";
-    closeX.onclick = () => closePopup(overlay);
+    closeX.innerHTML = '<i class="fa-solid fa-minus"></i>';
+    closeX.title = "Minimize";
+    closeX.style.cssText = "background:none; border:none; color:#666; font-size:18px; cursor:pointer; padding: 5px;";
+    closeX.onclick = () => handleMinimize(data);
     header.appendChild(closeX);
 
-    // Content Body (Scrollable)
+    // Content Body
     const body = document.createElement('div');
     body.style.cssText = "padding: 30px; overflow-y: auto; text-align: center;";
-    body.innerHTML = renderBlocks(data.content); // Use the new renderer
+    body.innerHTML = renderBlocks(data.content);
 
-    // Footer
+    // Footer Container
     const footer = document.createElement('div');
-    footer.style.cssText = "padding: 20px; border-top: 1px solid #222; text-align: center; background: #0a0a0a; border-radius: 0 0 16px 16px;";
+    footer.style.cssText = "background: #0a0a0a; border-top: 1px solid #222; padding: 20px; display: flex; flex-direction: column; gap: 15px;";
+
+    // 1. "Don't Show Again" Red Box
+    const redBox = document.createElement('label');
+    redBox.style.cssText = `
+        display: flex; align-items: center; justify-content: center; gap: 10px;
+        background: rgba(255, 0, 0, 0.1); border: 1px solid rgba(255, 0, 0, 0.3);
+        padding: 10px; border-radius: 8px; cursor: pointer; transition: 0.2s;
+    `;
+    redBox.innerHTML = `
+        <input type="checkbox" id="gn-dont-show" style="accent-color: #ff2a2a; transform: scale(1.2);">
+        <span style="color: #ffcccc; font-size: 14px; font-weight: 500;">Don't show this again</span>
+    `;
+    redBox.onmouseover = () => redBox.style.background = 'rgba(255, 0, 0, 0.15)';
+    redBox.onmouseout = () => redBox.style.background = 'rgba(255, 0, 0, 0.1)';
+
+    // 2. OK / Minimize Button
+    const actionBtn = document.createElement('button');
+    actionBtn.innerHTML = `<i class="fa-solid fa-check"></i> OK, Got it`;
+    actionBtn.style.cssText = `
+        background: #222; color: #fff; border: 1px solid #444; 
+        padding: 12px; width: 100%; border-radius: 8px; font-size: 15px; 
+        font-weight: bold; cursor: pointer; transition: 0.2s;
+    `;
+    actionBtn.onmouseover = () => { actionBtn.style.background = '#333'; actionBtn.style.borderColor = '#666'; };
+    actionBtn.onmouseout = () => { actionBtn.style.background = '#222'; actionBtn.style.borderColor = '#444'; };
     
-    const dismissBtn = document.createElement('button');
-    dismissBtn.innerText = "Close";
-    dismissBtn.style.cssText = "background: #222; color: #fff; border: 1px solid #333; padding: 10px 30px; border-radius: 6px; cursor: pointer; font-weight: bold;";
-    dismissBtn.onclick = () => closePopup(overlay);
-    
-    footer.appendChild(dismissBtn);
+    actionBtn.onclick = () => handleMinimize(data);
+
+    footer.appendChild(redBox);
+    footer.appendChild(actionBtn);
 
     box.appendChild(header);
     box.appendChild(body);
@@ -119,16 +178,51 @@ function showAnnouncementPopup(data) {
     overlay.appendChild(box);
     document.body.appendChild(overlay);
 
-    // Trigger Animation
+    // Entrance Animation
     requestAnimationFrame(() => {
         overlay.style.opacity = '1';
-        box.style.transform = 'translateY(0)';
+        box.style.transform = 'translateY(0) scale(1)';
     });
 }
 
-function closePopup(overlay) {
-    overlay.style.opacity = '0';
-    setTimeout(() => overlay.remove(), 300);
+/**
+ * Handles logic when user clicks OK or Minimize
+ */
+function handleMinimize(data) {
+    const overlay = document.getElementById('gn-announcement-overlay');
+    const box = overlay.querySelector('.gn-announce-box');
+    const floatBar = document.getElementById('gn-announce-float');
+    const dontShowCheckbox = document.getElementById('gn-dont-show');
+
+    // 1. Check if "Don't Show Again" is checked
+    if (dontShowCheckbox && dontShowCheckbox.checked) {
+        // PERMANENT DISMISSAL
+        const storageKey = `gn_announce_${data.lastUpdated}`;
+        localStorage.setItem(storageKey, 'true');
+        
+        // Fade out everything and remove
+        overlay.style.opacity = '0';
+        box.style.transform = 'translateY(20px) scale(0.9)';
+        if (floatBar) floatBar.remove(); // Don't show float bar
+        setTimeout(() => overlay.remove(), 300);
+        
+    } else {
+        // TEMPORARY MINIMIZE (Float)
+        
+        // Animate Overlay Out
+        overlay.style.opacity = '0';
+        box.style.transform = 'translateY(50px) scale(0.8)';
+        
+        setTimeout(() => {
+            overlay.style.display = 'none'; // Hide but don't remove
+            
+            // Animate Float Bar In
+            if (floatBar) {
+                floatBar.style.transform = 'translateY(0)';
+                floatBar.style.opacity = '1';
+            }
+        }, 300);
+    }
 }
 
 function checkAndShowAnnouncement() {
@@ -143,17 +237,28 @@ function checkAndShowAnnouncement() {
         const shouldShow = targetPages.length === 0 || targetPages.includes(currentPage);
         
         if (shouldShow) {
-            const storageKey = `gn_announce_${data.lastUpdated}`; // Use timestamp to force new announcements
+            const storageKey = `gn_announce_${data.lastUpdated}`;
             const hasSeen = localStorage.getItem(storageKey);
             
-            // "once" = show only if not in localstorage
-            // "always" = show every time (session check usually preferred, but simple always here)
+            // If "always" frequency OR user hasn't permanently dismissed it
             if (data.frequency === 'always' || !hasSeen) {
                 showAnnouncementPopup(data);
-                localStorage.setItem(storageKey, 'true');
             }
         }
     });
 }
+
+// Add CSS keyframe for bell animation
+const styleSheet = document.createElement("style");
+styleSheet.innerText = `
+@keyframes swing {
+    0% { transform: rotate(0deg); }
+    10% { transform: rotate(10deg); }
+    30% { transform: rotate(-10deg); }
+    50% { transform: rotate(5deg); }
+    70% { transform: rotate(-5deg); }
+    100% { transform: rotate(0deg); }
+}`;
+document.head.appendChild(styleSheet);
 
 document.addEventListener('DOMContentLoaded', checkAndShowAnnouncement);
