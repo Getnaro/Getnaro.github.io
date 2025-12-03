@@ -1,21 +1,17 @@
-import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
-import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
-import { getDatabase, ref, set, push, onChildAdded, onValue, onDisconnect } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-database.js";
+/* =========================================================
+   COMMUNITY CHAT - FIXED AUTH
+   - Uses centralized firebase-config.js to share login state
+   - Matches SDK versions (11.6.1)
+========================================================= */
 
-// --- FIREBASE CONFIG ---
-const firebaseConfig = {
-  apiKey: "AIzaSyCtX1G_OEXmkKtBNGzWQFEYiEWibrMIFrg",
-  authDomain: "user-getnaro.firebaseapp.com",
-  databaseURL: "https://user-getnaro-default-rtdb.asia-southeast1.firebasedatabase.app",
-  projectId: "user-getnaro",
-  storageBucket: "user-getnaro.firebasestorage.app",
-  messagingSenderId: "264425704576",
-  appId: "1:264425704576:web:cfd98a1f627e9a59cc2a65"
-};
+// 1. Import from your central config (This shares the login session)
+import { mainAuth, mainDb } from './firebase-config.js';
 
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getDatabase(app);
+// 2. Import specific functions from the matching SDK version (11.6.1)
+import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+import { 
+    ref, set, push, onChildAdded, onValue, onDisconnect 
+} from "https://www.gstatic.com/firebasejs/11.6.1/firebase-database.js";
 
 // --- DOM ELEMENTS ---
 const messageInput = document.getElementById('message-input');
@@ -28,12 +24,14 @@ let currentUser = null;
 let usersCache = {}; 
 
 // --- AUTH & USER PRESENCE ---
-onAuthStateChanged(auth, (user) => {
+// We use 'mainAuth' here, so it remembers you are already logged in
+onAuthStateChanged(mainAuth, (user) => {
     if (user) {
         currentUser = user;
         const username = user.displayName || "Anonymous";
         
-        const userStatusRef = ref(db, `community/users/${user.uid}`);
+        // Use 'mainDb' for database interactions
+        const userStatusRef = ref(mainDb, `community/users/${user.uid}`);
         set(userStatusRef, {
             username: username,
             status: 'online',
@@ -43,13 +41,14 @@ onAuthStateChanged(auth, (user) => {
         onDisconnect(userStatusRef).remove();
         setupChat();
     } else {
+        // Only redirect if actually not logged in
         window.location.href = "/pages/login.html";
     }
 });
 
 function setupChat() {
     // --- MESSAGES ---
-    const messagesRef = ref(db, 'community/messages');
+    const messagesRef = ref(mainDb, 'community/messages');
     
     onChildAdded(messagesRef, (snapshot) => {
         const msg = snapshot.val();
@@ -57,8 +56,9 @@ function setupChat() {
     });
 
     // --- ACTIVE USERS ---
-    const usersRef = ref(db, 'community/users');
+    const usersRef = ref(mainDb, 'community/users');
     onValue(usersRef, (snapshot) => {
+        if (!userListContainer) return;
         userListContainer.innerHTML = '';
         usersCache = {};
         
@@ -74,20 +74,23 @@ function setupChat() {
     });
 
     // --- SEND ---
-    sendBtn.addEventListener('click', sendMessage);
-    messageInput.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') sendMessage();
-    });
-
-    // --- MENTION ---
-    messageInput.addEventListener('input', handleMentions);
+    if (sendBtn) sendBtn.addEventListener('click', sendMessage);
+    
+    if (messageInput) {
+        messageInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') sendMessage();
+        });
+        // --- MENTION ---
+        messageInput.addEventListener('input', handleMentions);
+    }
 }
 
 function sendMessage() {
+    if (!messageInput) return;
     const text = messageInput.value.trim();
     if (!text || !currentUser) return;
 
-    const messagesRef = ref(db, 'community/messages');
+    const messagesRef = ref(mainDb, 'community/messages');
     const newMessageRef = push(messagesRef);
     
     set(newMessageRef, {
@@ -98,19 +101,25 @@ function sendMessage() {
     });
 
     messageInput.value = '';
-    mentionList.style.display = 'none';
-    scrollToBottom(); // Immediate scroll on send
+    if (mentionList) mentionList.style.display = 'none';
+    scrollToBottom(); 
 }
 
 function displayMessage(msg) {
+    if (!chatMessages) return;
+    
     const div = document.createElement('div');
-    const isSelf = msg.senderUid === currentUser.uid;
+    const isSelf = currentUser && msg.senderUid === currentUser.uid;
     div.className = `message ${isSelf ? 'self' : 'other'}`;
 
     let content = msg.text;
     const mentionRegex = /@(\w+)/g;
+    
+    // Safely handle display name
+    const currentName = currentUser ? currentUser.displayName : "";
+
     content = content.replace(mentionRegex, (match, username) => {
-        if (username === currentUser.displayName) {
+        if (username === currentName) {
             return `<span class="mention-highlight">${match}</span>`;
         }
         return match; 
@@ -131,7 +140,7 @@ function displayMessage(msg) {
 }
 
 function scrollToBottom() {
-    // Small timeout allows DOM to render the new message height before scrolling
+    if (!chatMessages) return;
     setTimeout(() => {
         chatMessages.scrollTop = chatMessages.scrollHeight;
     }, 50);
@@ -139,6 +148,8 @@ function scrollToBottom() {
 
 // --- MENTION LOGIC ---
 function handleMentions(e) {
+    if (!mentionList) return;
+    
     const val = e.target.value;
     const cursorPos = e.target.selectionStart;
     const lastWordMatch = val.slice(0, cursorPos).match(/@(\w*)$/);
@@ -152,6 +163,8 @@ function handleMentions(e) {
 }
 
 function showMentionPopup(query) {
+    if (!mentionList) return;
+    
     mentionList.innerHTML = '';
     let matchCount = 0;
 
@@ -170,6 +183,8 @@ function showMentionPopup(query) {
 }
 
 function completeMention(username) {
+    if (!messageInput || !mentionList) return;
+    
     const val = messageInput.value;
     const cursorPos = messageInput.selectionStart;
     
@@ -180,4 +195,3 @@ function completeMention(username) {
     mentionList.style.display = 'none';
     messageInput.focus();
 }
-import { mainAuth, mainDb, mainFirestore, mainStorage } from './firebase-config.js';
