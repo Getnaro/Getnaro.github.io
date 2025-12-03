@@ -1,16 +1,14 @@
 /* =========================================================
-   COMMUNITY CHAT - FIXED AUTH
-   - Uses centralized firebase-config.js to share login state
-   - Matches SDK versions (11.6.1)
+   COMMUNITY CHAT - OPTIMIZED PERFORMANCE
+   - FAST LOAD: Limits chat history to last 50 messages
+   - FIXED AUTH: Uses centralized login state
 ========================================================= */
 
-// 1. Import from your central config (This shares the login session)
 import { mainAuth, mainDb } from './firebase-config.js';
-
-// 2. Import specific functions from the matching SDK version (11.6.1)
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
 import { 
-    ref, set, push, onChildAdded, onValue, onDisconnect 
+    ref, set, push, onChildAdded, onValue, onDisconnect, 
+    query, limitToLast // <--- ADDED FOR PERFORMANCE
 } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-database.js";
 
 // --- DOM ELEMENTS ---
@@ -24,13 +22,11 @@ let currentUser = null;
 let usersCache = {}; 
 
 // --- AUTH & USER PRESENCE ---
-// We use 'mainAuth' here, so it remembers you are already logged in
 onAuthStateChanged(mainAuth, (user) => {
     if (user) {
         currentUser = user;
         const username = user.displayName || "Anonymous";
         
-        // Use 'mainDb' for database interactions
         const userStatusRef = ref(mainDb, `community/users/${user.uid}`);
         set(userStatusRef, {
             username: username,
@@ -41,21 +37,22 @@ onAuthStateChanged(mainAuth, (user) => {
         onDisconnect(userStatusRef).remove();
         setupChat();
     } else {
-        // Only redirect if actually not logged in
         window.location.href = "/pages/login.html";
     }
 });
 
 function setupChat() {
-    // --- MESSAGES ---
+    // --- 1. OPTIMIZED MESSAGES LOADING ---
+    // Instead of loading ALL messages, we only load the last 50.
     const messagesRef = ref(mainDb, 'community/messages');
+    const recentMessagesQuery = query(messagesRef, limitToLast(50));
     
-    onChildAdded(messagesRef, (snapshot) => {
+    onChildAdded(recentMessagesQuery, (snapshot) => {
         const msg = snapshot.val();
         displayMessage(msg);
     });
 
-    // --- ACTIVE USERS ---
+    // --- 2. ACTIVE USERS ---
     const usersRef = ref(mainDb, 'community/users');
     onValue(usersRef, (snapshot) => {
         if (!userListContainer) return;
@@ -80,7 +77,6 @@ function setupChat() {
         messageInput.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') sendMessage();
         });
-        // --- MENTION ---
         messageInput.addEventListener('input', handleMentions);
     }
 }
@@ -114,10 +110,9 @@ function displayMessage(msg) {
 
     let content = msg.text;
     const mentionRegex = /@(\w+)/g;
-    
-    // Safely handle display name
     const currentName = currentUser ? currentUser.displayName : "";
 
+    // Highlight mentions
     content = content.replace(mentionRegex, (match, username) => {
         if (username === currentName) {
             return `<span class="mention-highlight">${match}</span>`;
