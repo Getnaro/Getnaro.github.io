@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NaroTech India | NaroTech </title>
+    
+    <!-- FONTS -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossNaroTech>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Space+Grotesk:wght@300;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+    <style>
+           @font-face {
+            font-family: Getnaro;
+            src: url(/assests/Getnaro-medium.ttf);
+        }
+        :root {
+            --primary: #9F00FF;
+            --bg: #000000;
+            --surface: #0a0a0a;
+            --glass: rgba(255, 255, 255, 0.05);
+            --border: rgba(255, 255, 255, 0.1);
+            --text-main: #ffffff;
+            --text-sec: #888888;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Getnaro !important;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text-main);
+            font-family: 'Outfit', sans-serif;
+            overflow-x: hidden;
+            height: 100vh;
+            width: 100vw;
+            /* Mandatory Scroll Snap */
+            scroll-snap-type: y mandatory;
+            overflow-y: scroll;
+            scroll-behavior: smooth;
+        }
+
+        /* --- NAVIGATION --- */
+        .nav-dots {
+            position: fixed;
+            right: 30px;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .nav-dot {
+            width: 8px; height: 8px;
+            background: rgba(255,255,255,0.3);
+            border-radius: 50%;
+            transition: 0.3s;
+            cursor: pointer;
+            position: relative;
+        }
+        .nav-dot:hover, .nav-dot.active {
+            background: var(--primary);
+            transform: scale(1.5);
+            box-shadow: 0 0 10px var(--primary);
+        }
+        .nav-dot::after {
+            content: attr(data-label);
+            position: absolute;
+            right: 20px; top: 50%; transform: translateY(-50%) translateX(10px);
+            background: rgba(0,0,0,0.8); padding: 4px 8px; border-radius: 4px;
+            font-size: 10px; text-transform: uppercase; letter-spacing: 1px;
+            opacity: 0; transition: 0.3s; pointer-events: none; white-space: nowrap;
+            border: 1px solid var(--border);
+        }
+        .nav-dot:hover::after { opacity: 1; transform: translateY(-50%) translateX(0); }
+
+        /* --- SECTION BASE --- */
+        section {
+            height: 100vh;
+            width: 100vw;
+            scroll-snap-align: start;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            perspective: 1000px;
+        }
+
+        /* Background Image Layer */
+        .bg-layer {
+            position: absolute; inset: 0;
+            background-size: cover; background-position: center;
+            opacity: 0.3; filter: blur(5px) brightness(0.6);
+            transform: scale(1.1);
+            transition: transform 10s ease;
+            z-index: 0;
+        }
+        /* Active section slowly zooms bg */
+        section.active-section .bg-layer { transform: scale(1); }
+
+        /* Gradient Overlay */
+        .gradient-overlay {
+            position: absolute; inset: 0;
+            background: radial-gradient(circle at center, transparent 0%, #000 90%);
+            z-index: 1;
+        }
+
+        /* --- CONTENT CONTAINER --- */
+        .container {
+            position: relative; z-index: 10;
+            width: 85%; max-width: 1400px;
+            display: grid; grid-template-columns: 1fr 1fr; gap: 50px;
+            align-items: center;
+        }
+
+        /* --- TEXT STYLES --- */
+        .text-block {
+            display: flex; flex-direction: column; justify-content: center;
+        }
+        
+        .badge {
+            display: inline-flex; align-items: center; gap: 8px;
+            background: rgba(159, 0, 255, 0.15);
+            border: 1px solid var(--primary);
+            color: var(--primary);
+            padding: 8px 16px; border-radius: 50px;
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 0.9rem; letter-spacing: 1px; text-transform: uppercase;
+            width: fit-content; margin-bottom: 20px;
+            box-shadow: 0 0 20px rgba(159,0,255,0.2);
+        }
+
+        h2 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 4.5rem; line-height: 1; margin-bottom: 25px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #fff 0%, #aaa 100%);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+
+        p {
+            font-size: 1.25rem; color: #ccc; line-height: 1.6; max-width: 550px;
+            border-left: 3px solid var(--primary); padding-left: 20px;
+        }
+
+        /* --- CARD STYLES --- */
+        .card-block {
+            position: relative; height: 60vh;
+            display: flex; justify-content: center; align-items: center;
+        }
+
+        .glass-panel {
+            width: 100%; height: 100%;
+            background: rgba(20, 20, 20, 0.6);
+            backdrop-filter: blur(30px);
+            -webkit-backdrop-filter: blur(30px);
+            border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 30px;
+            overflow: hidden;
+            position: relative;
+            box-shadow: 0 40px 80px rgba(0,0,0,0.6);
+            display: flex; flex-direction: column;
+        }
+
+        .glass-panel img {
+            width: 100%; height: 70%; object-fit: cover;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .panel-footer {
+            flex: 1; padding: 30px;
+            background: linear-gradient(180deg, rgba(30,30,30,0.8), rgba(10,10,10,0.95));
+            display: flex; align-items: center; gap: 20px;
+        }
+
+        .icon-box {
+            width: 60px; height: 60px;
+            background: var(--primary);
+            border-radius: 16px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 28px; color: #fff;
+            box-shadow: 0 10px 20px rgba(159,0,255,0.3);
+        }
+
+        .panel-info h3 { font-family: 'Space Grotesk', sans-serif; font-size: 1.8rem; margin: 0; color: #fff; }
+        .panel-info span { font-size: 0.9rem; color: #888; text-transform: uppercase; letter-spacing: 2px; }
+
+        /* --- ANIMATIONS (Unique per section) --- */
+        /* Common Init State */
+        .anim-element { opacity: 0; transition: all 1s cubic-bezier(0.16, 1, 0.3, 1); }
+
+        /* Type 1: Slide Up */
+        .slide-up .text-block { transform: translateY(100px); }
+        .slide-up .card-block { transform: translateY(150px); transition-delay: 0.2s; }
+        .active-section.slide-up .text-block, 
+        .active-section.slide-up .card-block { opacity: 1; transform: translateY(0); }
+
+        /* Type 2: Slide Sides */
+        .slide-sides .text-block { transform: translateX(-100px); }
+        .slide-sides .card-block { transform: translateX(100px); }
+        .active-section.slide-sides .text-block, 
+        .active-section.slide-sides .card-block { opacity: 1; transform: translateX(0); }
+
+        /* Type 3: Scale In */
+        .scale-in .text-block { transform: scale(0.8); }
+        .scale-in .card-block { transform: scale(0.8) rotate(-5deg); transition-delay: 0.1s; }
+        .active-section.scale-in .text-block, 
+        .active-section.scale-in .card-block { opacity: 1; transform: scale(1) rotate(0deg); }
+
+        /* Type 4: Blur Fade */
+        .blur-fade .text-block { filter: blur(20px); transform: translateX(-50px); }
+        .blur-fade .card-block { filter: blur(20px); transform: translateX(50px); transition-delay: 0.2s; }
+        .active-section.blur-fade .text-block, 
+        .active-section.blur-fade .card-block { opacity: 1; filter: blur(0); transform: translateX(0); }
+
+        /* Type 5: 3D Flip */
+        .flip-3d .card-block { transform: perspective(1000px) rotateY(90deg); transform-NaroTech: left; }
+        .flip-3d .text-block { transform: translateX(-50px); }
+        .active-section.flip-3d .card-block { opacity: 1; transform: perspective(1000px) rotateY(0deg); }
+        .active-section.flip-3d .text-block { opacity: 1; transform: translateX(0); }
+
+        /* Type 6: Rotate In */
+        .rotate-in .card-block { transform: rotate(-15deg) scale(0.8); transform-NaroTech: center; opacity: 0; }
+        .rotate-in .text-block { transform: translateY(50px); opacity: 0; }
+        .active-section.rotate-in .card-block { opacity: 1; transform: rotate(0) scale(1); transition: all 1.2s cubic-bezier(0.34, 1.56, 0.64, 1); }
+        .active-section.rotate-in .text-block { opacity: 1; transform: translateY(0); transition: all 1s ease 0.2s; }
+
+        /* Type 7: Reveal (Clip Path) */
+        .reveal .card-block { clip-path: inset(0 100% 0 0); opacity: 1; } /* Start hidden by clip */
+        .reveal .text-block { clip-path: inset(0 0 0 100%); opacity: 1; }
+        .active-section.reveal .card-block { clip-path: inset(0 0 0 0); transition: clip-path 1.2s cubic-bezier(0.77, 0, 0.175, 1); }
+        .active-section.reveal .text-block { clip-path: inset(0 0 0 0); transition: clip-path 1.2s cubic-bezier(0.77, 0, 0.175, 1) 0.2s; }
+
+        /* Type 8: Zoom Out */
+        .zoom-out .bg-layer { transform: scale(1.5); }
+        .active-section.zoom-out .bg-layer { transform: scale(1); transition: transform 8s ease-out; }
+        .zoom-out .text-block { transform: scale(1.2); opacity: 0; }
+        .zoom-out .card-block { transform: scale(1.2); opacity: 0; }
+        .active-section.zoom-out .text-block,
+        .active-section.zoom-out .card-block { opacity: 1; transform: scale(1); transition: all 1s ease-out; }
+
+
+        /* --- HERO SPECIFIC --- */
+        #hero .container { grid-template-columns: 1fr; text-align: center; }
+        #hero h1 { font-size: 10vw; line-height: 0.9; margin-bottom: 20px; text-transform: uppercase; letter-spacing: -5px; }
+        #hero p { margin: 0 auto; border: none; padding: 0; }
+        #hero .text-block { transform: scale(1.2); filter: blur(10px); }
+        #hero.active-section .text-block { opacity: 1; transform: scale(1); filter: blur(0); }
+
+        /* --- RESPONSIVE --- */
+        @media (max-width: 900px) {
+            .container { grid-template-columns: 1fr; gap: 30px; width: 90%; }
+            .card-block { height: 40vh; order: -1; }
+            h2 { font-size: 3rem; }
+            p { font-size: 1rem; padding-left: 15px; }
+            .nav-dots { display: none; }
+            #hero h1 { font-size: 18vw; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- NAV CONTAINER -->
+    <div class="nav-dots" id="nav-dots"></div>
+
+    <!-- 1. HERO - ZOOM OUT -->
+    <section id="hero" class="zoom-out" data-label="Start">
+        <div class="bg-layer" style="background-image: url('https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=2072&auto=format&fit=crop');"></div>
+        <div class="gradient-overlay"></div>
+        <div class="container active-section">
+            <div class="text-block anim-element">
+                <div class="badge"><i class="fa-solid fa-calendar-days"></i> 2025 - 2026</div>
+                <h1>NaroTech<br><span style="color:var(--primary)">Roadmap</span></h1>
+                <p>NaroTech India's vision for the future. Scroll to explore the evolution of our ecosystem.</p>
+                <div style="margin-top:50px; animation: bounce 2s infinite; opacity:0.7;"><i class="fa-solid fa-chevron-down fa-2x"></i></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 2. DEC 25 - SLIDE UP -->
+    <section class="slide-up" data-label="Dec '25">
+        <div class="bg-layer" style="background-image: url('https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=2070&auto=format&fit=crop');"></div>
+        <div class="gradient-overlay"></div>
+        <div class="container">
+            <div class="text-block anim-element">
+                <div class="badge">Dec 2025</div>
+                <h2>Getnaro<br>Web Launch</h2>
+                <p>The beginning of a new era. A centralized, ad-free download hub for software enthusiasts goes live globally.</p>
+            </div>
+            <div class="card-block anim-element">
+                <div class="glass-panel">
+                    <img src="https://images.unsplash.com/photo-1461749280684-dccba630e2f6?q=80&w=2069&auto=format&fit=crop" alt="Code">
+                    <div class="panel-footer">
+                        <div class="icon-box"><i class="fa-solid fa-globe"></i></div>
+                        <div class="panel-info"><h3>Website Live</h3><span>Phase One</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 3. JAN 26 - REVEAL -->
+    <section class="reveal" data-label="Jan '26">
+        <div class="bg-layer" style="background-image: url('https://images.unsplash.com/photo-1614064641938-3bcee529cfc4?q=80&w=2000&auto=format&fit=crop');"></div>
+        <div class="gradient-overlay"></div>
+        <div class="container">
+            <div class="card-block anim-element">
+                <div class="glass-panel">
+                    <img src="https://images.unsplash.com/photo-1629654297299-c8506221ca97?q=80&w=2000&auto=format&fit=crop" alt="Windows">
+                    <div class="panel-footer">
+                        <div class="icon-box"><i class="fa-brands fa-windows"></i></div>
+                        <div class="panel-info"><h3>Native Client</h3><span>Desktop App</span></div>
+                    </div>
+                </div>
+            </div>
+            <div class="text-block anim-element">
+                <div class="badge">Jan 2026</div>
+                <h2>Windows<br>Launch</h2>
+                <p>Getnaro arrives on your desktop. Faster downloads, auto-updates, and deep system integration for Windows users.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- 4. FEB 26 - ROTATE IN -->
+    <section class="rotate-in" data-label="Feb '26">
+        <div class="bg-layer" style="background-image: url('https://images.unsplash.com/photo-1629654291663-b91ad427698f?q=80&w=2000&auto=format&fit=crop');"></div>
+        <div class="gradient-overlay"></div>
+        <div class="container">
+            <div class="text-block anim-element">
+                <div class="badge">Feb 2026</div>
+                <h2>Linux<br>Extension</h2>
+                <p>Open Source freedom. Getnaro expands to Linux distributions, bringing our ecosystem to developers and power users.</p>
+            </div>
+            <div class="card-block anim-element">
+                <div class="glass-panel">
+                    <img src="https://images.unsplash.com/photo-1607799275518-d750cc6867a8?q=80&w=2000&auto=format&fit=crop" alt="Linux Terminal">
+                    <div class="panel-footer">
+                        <div class="icon-box"><i class="fa-brands fa-linux"></i></div>
+                        <div class="panel-info"><h3>Tux Edition</h3><span>Expansion</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 5. MAR 26 - SLIDE SIDES -->
+    <section class="slide-sides" data-label="Mar '26">
+        <div class="bg-layer" style="background-image: url('https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=2000&auto=format&fit=crop');"></div>
+        <div class="gradient-overlay"></div>
+        <div class="container">
+            <div class="card-block anim-element">
+                <div class="glass-panel">
+                    <img src="https://images.unsplash.com/photo-1538481199705-c710c4e965fc?q=80&w=2000&auto=format&fit=crop" alt="Gaming Setup">
+                    <div class="panel-footer">
+                        <div class="icon-box"><i class="fa-solid fa-gamepad"></i></div>
+                        <div class="panel-info"><h3>RenGames PC</h3><span>Gaming Hub</span></div>
+                    </div>
+                </div>
+            </div>
+            <div class="text-block anim-element">
+                <div class="badge">Mar 2026</div>
+                <h2>RenGames<br>PC Launch</h2>
+                <p>The ultimate gaming utility. Optimize performance, manage libraries, and discover indie gems on Windows.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- 6. APR 26 - BLUR FADE -->
+    <section class="blur-fade" data-label="Apr '26">
+        <div class="bg-layer" style="background-image: url('https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?q=80&w=2000&auto=format&fit=crop');"></div>
+        <div class="gradient-overlay"></div>
+        <div class="container">
+            <div class="text-block anim-element">
+                <div class="badge">Apr 2026</div>
+                <h2>Mobile &<br>BitFiles</h2>
+                <p>RenGames hits Android. Plus, BitFiles launches: a seamless file-sharing ecosystem across PC, Linux & Mobile.</p>
+            </div>
+            <div class="card-block anim-element">
+                <div class="glass-panel">
+                    <img src="https://images.unsplash.com/photo-1555421689-491a97ff2040?q=80&w=2000&auto=format&fit=crop" alt="Files">
+                    <div class="panel-footer">
+                        <div class="icon-box"><i class="fa-solid fa-share-nodes"></i></div>
+                        <div class="panel-info"><h3>Ecosystem</h3><span>Cross-Platform</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 7. MAY 26 - SCALE IN -->
+    <section class="scale-in" data-label="May '26">
+        <div class="bg-layer" style="background-image: url('https://images.unsplash.com/photo-1520690214124-2405c5217036?q=80&w=2000&auto=format&fit=crop');"></div>
+        <div class="gradient-overlay"></div>
+        <div class="container">
+            <div class="card-block anim-element">
+                <div class="glass-panel">
+                    <img src="https://images.unsplash.com/photo-1544197150-b99a580bb7a8?q=80&w=2000&auto=format&fit=crop" alt="Speed">
+                    <div class="panel-footer">
+                        <div class="icon-box"><i class="fa-solid fa-gauge-high"></i></div>
+                        <div class="panel-info"><h3>Naro Speed</h3><span>Network Tool</span></div>
+                    </div>
+                </div>
+            </div>
+            <div class="text-block anim-element">
+                <div class="badge">May 2026</div>
+                <h2>Naro<br>Speed Test</h2>
+                <p>Precision internet analysis. Web launch early May, followed by native apps for PC and Mobile by late May.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- 8. JUN 26 - FLIP 3D -->
+    <section class="flip-3d" data-label="Jun '26">
+        <div class="bg-layer" style="background-image: url('https://images.unsplash.com/photo-1542332213-9b5a5a3fad35?q=80&w=2000&auto=format&fit=crop');"></div>
+        <div class="gradient-overlay"></div>
+        <div class="container">
+            <div class="text-block anim-element">
+                <div class="badge">Jun 2026</div>
+                <h2>Ark ASA<br>Mod Map</h2>
+                <p>Unleashing creativity. Our first exclusive, high-fidelity custom map mod for Ark Survival Ascended.</p>
+            </div>
+            <div class="card-block anim-element">
+                <div class="glass-panel">
+                    <img src="https://images.unsplash.com/photo-1511512578047-dfb367046420?q=80&w=2000&auto=format&fit=crop" alt="Game Map">
+                    <div class="panel-footer">
+                        <div class="icon-box"><i class="fa-solid fa-map"></i></div>
+                        <div class="panel-info"><h3>Exclusive Mod</h3><span>Gaming</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 9. JUL 26 - REVEAL -->
+    <section class="reveal" data-label="Jul '26">
+        <div class="bg-layer" style="background-image: url('https://images.unsplash.com/photo-1620712943543-bcc4688e7485?q=80&w=2000&auto=format&fit=crop');"></div>
+        <div class="gradient-overlay"></div>
+        <div class="container">
+            <div class="card-block anim-element">
+                <div class="glass-panel">
+                    <img src="https://images.unsplash.com/photo-1677442136019-21780ecad995?q=80&w=2000&auto=format&fit=crop" alt="AI Network">
+                    <div class="panel-footer">
+                        <div class="icon-box"><i class="fa-solid fa-wand-magic-sparkles"></i></div>
+                        <div class="panel-info"><h3>Naro Scaler</h3><span>AI Upscaling</span></div>
+                    </div>
+                </div>
+            </div>
+            <div class="text-block anim-element">
+                <div class="badge">Jul 2026</div>
+                <h2>AI Image<br>Upscaler</h2>
+                <p>Enhance reality. Naro Scaler web platform launch, followed by powerful native apps for PC and Mobile.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- 10. AUG 26 - ROTATE IN -->
+    <section class="rotate-in" data-label="Aug '26">
+        <div class="bg-layer" style="background-image: url('https://images.unsplash.com/photo-1524492412937-b28074a5d7da?q=80&w=2000&auto=format&fit=crop');"></div>
+        <div class="gradient-overlay"></div>
+        <div class="container">
+            <div class="text-block anim-element">
+                <div class="badge">Aug 2026</div>
+                <h2>Our Bharat<br>Portal</h2>
+                <p>Celebrating Independence. A dedicated platform for exploring Indie Apps, Softwares, and Digital Arts from India.</p>
+            </div>
+            <div class="card-block anim-element">
+                <div class="glass-panel">
+                    <img src="https://images.unsplash.com/photo-1532375810709-75b1da00537c?q=80&w=2000&auto=format&fit=crop" alt="India Culture">
+                    <div class="panel-footer">
+                        <div class="icon-box"><i class="fa-solid fa-flag"></i></div>
+                        <div class="panel-info"><h3>Indie Hub</h3><span>National</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 11. SEP 26 - SLIDE SIDES -->
+    <section class="slide-sides" data-label="Sep '26">
+        <div class="bg-layer" style="background-image: url('https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=2000&auto=format&fit=crop');"></div>
+        <div class="gradient-overlay"></div>
+        <div class="container">
+            <div class="card-block anim-element">
+                <div class="glass-panel">
+                    <img src="https://images.unsplash.com/photo-1550745165-9bc0b252726f?q=80&w=2000&auto=format&fit=crop" alt="Processor">
+                    <div class="panel-footer">
+                        <div class="icon-box"><i class="fa-solid fa-microchip"></i></div>
+                        <div class="panel-info"><h3>UniEngine</h3><span>Performance</span></div>
+                    </div>
+                </div>
+            </div>
+            <div class="text-block anim-element">
+                <div class="badge">Sep 2026</div>
+                <h2>UniEngine<br>AI Assistant</h2>
+                <p>Next-gen Game Benchmarking and Tuning software for Windows. AI-driven performance metrics for gamers.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- 12. OCT 26 - SCALE IN -->
+    <section class="scale-in" data-label="Oct '26">
+        <div class="bg-layer" style="background-image: url('https://images.unsplash.com/photo-1621360841012-6a6f50b8c2a3?q=80&w=2000&auto=format&fit=crop');"></div>
+        <div class="gradient-overlay"></div>
+        <div class="container">
+            <div class="text-block anim-element">
+                <div class="badge">Oct 2026</div>
+                <h2>DawnDown<br>Platform</h2>
+                <p>Universal media downloader. Browser extensions early October, followed by full PC and Mobile apps.</p>
+            </div>
+            <div class="card-block anim-element">
+                <div class="glass-panel">
+                    <img src="https://images.unsplash.com/photo-1611162617474-5b21e879e113?q=80&w=2000&auto=format&fit=crop" alt="Download Cloud">
+                    <div class="panel-footer">
+                        <div class="icon-box"><i class="fa-solid fa-cloud-arrow-down"></i></div>
+                        <div class="panel-info"><h3>Media Tool</h3><span>Universal</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 13. NOV 26 - BLUR FADE -->
+    <section class="blur-fade" data-label="Nov '26">
+        <div class="bg-layer" style="background-image: url('https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=2000&auto=format&fit=crop');"></div>
+        <div class="gradient-overlay"></div>
+        <div class="container">
+            <div class="card-block anim-element">
+                <div class="glass-panel">
+                    <img src="https://images.unsplash.com/photo-1605379399642-870262d3d051?q=80&w=2000&auto=format&fit=crop" alt="Programming">
+                    <div class="panel-footer">
+                        <div class="icon-box"><i class="fa-solid fa-network-wired"></i></div>
+                        <div class="panel-info"><h3>WebXNeo</h3><span>Open Source</span></div>
+                    </div>
+                </div>
+            </div>
+            <div class="text-block anim-element">
+                <div class="badge">Nov 2026</div>
+                <h2>WebXNeo<br>Major Update</h2>
+                <p>The ultimate Open Source explorer. A massive update for finding free software across the internet.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- 14. DEC 26 - FLIP 3D -->
+    <section class="flip-3d" data-label="Dec '26">
+        <div class="bg-layer" style="background-image: url('https://images.unsplash.com/photo-1519638399535-1b036603ac77?q=80&w=2000&auto=format&fit=crop');"></div>
+        <div class="gradient-overlay"></div>
+        <div class="container">
+            <div class="text-block anim-element">
+                <div class="badge">Dec 2026</div>
+                <h2>Project<br>Surprise</h2>
+                <p>Ending the year with a bang. A secret Ark Survival Ascended Mod that redefines gameplay.</p>
+            </div>
+            <div class="card-block anim-element">
+                <div class="glass-panel">
+                    <img src="https://images.unsplash.com/photo-1513883049090-d0b7439799bf?q=80&w=2000&auto=format&fit=crop" alt="Gift Surprise">
+                    <div class="panel-footer">
+                        <div class="icon-box"><i class="fa-solid fa-gift"></i></div>
+                        <div class="panel-info"><h3>Secret</h3><span>Revealed Soon</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        // --- 1. INTERSECTION OBSERVER FOR ANIMATIONS ---
+        const sections = document.querySelectorAll('section');
+        const navContainer = document.getElementById('nav-dots');
+
+        // Create Nav Dots
+        sections.forEach((section, index) => {
+            if(index === 0) return; // Skip hero in dots if preferred, or keep
+            const dot = document.createElement('div');
+            dot.className = 'nav-dot';
+            dot.setAttribute('data-label', section.getAttribute('data-label'));
+            dot.onclick = () => section.scrollIntoView({ behavior: 'smooth' });
+            navContainer.appendChild(dot);
+        });
+
+        const dots = document.querySelectorAll('.nav-dot');
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    // Activate animations
+                    entry.target.classList.add('active-section');
+                    
+                    // Update dots
+                    const label = entry.target.getAttribute('data-label');
+                    dots.forEach(dot => {
+                        dot.classList.remove('active');
+                        if(dot.getAttribute('data-label') === label) dot.classList.add('active');
+                    });
+                } else {
+                    // Optional: Remove class to re-trigger animation on scroll back
+                    // entry.target.classList.remove('active-section');
+                }
+            });
+        }, { threshold: 0.5 });
+
+        sections.forEach(sec => observer.observe(sec));
+
+    </script>
+</body>
+</html>
