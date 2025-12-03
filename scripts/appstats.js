@@ -12,7 +12,8 @@ const firebaseConfig = {
   messagingSenderId: "129355115034",
   appId: "1:129355115034:web:21c3c36ccb940d7fab7fa3"
 };
-
+const COLLECTION_NAME = "app_data"; 
+const STATS_DOC_ID = "stats";
 const DOWNLOAD_LINKS = {
     x64: "https://getnaro.github.io/getnaro/x64",
     x32: "https://getnaro.github.io/getnaro/x32",
