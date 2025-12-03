@@ -326,7 +326,20 @@
         </div>
         <!-- Apps will be injected here by JavaScript -->
     </div>
+<h2 class="section-title"><i class="fa-solid fa-fire" style="color:#ff0055;"></i> Hot & Updated</h2>
+<div class="container" id="hot-apps-container">
+    <div class="gn-grid-loader"><div class="gn-spinner"></div></div>
+</div>
 
+<section class="gn-newsletter">
+    <i class="fa-solid fa-envelope-open-text" style="font-size: 40px; color: #9F00FF; margin-bottom: 15px;"></i>
+    <h3>Stay in the Loop</h3>
+    <p>Get notified about new software drops, driver updates, and exclusive tools.</p>
+    <form class="newsletter-form" onsubmit="event.preventDefault(); alert('Thanks for subscribing!');">
+        <input type="email" class="newsletter-input" placeholder="Enter your email address" required>
+        <button type="submit" class="newsletter-btn">Subscribe</button>
+    </form>
+</section>
 <!-- ================= FEATURE HIGHLIGHTS ================= -->
 <section class="gn-features">
     <h2 class="gn-features-title">Why Choose Getnaro?</h2>
@@ -537,6 +550,211 @@
 <script type="module" src="/scripts/stats.js"></script>
 <script type="module" src="/scripts/search.js"></script>
 <script type="module" src="/scripts/ai_assistant.js"></script>
+<script type="module">
+    // ==========================================
+    // NEWSLETTER SUBSCRIPTION - FIXED VERSION
+    // ==========================================
+    
+    import { getApps, initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+    import { getDatabase, ref, set, get, child } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-database.js";
+    
+    // Firebase Config (same as your admin panel)
+    const firebaseConfig = {
+        apiKey: "AIzaSyCtX1G_OEXmkKtBNGzWQFEYiEWibrMIFrg",
+        authDomain: "user-getnaro.firebaseapp.com",
+        databaseURL: "https://user-getnaro-default-rtdb.asia-southeast1.firebasedatabase.app",
+        projectId: "user-getnaro",
+        storageBucket: "user-getnaro.firebasestorage.app",
+        messagingSenderId: "264425704576",
+        appId: "1:264425704576:web:cfd98a1f627e9a59cc2a65"
+    };
+    
+    // Initialize Firebase (or use existing)
+    const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
+    const rtdb = getDatabase(app);
+    
+    // Custom Popup Functions
+    function showSubscribePopup(message, isSuccess = true) {
+        const existingPopup = document.querySelector('.gn-subscribe-popup');
+        if (existingPopup) existingPopup.remove();
+        
+        const popup = document.createElement('div');
+        popup.className = 'gn-subscribe-popup';
+        popup.innerHTML = `
+            <div class="gn-subscribe-box">
+                <div class="popup-icon">
+                    ${isSuccess 
+                        ? '<i class="fa-solid fa-circle-check"></i>' 
+                        : '<i class="fa-solid fa-circle-exclamation"></i>'}
+                </div>
+                <h3>${isSuccess ? 'Successfully Subscribed!' : 'Oops!'}</h3>
+                <p>${message}</p>
+                <button class="popup-close-btn" onclick="this.closest('.gn-subscribe-popup').remove()">
+                    ${isSuccess ? 'Awesome!' : 'Got It'}
+                </button>
+            </div>
+        `;
+        
+        document.body.appendChild(popup);
+        setTimeout(() => popup.classList.add('show'), 10);
+        
+        setTimeout(() => {
+            popup.classList.remove('show');
+            setTimeout(() => popup.remove(), 300);
+        }, 4000);
+    }
+    
+    // Newsletter Form Logic
+    const newsletterForm = document.querySelector('.newsletter-form');
+    
+    if (newsletterForm) {
+        newsletterForm.onsubmit = async (e) => {
+            e.preventDefault();
+            
+            const input = newsletterForm.querySelector('.newsletter-input');
+            const email = input.value.trim().toLowerCase();
+            const btn = newsletterForm.querySelector('.newsletter-btn');
+            
+            // Validation
+            if (!email) {
+                showSubscribePopup('Please enter a valid email address.', false);
+                return;
+            }
+            
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) {
+                showSubscribePopup('Please enter a valid email format.', false);
+                return;
+            }
+            
+            // Visual Feedback
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Subscribing...';
+            btn.disabled = true;
+            
+            try {
+                // Encode email for Firebase key (replace . # $ [ ] with safe characters)
+                const encodedEmail = email.replace(/\./g, ',');
+                
+                // Check if already subscribed
+                const subscriberRef = ref(rtdb, `newsletter_subscribers/${encodedEmail}`);
+                const snapshot = await get(subscriberRef);
+                
+                if (snapshot.exists()) {
+                    showSubscribePopup('You\'re already on our list! 🎉', false);
+                } else {
+                    // Save to RTDB
+                    await set(subscriberRef, {
+                        email: email,
+                        name: email.split('@')[0],
+                        subscribedAt: Date.now(),
+                        source: 'store_page',
+                        status: 'active'
+                    });
+                    
+                    showSubscribePopup('Welcome to Getnaro! You\'ll receive updates on new apps, exclusive features, and more.', true);
+                    input.value = ""; 
+                }
+            } catch (error) {
+                console.error("Subscribe Error:", error);
+                showSubscribePopup('Something went wrong. Please try again later.', false);
+            }
+            
+            // Reset Button
+            btn.innerHTML = originalText;
+            btn.disabled = false;
+        };
+    }
+</script>
+<script>
+    async function fetchAndRenderApps() {
+        const container = document.getElementById('apps-container');
+        const hotContainer = document.getElementById('hot-apps-container');
+
+        // Loaders
+        if(container) container.innerHTML = '<div class="gn-grid-loader"><div class="gn-spinner"></div></div>';
+        if(hotContainer) hotContainer.innerHTML = '<div class="gn-grid-loader"><div class="gn-spinner"></div></div>';
+
+        try {
+            console.log("Fetching apps from Firestore..."); 
+            const q = query(collection(db, "apps")); 
+            const querySnapshot = await getDocs(q);
+            
+            // Clear Loaders
+            container.innerHTML = ''; 
+            hotContainer.innerHTML = '';
+
+            if (querySnapshot.empty) {
+                container.innerHTML = '<p style="text-align:center; width:100%; color: #aaa;">Maintenance Mode.</p>';
+                return;
+            }
+
+            let apps = [];
+            querySnapshot.forEach((doc) => {
+                apps.push({ id: doc.id, ...doc.data() });
+            });
+            
+            // Stats update
+            set(ref(rtdb, "stats/total_apps"), apps.length);
+            
+            // Sort Alphabetically
+            apps.sort((a, b) => a.name.localeCompare(b.name));
+
+            // --- RENDER FUNCTION ---
+            apps.forEach(app => {
+                const imgSrc = app.image || '/assests/logo-getnaro-nobg.png';
+                const category = (app.category || 'tools').toLowerCase();
+                
+                // 1. DETERMINE BADGE
+                // You can add a 'badge' field in Firestore: 'hot', 'new', 'updated'
+                // If missing, we simulate it for demo purposes based on category/logic
+                let badgeHTML = '';
+                if (app.badge === 'hot' || (!app.badge && Math.random() > 0.8)) {
+                    badgeHTML = `<span class="gn-badge badge-hot">HOT</span>`;
+                } else if (app.badge === 'new' || (!app.badge && Math.random() > 0.8)) {
+                    badgeHTML = `<span class="gn-badge badge-new">NEW</span>`;
+                } else if (app.badge === 'updated') {
+                    badgeHTML = `<span class="gn-badge badge-updated">UPDATED</span>`;
+                }
+
+                // 2. SMALL INFO (Version & Size)
+                // Assumes fields 'version' and 'size' exist in Firestore, else uses defaults
+                const metaInfo = `v${app.version || '1.0'} • ${app.size || 'Unknown'}`;
+
+                // Create Card HTML
+                const cardHTML = `
+                    <div class="content-one" data-category="${category}">
+                        ${badgeHTML} <img src="${imgSrc}" alt="${app.name}" onerror="this.src='/assests/logo-getnaro-nobg.png'">
+                        <span class="tet">
+                            <h5>${app.name}</h5>
+                            <span class="app-meta">${metaInfo}</span> <a href="/pages/view.html?id=${app.id}">DOWNLOAD</a>
+                        </span>
+                    </div>
+                `;
+
+                // 3. INJECT INTO MAIN CONTAINER
+                container.insertAdjacentHTML('beforeend', cardHTML);
+
+                // 4. INJECT INTO HOT/UPDATED CONTAINER (If applicable)
+                if (badgeHTML !== '') {
+                    // We clone the logic for the hot section
+                    hotContainer.insertAdjacentHTML('beforeend', cardHTML);
+                }
+            });
+            
+            // If no hot apps found, hide the section loader
+            if(hotContainer.innerHTML === '') {
+                hotContainer.innerHTML = '<p style="width:100%; text-align:center; color:#666;">No recent updates.</p>';
+            }
+
+            initTabs();
+
+        } catch (error) {
+            console.error("Error fetching apps:", error);
+            container.innerHTML = `<p style="text-align:center; width:100%; color: red;">Failed to load apps.<br><small>${error.message}</small></p>`;
+        }
+    }
+</script>
 </body>
 </html>
 </body>

@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="/stylesheets/admin.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="shortcut icon" href="/assests/logo-getnaro-whitebg.png" type="image/x-icon">
     <style>
         /* Essential layout fixes to match your screenshot */
         .container { max-width: 1400px; margin: 0 auto; padding-top: 40px; }
@@ -33,6 +34,12 @@
             display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.9);
             z-index: 6000; align-items: center; justify-content: center;
         }
+
+        /* Custom Scrollbar for lists */
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #111; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #333; border-radius: 3px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #9F00FF; }
     </style>
 </head>
 <body class="bg-black text-gray-200 font-sans min-h-screen">
@@ -145,6 +152,9 @@
                     <button data-tab="apps" class="tab-button bg-gray-800 hover:gn-bg text-gray-300 px-4 py-2 rounded-lg font-bold transition"><i class="fa-solid fa-list-check mr-2"></i>App Library</button>
                     <button data-tab="users" class="tab-button bg-gray-800 hover:gn-bg text-gray-300 px-4 py-2 rounded-lg font-bold transition"><i class="fa-solid fa-users mr-2"></i>User Database</button>
                     <button data-tab="patches" class="tab-button bg-gray-800 hover:gn-bg text-gray-300 px-4 py-2 rounded-lg font-bold transition"><i class="fa-solid fa-scroll mr-2"></i>Patch Notes</button>
+                    <button data-tab="email" class="tab-button bg-gray-800 hover:gn-bg text-gray-300 px-4 py-2 rounded-lg font-bold transition">
+                        <i class="fa-solid fa-envelope mr-2"></i>Newsletter
+                    </button>
                     <button data-tab="config" class="tab-button bg-gray-800 hover:gn-bg text-gray-300 px-4 py-2 rounded-lg font-bold transition"><i class="fa-solid fa-cog mr-2"></i>Site Config</button>
                 </div>
             </div>
@@ -196,21 +206,16 @@
                             <div><label class="block text-xs text-gray-500 font-bold mb-1">Description</label><textarea id="app-desc" rows="4" class="w-full bg-black border border-gray-700 rounded p-3 text-gray-300 outline-none"></textarea></div>
                             <div><label class="block text-xs text-gray-500 font-bold mb-1">Link</label><input type="text" id="app-download-link" class="w-full bg-black border border-gray-700 rounded p-3 text-blue-400 outline-none"></div>
                              <div><label class="block text-xs text-gray-500 font-bold mb-1">Icon URL</label><input type="text" id="app-image" class="w-full bg-black border border-gray-700 rounded p-3 text-white outline-none"></div>
-                           <!-- PASTE THIS INSIDE THE APP EDITOR SECTION IN ADMIN.HTML -->
-
-<div class="mt-4 border-t border-gray-800 pt-4">
-    <label class="block text-xs text-gray-500 font-bold mb-2 uppercase">
-        <i class="fa-solid fa-images mr-1"></i> Carousel Images
-    </label>
-    
-    <!-- Container for the list of inputs -->
-    <div id="app-screenshots-container" class="space-y-3 mb-3"></div>
-
-    <!-- Add Button -->
-    <button id="add-screenshot-btn" class="w-full border border-dashed border-gray-700 text-gray-500 hover:text-white hover:border-purple-500 hover:bg-purple-900/10 py-2 rounded-lg text-xs font-bold transition flex justify-center items-center gap-2">
-        <i class="fa-solid fa-plus"></i> Add Screenshot
-    </button>
-</div>
+                            
+                            <div class="mt-4 border-t border-gray-800 pt-4">
+                                <label class="block text-xs text-gray-500 font-bold mb-2 uppercase">
+                                    <i class="fa-solid fa-images mr-1"></i> Carousel Images
+                                </label>
+                                <div id="app-screenshots-container" class="space-y-3 mb-3"></div>
+                                <button id="add-screenshot-btn" class="w-full border border-dashed border-gray-700 text-gray-500 hover:text-white hover:border-purple-500 hover:bg-purple-900/10 py-2 rounded-lg text-xs font-bold transition flex justify-center items-center gap-2">
+                                    <i class="fa-solid fa-plus"></i> Add Screenshot
+                                </button>
+                            </div>
                              <div class="flex gap-3 pt-4"><button id="save-app-btn" class="flex-1 gn-bg hover:bg-purple-600 text-white py-3 rounded-lg font-bold transition shadow-lg">Save App</button><button id="clear-form-btn" class="px-6 bg-gray-800 hover:bg-gray-700 text-white py-3 rounded-lg font-bold transition">Clear</button></div>
                         </div>
                     </div>
@@ -274,6 +279,7 @@
                             <h3 class="text-xl font-bold text-white flex items-center gap-3"><i class="fa-solid fa-scroll gn-text"></i> Patch Notes</h3>
                             <button id="btn-new-patch" class="gn-bg text-white px-6 py-3 rounded-lg font-bold transition shadow-lg flex items-center gap-2"><i class="fa-solid fa-plus"></i> New Patch</button>
                         </div>
+
                         <div class="overflow-hidden rounded-xl border border-gray-800">
                             <table class="w-full text-left text-sm text-gray-400">
                                 <thead class="bg-black text-gray-300 uppercase font-bold tracking-wider">
@@ -339,73 +345,150 @@
                              <p class="text-sm text-gray-300 flex justify-between py-1">Status: <span id="rtdb-status" class="text-yellow-500 font-mono">Connecting...</span></p>
                              <p class="text-sm text-gray-300 flex justify-between py-1">Last Sync: <span id="rtdb-last-update" class="text-gray-400 font-mono">--:--</span></p>
                              <button id="reset-peak-btn" class="mt-4 bg-blue-900/50 hover:bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-bold transition w-full">Reset Peak Counter</button>
-                         </div>
+                          </div>
                     </div>
                     <div id="config-status-msg" class="mt-6 text-sm font-mono text-green-400"></div>
                 </div>
-                <!-- ADVANCED ANNOUNCEMENT EDITOR (Add to #tab-config) -->
+                
+                <div class="col-span-1 lg:col-span-3 bg-gray-900 p-8 rounded-2xl border border-gray-700 shadow-xl mt-8">
+                    <div class="flex justify-between items-center mb-6 border-b border-gray-800 pb-4">
+                        <h3 class="text-xl font-bold text-white flex items-center gap-3">
+                            <i class="fa-solid fa-bullhorn text-purple-500"></i> Announcement Manager
+                        </h3>
+                        <div class="flex items-center gap-4">
+                            <label class="flex items-center gap-2 text-sm text-gray-300 font-bold cursor-pointer bg-black px-3 py-2 rounded border border-gray-700">
+                                <input type="checkbox" id="announce-enabled" class="h-4 w-4 accent-purple-500 rounded"> Enabled
+                            </label>
+                            <button id="save-announce-btn" class="gn-bg hover:bg-purple-600 text-white px-6 py-2 rounded-lg text-sm font-bold shadow-lg transition">
+                                <i class="fa-solid fa-save mr-2"></i> Save & Publish
+                            </button>
+                        </div>
+                    </div>
 
-<div class="col-span-1 lg:col-span-3 bg-gray-900 p-8 rounded-2xl border border-gray-700 shadow-xl mt-8">
-    <div class="flex justify-between items-center mb-6 border-b border-gray-800 pb-4">
-        <h3 class="text-xl font-bold text-white flex items-center gap-3">
-            <i class="fa-solid fa-bullhorn text-purple-500"></i> Announcement Manager
-        </h3>
-        <div class="flex items-center gap-4">
-            <label class="flex items-center gap-2 text-sm text-gray-300 font-bold cursor-pointer bg-black px-3 py-2 rounded border border-gray-700">
-                <input type="checkbox" id="announce-enabled" class="h-4 w-4 accent-purple-500 rounded"> Enabled
-            </label>
-            <button id="save-announce-btn" class="gn-bg hover:bg-purple-600 text-white px-6 py-2 rounded-lg text-sm font-bold shadow-lg transition">
-                <i class="fa-solid fa-save mr-2"></i> Save & Publish
-            </button>
-        </div>
-    </div>
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                        <div class="lg:col-span-1 space-y-6">
+                            <div class="bg-black/40 p-4 rounded-xl border border-gray-800">
+                                <h4 class="text-xs font-bold text-gray-500 uppercase mb-3">Targeting</h4>
+                                <div class="space-y-2 mb-4">
+                                    <label class="block text-xs text-gray-400 mb-1">Frequency</label>
+                                    <select id="announce-freq" class="w-full bg-gray-900 border border-gray-700 rounded p-2 text-white text-sm outline-none">
+                                        <option value="once">Show Once per User</option>
+                                        <option value="always">Show Every Time</option>
+                                    </select>
+                                </div>
+                                <label class="block text-xs text-gray-400 mb-2">Active Pages</label>
+                                <div class="flex flex-wrap gap-2" id="announce-pages-container">
+                                    <label class="bg-gray-800 px-2 py-1 rounded text-xs text-gray-300 flex gap-2 cursor-pointer border border-gray-700 hover:border-purple-500"><input type="checkbox" value="index" class="announce-page-check accent-purple-500"> Home</label>
+                                    <label class="bg-gray-800 px-2 py-1 rounded text-xs text-gray-300 flex gap-2 cursor-pointer border border-gray-700 hover:border-purple-500"><input type="checkbox" value="view" class="announce-page-check accent-purple-500"> App View</label>
+                                    <label class="bg-gray-800 px-2 py-1 rounded text-xs text-gray-300 flex gap-2 cursor-pointer border border-gray-700 hover:border-purple-500"><input type="checkbox" value="community" class="announce-page-check accent-purple-500"> Community</label>
+                                    <label class="bg-gray-800 px-2 py-1 rounded text-xs text-gray-300 flex gap-2 cursor-pointer border border-gray-700 hover:border-purple-500"><input type="checkbox" value="store" class="announce-page-check accent-purple-500"> Store</label>
+                                    <label class="bg-gray-800 px-2 py-1 rounded text-xs text-gray-300 flex gap-2 cursor-pointer border border-gray-700 hover:border-purple-500"><input type="checkbox" value="faq" class="announce-page-check accent-purple-500"> FAQ</label>
+                                    <label class="bg-gray-800 px-2 py-1 rounded text-xs text-gray-300 flex gap-2 cursor-pointer border border-gray-700 hover:border-purple-500"><input type="checkbox" value="about" class="announce-page-check accent-purple-500"> About</label>
+                                    <label class="bg-gray-800 px-2 py-1 rounded text-xs text-gray-300 flex gap-2 cursor-pointer border border-gray-700 hover:border-purple-500"><input type="checkbox" value="contact" class="announce-page-check accent-purple-500"> Contact</label>
+                                    <label class="bg-gray-800 px-2 py-1 rounded text-xs text-gray-300 flex gap-2 cursor-pointer border border-gray-700 hover:border-purple-500"><input type="checkbox" value="profile" class="announce-page-check accent-purple-500"> Profile</label>
+                                    <label class="bg-gray-800 px-2 py-1 rounded text-xs text-gray-300 flex gap-2 cursor-pointer border border-gray-700 hover:border-purple-500"><input type="checkbox" value="signup" class="announce-page-check accent-purple-500"> Signup</label>
+                                </div>
+                            </div>
 
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        <!-- SETTINGS COLUMN -->
-        <div class="lg:col-span-1 space-y-6">
-            <div class="bg-black/40 p-4 rounded-xl border border-gray-800">
-                <h4 class="text-xs font-bold text-gray-500 uppercase mb-3">Targeting</h4>
-                <div class="space-y-2 mb-4">
-                    <label class="block text-xs text-gray-400 mb-1">Frequency</label>
-                    <select id="announce-freq" class="w-full bg-gray-900 border border-gray-700 rounded p-2 text-white text-sm outline-none">
-                        <option value="once">Show Once per User</option>
-                        <option value="always">Show Every Time</option>
-                    </select>
-                </div>
-                <label class="block text-xs text-gray-400 mb-2">Active Pages</label>
-                <div class="flex flex-wrap gap-2" id="announce-pages-container">
-                    <label class="bg-gray-800 px-2 py-1 rounded text-xs text-gray-300 flex gap-2 cursor-pointer border border-gray-700 hover:border-purple-500"><input type="checkbox" value="index" class="announce-page-check accent-purple-500"> Home</label>
-                    <label class="bg-gray-800 px-2 py-1 rounded text-xs text-gray-300 flex gap-2 cursor-pointer border border-gray-700 hover:border-purple-500"><input type="checkbox" value="view" class="announce-page-check accent-purple-500"> App View</label>
-                    <label class="bg-gray-800 px-2 py-1 rounded text-xs text-gray-300 flex gap-2 cursor-pointer border border-gray-700 hover:border-purple-500"><input type="checkbox" value="community" class="announce-page-check accent-purple-500"> Community</label>
-                    <label class="bg-gray-800 px-2 py-1 rounded text-xs text-gray-300 flex gap-2 cursor-pointer border border-gray-700 hover:border-purple-500"><input type="checkbox" value="store" class="announce-page-check accent-purple-500"> Store</label>
-                    <label class="bg-gray-800 px-2 py-1 rounded text-xs text-gray-300 flex gap-2 cursor-pointer border border-gray-700 hover:border-purple-500"><input type="checkbox" value="faq" class="announce-page-check accent-purple-500"> FAQ</label>
-                    <label class="bg-gray-800 px-2 py-1 rounded text-xs text-gray-300 flex gap-2 cursor-pointer border border-gray-700 hover:border-purple-500"><input type="checkbox" value="about" class="announce-page-check accent-purple-500"> About</label>
-                    <label class="bg-gray-800 px-2 py-1 rounded text-xs text-gray-300 flex gap-2 cursor-pointer border border-gray-700 hover:border-purple-500"><input type="checkbox" value="contact" class="announce-page-check accent-purple-500"> Contact</label>
-                    <label class="bg-gray-800 px-2 py-1 rounded text-xs text-gray-300 flex gap-2 cursor-pointer border border-gray-700 hover:border-purple-500"><input type="checkbox" value="profile" class="announce-page-check accent-purple-500"> Profile</label>
-                    <label class="bg-gray-800 px-2 py-1 rounded text-xs text-gray-300 flex gap-2 cursor-pointer border border-gray-700 hover:border-purple-500"><input type="checkbox" value="signup" class="announce-page-check accent-purple-500"> Signup</label>
+                            <div class="bg-black/40 p-4 rounded-xl border border-gray-800">
+                                <h4 class="text-xs font-bold text-gray-500 uppercase mb-3">Add Content</h4>
+                                <div class="grid grid-cols-1 gap-2">
+                                    <button id="ann-add-heading" class="text-left bg-gray-900 hover:bg-gray-800 border border-gray-700 p-3 rounded text-sm text-white transition flex items-center gap-2"><i class="fa-solid fa-heading text-purple-400"></i> Heading</button>
+                                    <button id="ann-add-text" class="text-left bg-gray-900 hover:bg-gray-800 border border-gray-700 p-3 rounded text-sm text-white transition flex items-center gap-2"><i class="fa-solid fa-paragraph text-gray-400"></i> Text Paragraph</button>
+                                    <button id="ann-add-list" class="text-left bg-gray-900 hover:bg-gray-800 border border-gray-700 p-3 rounded text-sm text-white transition flex items-center gap-2"><i class="fa-solid fa-list text-blue-400"></i> Bullet Point</button>
+                                    <button id="ann-add-image" class="text-left bg-gray-900 hover:bg-gray-800 border border-gray-700 p-3 rounded text-sm text-white transition flex items-center gap-2"><i class="fa-solid fa-image text-green-400"></i> Image</button>
+                                    <button id="ann-add-btn" class="text-left bg-gray-900 hover:bg-gray-800 border border-gray-700 p-3 rounded text-sm text-white transition flex items-center gap-2"><i class="fa-solid fa-mouse-pointer text-yellow-400"></i> Action Button</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="lg:col-span-2">
+                            <div id="announce-blocks-container" class="space-y-3 min-h-[400px] p-6 border-2 border-dashed border-gray-800 rounded-2xl bg-black/20 relative">
+                                <p id="announce-empty-msg" class="absolute inset-0 flex items-center justify-center text-gray-600 text-sm pointer-events-none">Add blocks from the left menu</p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            <div class="bg-black/40 p-4 rounded-xl border border-gray-800">
-                <h4 class="text-xs font-bold text-gray-500 uppercase mb-3">Add Content</h4>
-                <div class="grid grid-cols-1 gap-2">
-                    <button id="ann-add-heading" class="text-left bg-gray-900 hover:bg-gray-800 border border-gray-700 p-3 rounded text-sm text-white transition flex items-center gap-2"><i class="fa-solid fa-heading text-purple-400"></i> Heading</button>
-                    <button id="ann-add-text" class="text-left bg-gray-900 hover:bg-gray-800 border border-gray-700 p-3 rounded text-sm text-white transition flex items-center gap-2"><i class="fa-solid fa-paragraph text-gray-400"></i> Text Paragraph</button>
-                    <button id="ann-add-list" class="text-left bg-gray-900 hover:bg-gray-800 border border-gray-700 p-3 rounded text-sm text-white transition flex items-center gap-2"><i class="fa-solid fa-list text-blue-400"></i> Bullet Point</button>
-                    <button id="ann-add-image" class="text-left bg-gray-900 hover:bg-gray-800 border border-gray-700 p-3 rounded text-sm text-white transition flex items-center gap-2"><i class="fa-solid fa-image text-green-400"></i> Image</button>
-                    <button id="ann-add-btn" class="text-left bg-gray-900 hover:bg-gray-800 border border-gray-700 p-3 rounded text-sm text-white transition flex items-center gap-2"><i class="fa-solid fa-mouse-pointer text-yellow-400"></i> Action Button</button>
-                </div>
-            </div>
-        </div>
+            <div id="tab-email" class="tab-content hidden">
+                <div class="bg-gray-900 p-8 rounded-2xl border border-gray-800 shadow-xl">
+                    <div class="flex justify-between items-center mb-6 border-b border-gray-800 pb-4">
+                        <div>
+                            <h3 class="text-xl font-bold text-white flex items-center gap-3">
+                                <i class="fa-solid fa-paper-plane gn-text"></i> Email Campaign Manager
+                            </h3>
+                            <p class="text-xs text-gray-500 mt-1">
+                                <span id="subscriber-count" class="text-green-400 font-bold">0</span> Active Subscribers Loaded
+                            </p>
+                        </div>
+                        <div class="flex gap-3">
+                            <button id="refresh-subs-btn" class="text-gray-400 hover:text-white text-sm"><i class="fa-solid fa-sync"></i> Refresh List</button>
+                            <button id="send-email-btn" class="gn-bg text-white px-8 py-2 rounded-lg font-bold shadow-lg hover:bg-purple-600 transition">
+                                <i class="fa-solid fa-rocket mr-2"></i> Send Campaign
+                            </button>
+                        </div>
+                    </div>
 
-        <!-- EDITOR CANVAS -->
-        <div class="lg:col-span-2">
-            <div id="announce-blocks-container" class="space-y-3 min-h-[400px] p-6 border-2 border-dashed border-gray-800 rounded-2xl bg-black/20 relative">
-                <p id="announce-empty-msg" class="absolute inset-0 flex items-center justify-center text-gray-600 text-sm pointer-events-none">Add blocks from the left menu</p>
-            </div>
-        </div>
-    </div>
-</div>
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                        <div class="lg:col-span-1 space-y-6">
+                            
+                            <div class="bg-black/40 p-5 rounded-xl border border-gray-800">
+                                <h4 class="text-xs font-bold text-gray-500 uppercase mb-3">Campaign Settings</h4>
+                                <div class="space-y-4">
+                                    <div>
+                                        <label class="block text-xs text-gray-400 mb-1">Email Subject Line</label>
+                                        <input type="text" id="email-subject" class="w-full bg-gray-900 border border-gray-700 rounded p-3 text-white focus:border-purple-500 outline-none" placeholder="e.g. Big Update v2.0 is Live!">
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs text-gray-400 mb-1">Preview Text (Snippet)</label>
+                                        <input type="text" id="email-preview" class="w-full bg-gray-900 border border-gray-700 rounded p-3 text-gray-300 text-sm outline-none" placeholder="Short summary shown in inbox...">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="bg-black/40 p-5 rounded-xl border border-gray-800">
+                                <div class="flex justify-between items-end mb-3">
+                                     <h4 class="text-xs font-bold text-gray-500 uppercase">Select Recipients</h4>
+                                     <span id="selected-count" class="text-xs text-purple-400 font-bold">0 Selected</span>
+                                </div>
+                                
+                                <div class="flex items-center gap-3 mb-3 pb-3 border-b border-gray-700 bg-gray-900/50 p-2 rounded">
+                                     <input type="checkbox" id="email-select-all" class="w-4 h-4 rounded border-gray-600 text-purple-600 focus:ring-purple-500 bg-gray-700 cursor-pointer">
+                                     <label for="email-select-all" class="text-sm text-gray-200 font-bold cursor-pointer select-none">Select / Unselect All</label>
+                                </div>
+                        
+                                <div id="email-recipient-list" class="space-y-1 max-h-[250px] overflow-y-auto pr-2 custom-scrollbar">
+                                     <div class="text-center text-gray-600 text-xs py-4">Click "Refresh List" to load users...</div>
+                                </div>
+                            </div>
+
+                            <div class="bg-black/40 p-5 rounded-xl border border-gray-800">
+                                <h4 class="text-xs font-bold text-gray-500 uppercase mb-3">Drag & Drop Blocks</h4>
+                                <div class="grid grid-cols-1 gap-2">
+                                    <button id="email-add-header" class="text-left bg-gray-900 hover:bg-gray-800 border border-gray-700 p-3 rounded text-sm text-white transition flex items-center gap-2"><i class="fa-solid fa-heading text-purple-400"></i> Main Header</button>
+                                    <button id="email-add-text" class="text-left bg-gray-900 hover:bg-gray-800 border border-gray-700 p-3 rounded text-sm text-white transition flex items-center gap-2"><i class="fa-solid fa-paragraph text-gray-400"></i> Rich Text</button>
+                                    <button id="email-add-app" class="text-left bg-gray-900 hover:bg-gray-800 border border-gray-700 p-3 rounded text-sm text-white transition flex items-center gap-2"><i class="fa-brands fa-windows text-blue-400"></i> App Highlight</button>
+                                    <button id="email-add-image" class="text-left bg-gray-900 hover:bg-gray-800 border border-gray-700 p-3 rounded text-sm text-white transition flex items-center gap-2"><i class="fa-solid fa-image text-green-400"></i> Image</button>
+                                    <button id="email-add-btn" class="text-left bg-gray-900 hover:bg-gray-800 border border-gray-700 p-3 rounded text-sm text-white transition flex items-center gap-2"><i class="fa-solid fa-mouse-pointer text-yellow-400"></i> CTA Button</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="lg:col-span-2">
+                            <div class="bg-white rounded-xl overflow-hidden shadow-2xl">
+                                <div class="bg-gray-100 border-b border-gray-200 p-3 flex gap-2 items-center">
+                                    <div class="flex gap-1.5"><div class="w-3 h-3 rounded-full bg-red-400"></div><div class="w-3 h-3 rounded-full bg-yellow-400"></div><div class="w-3 h-3 rounded-full bg-green-400"></div></div>
+                                    <div class="bg-white px-4 py-1 rounded text-xs text-gray-500 flex-1 text-center shadow-sm">New Message</div>
+                                </div>
+                                
+                                <div id="email-blocks-container" class="min-h-[600px] p-8 bg-gray-50 space-y-4">
+                                    <p id="email-empty-msg" class="text-center text-gray-400 mt-20 pointer-events-none">Add blocks to build your email</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
             
             <div id="import-section">

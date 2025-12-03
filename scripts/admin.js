@@ -218,6 +218,7 @@ function initDashboard() {
     loadSiteConfig();
     loadPatchNotes();
     setupImportWipeHandlers();
+    initEmailManager();
     
     // --- 5. INITIALIZE ANNOUNCEMENT MANAGER ---
     initAdvancedAnnouncement(); 
@@ -1036,4 +1037,526 @@ function initAdvancedAnnouncement() {
             showToast(e.message, "error");
         }
     });
+}
+// ==========================================
+// EMAIL CAMPAIGN MANAGER - FINAL VERSION
+// Paste this ENTIRE section at the bottom of admin.js
+// ==========================================
+
+let allSubscribers = [];
+let selectedRecipients = new Set();
+let emailBlocks = [];
+
+function initEmailManager() {
+    console.log('📧 Initializing Email Campaign Manager...');
+    
+    // Wait for auth to be ready
+    if (!auth.currentUser) {
+        console.warn('⚠️ Waiting for authentication...');
+        setTimeout(initEmailManager, 500);
+        return;
+    }
+    
+    const emailEls = {
+        subscriberCount: document.getElementById('subscriber-count'),
+        selectedCount: document.getElementById('selected-count'),
+        recipientList: document.getElementById('email-recipient-list'),
+        selectAllCheckbox: document.getElementById('email-select-all'),
+        refreshBtn: document.getElementById('refresh-subs-btn'),
+        sendBtn: document.getElementById('send-email-btn'),
+        emailSubject: document.getElementById('email-subject'),
+        emailPreview: document.getElementById('email-preview'),
+        blocksContainer: document.getElementById('email-blocks-container'),
+        emptyMsg: document.getElementById('email-empty-msg'),
+        addHeaderBtn: document.getElementById('email-add-header'),
+        addTextBtn: document.getElementById('email-add-text'),
+        addAppBtn: document.getElementById('email-add-app'),
+        addImageBtn: document.getElementById('email-add-image'),
+        addBtnBtn: document.getElementById('email-add-btn')
+    };
+
+    if (!emailEls.subscriberCount) {
+        console.warn('Email manager elements not found');
+        return;
+    }
+
+    loadAllSubscribers();
+    
+    emailEls.refreshBtn.addEventListener('click', loadAllSubscribers);
+    
+    emailEls.selectAllCheckbox.addEventListener('change', (e) => {
+        const checked = e.target.checked;
+        document.querySelectorAll('.recipient-checkbox').forEach(cb => {
+            cb.checked = checked;
+            if (checked) {
+                selectedRecipients.add(cb.value);
+            } else {
+                selectedRecipients.delete(cb.value);
+            }
+        });
+        updateSelectedCount();
+    });
+    
+    emailEls.addHeaderBtn.addEventListener('click', () => addEmailBlock('header'));
+    emailEls.addTextBtn.addEventListener('click', () => addEmailBlock('text'));
+    emailEls.addAppBtn.addEventListener('click', () => addEmailBlock('app'));
+    emailEls.addImageBtn.addEventListener('click', () => addEmailBlock('image'));
+    emailEls.addBtnBtn.addEventListener('click', () => addEmailBlock('button'));
+    
+    emailEls.sendBtn.addEventListener('click', sendEmailCampaign);
+    
+    renderEmailBlocks();
+}
+
+// ==========================================
+// REPLACE loadAllSubscribers in admin.js
+// ==========================================
+
+async function loadAllSubscribers() {
+    const list = document.getElementById('email-recipient-list');
+    if (!list) return;
+    
+    list.innerHTML = '<div class="text-center text-gray-500 text-xs py-4"><i class="fa-solid fa-spinner fa-spin mr-2"></i>Loading...</div>';
+    
+    try {
+        const subsRef = dbRef(rtdb, 'newsletter_subscribers');
+        const snapshot = await get(subsRef);
+        
+        allSubscribers = [];
+        selectedRecipients.clear();
+        
+        if (snapshot.exists()) {
+            const data = snapshot.val();
+            Object.entries(data).forEach(([key, info]) => {
+                // Decode the email (commas back to dots)
+                const decodedKey = key.replace(/,/g, '.');
+                const email = info.email || decodedKey;
+                const name = info.name || email.split('@')[0];
+                const subscribedAt = info.subscribedAt || Date.now();
+                
+                allSubscribers.push({ email, subscribedAt, name });
+            });
+        }
+        
+        allSubscribers.sort((a, b) => b.subscribedAt - a.subscribedAt);
+        
+        document.getElementById('subscriber-count').textContent = allSubscribers.length;
+        renderRecipientList();
+        
+        if (allSubscribers.length > 0) {
+            showToast(`Loaded ${allSubscribers.length} subscribers`, 'success');
+        }
+        
+    } catch (error) {
+        console.error('Load error:', error);
+        list.innerHTML = `<div class="text-center text-red-500 text-xs py-4">Error: ${error.message}</div>`;
+        showToast('Failed to load subscribers', 'error');
+    }
+}
+
+function renderRecipientList() {
+    const list = document.getElementById('email-recipient-list');
+    if (!list) return;
+    
+    list.innerHTML = '';
+    
+    if (allSubscribers.length === 0) {
+        list.innerHTML = '<div class="text-center text-gray-600 text-xs py-4">No subscribers yet</div>';
+        return;
+    }
+    
+    allSubscribers.forEach(sub => {
+        const div = document.createElement('div');
+        div.className = 'flex items-center gap-2 p-2 rounded hover:bg-gray-800/50 transition cursor-pointer group';
+        
+        const date = new Date(sub.subscribedAt).toLocaleDateString();
+        
+        div.innerHTML = `
+            <input type="checkbox" value="${sub.email}" class="recipient-checkbox w-4 h-4 rounded border-gray-600 text-purple-600 focus:ring-purple-500 bg-gray-700 cursor-pointer">
+            <div class="flex-grow min-w-0">
+                <p class="text-xs text-white font-semibold truncate">${sub.name}</p>
+                <p class="text-[10px] text-gray-500 truncate">${sub.email}</p>
+            </div>
+            <span class="text-[9px] text-gray-600 opacity-0 group-hover:opacity-100 transition">${date}</span>
+        `;
+        
+        const checkbox = div.querySelector('.recipient-checkbox');
+        checkbox.addEventListener('change', (e) => {
+            if (e.target.checked) {
+                selectedRecipients.add(sub.email);
+            } else {
+                selectedRecipients.delete(sub.email);
+            }
+            updateSelectedCount();
+        });
+        
+        div.addEventListener('click', (e) => {
+            if (e.target !== checkbox) {
+                checkbox.checked = !checkbox.checked;
+                checkbox.dispatchEvent(new Event('change'));
+            }
+        });
+        
+        list.appendChild(div);
+    });
+}
+
+function updateSelectedCount() {
+    const el = document.getElementById('selected-count');
+    if (el) el.textContent = `${selectedRecipients.size} Selected`;
+}
+
+function addEmailBlock(type) {
+    const block = {
+        id: 'block_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9),
+        type: type
+    };
+    
+    switch(type) {
+        case 'header':
+            block.content = 'Email Heading';
+            block.color = '#9F00FF';
+            break;
+        case 'text':
+            block.content = 'Your email content goes here...';
+            break;
+        case 'app':
+            block.appId = '';
+            block.appName = 'App Name';
+            block.appIcon = 'https://via.placeholder.com/64';
+            block.appDesc = 'App description...';
+            break;
+        case 'image':
+            block.url = '';
+            block.alt = 'Image';
+            break;
+        case 'button':
+            block.text = 'Click Here';
+            block.link = '#';
+            block.color = '#9F00FF';
+            break;
+    }
+    
+    emailBlocks.push(block);
+    renderEmailBlocks();
+}
+
+function removeEmailBlock(id) {
+    emailBlocks = emailBlocks.filter(b => b.id !== id);
+    renderEmailBlocks();
+}
+
+function moveEmailBlock(id, direction) {
+    const idx = emailBlocks.findIndex(b => b.id === id);
+    if (idx === -1) return;
+    
+    const newIdx = idx + direction;
+    if (newIdx < 0 || newIdx >= emailBlocks.length) return;
+    
+    [emailBlocks[idx], emailBlocks[newIdx]] = [emailBlocks[newIdx], emailBlocks[idx]];
+    renderEmailBlocks();
+}
+
+function updateEmailBlock(id, field, value) {
+    const block = emailBlocks.find(b => b.id === id);
+    if (block) block[field] = value;
+}
+
+function renderEmailBlocks() {
+    const container = document.getElementById('email-blocks-container');
+    const emptyMsg = document.getElementById('email-empty-msg');
+    
+    if (!container) return;
+    
+    container.innerHTML = '';
+    
+    if (emailBlocks.length === 0) {
+        if (emptyMsg) emptyMsg.style.display = 'block';
+        return;
+    }
+    
+    if (emptyMsg) emptyMsg.style.display = 'none';
+    
+    emailBlocks.forEach(block => {
+        container.appendChild(createEmailBlockUI(block));
+    });
+}
+
+function createEmailBlockUI(block) {
+    const wrapper = document.createElement('div');
+    wrapper.className = 'relative group';
+    
+    const controls = document.createElement('div');
+    controls.className = 'absolute -top-2 right-0 flex gap-1 opacity-0 group-hover:opacity-100 transition z-10';
+    
+    controls.innerHTML = `
+        <button data-action="move-up" data-id="${block.id}" class="email-block-control bg-gray-800 hover:bg-purple-600 text-white w-6 h-6 rounded text-xs">
+            <i class="fa-solid fa-arrow-up"></i>
+        </button>
+        <button data-action="move-down" data-id="${block.id}" class="email-block-control bg-gray-800 hover:bg-purple-600 text-white w-6 h-6 rounded text-xs">
+            <i class="fa-solid fa-arrow-down"></i>
+        </button>
+        <button data-action="delete" data-id="${block.id}" class="email-block-control bg-red-900/50 hover:bg-red-600 text-white w-6 h-6 rounded text-xs">
+            <i class="fa-solid fa-times"></i>
+        </button>
+    `;
+    
+    wrapper.appendChild(controls);
+    
+    controls.querySelectorAll('.email-block-control').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const action = btn.dataset.action;
+            const id = btn.dataset.id;
+            
+            if (action === 'delete') {
+                removeEmailBlock(id);
+            } else if (action === 'move-up') {
+                moveEmailBlock(id, -1);
+            } else if (action === 'move-down') {
+                moveEmailBlock(id, 1);
+            }
+        });
+    });
+    
+    const content = document.createElement('div');
+    content.className = 'border border-gray-300 rounded-lg overflow-hidden bg-white';
+    
+    if (block.type === 'header') {
+        content.innerHTML = `
+            <div style="background: ${block.color}; padding: 30px; text-align: center;">
+                <input type="text" value="${block.content}" 
+                    data-block-id="${block.id}" data-field="content"
+                    class="block-input w-full bg-transparent border-0 text-center text-white text-3xl font-bold outline-none placeholder-white/50"
+                    placeholder="Email Heading">
+            </div>
+            <div class="p-2 bg-gray-100 border-t border-gray-300 flex items-center gap-2 justify-center">
+                <span class="text-xs text-gray-600">Header Color:</span>
+                <input type="color" value="${block.color}" 
+                    data-block-id="${block.id}" data-field="color"
+                    class="block-color-input h-6 w-12 cursor-pointer">
+            </div>
+        `;
+    } else if (block.type === 'text') {
+        content.innerHTML = `
+            <div class="p-6">
+                <textarea data-block-id="${block.id}" data-field="content"
+                    class="block-input w-full bg-transparent border border-gray-300 rounded p-3 text-gray-800 text-sm leading-relaxed outline-none min-h-[100px]"
+                    placeholder="Email body text...">${block.content}</textarea>
+            </div>
+        `;
+    } else if (block.type === 'app') {
+        content.innerHTML = `
+            <div class="p-6 bg-gradient-to-br from-purple-50 to-blue-50">
+                <div class="flex items-center gap-4 bg-white p-4 rounded-lg shadow-sm border border-gray-200">
+                    <img src="${block.appIcon}" alt="icon" class="w-16 h-16 rounded-lg">
+                    <div class="flex-grow">
+                        <input type="text" value="${block.appName}" 
+                            data-block-id="${block.id}" data-field="appName"
+                            class="block-input w-full bg-transparent border-0 text-lg font-bold text-gray-800 outline-none mb-1"
+                            placeholder="App Name">
+                        <input type="text" value="${block.appDesc}" 
+                            data-block-id="${block.id}" data-field="appDesc"
+                            class="block-input w-full bg-transparent border-0 text-sm text-gray-600 outline-none"
+                            placeholder="Short description">
+                    </div>
+                </div>
+            </div>
+            <div class="p-3 bg-gray-100 border-t border-gray-300 space-y-2">
+                <input type="text" value="${block.appIcon || ''}" 
+                    data-block-id="${block.id}" data-field="appIcon"
+                    class="block-input-with-refresh w-full bg-white border border-gray-300 rounded p-2 text-xs text-gray-700 outline-none"
+                    placeholder="App Icon URL">
+                <input type="text" value="${block.appId || ''}" 
+                    data-block-id="${block.id}" data-field="appId"
+                    class="block-input w-full bg-white border border-gray-300 rounded p-2 text-xs text-gray-700 outline-none"
+                    placeholder="App ID (for link)">
+            </div>
+        `;
+    } else if (block.type === 'image') {
+        content.innerHTML = `
+            <div class="p-6 text-center">
+                ${block.url ? `<img src="${block.url}" alt="${block.alt}" class="max-w-full h-auto rounded-lg mx-auto">` : '<div class="bg-gray-200 h-48 rounded-lg flex items-center justify-center text-gray-500"><i class="fa-solid fa-image text-4xl"></i></div>'}
+            </div>
+            <div class="p-3 bg-gray-100 border-t border-gray-300">
+                <input type="text" value="${block.url || ''}" 
+                    data-block-id="${block.id}" data-field="url"
+                    class="block-input-with-refresh w-full bg-white border border-gray-300 rounded p-2 text-xs text-gray-700 outline-none mb-2"
+                    placeholder="Image URL">
+                <input type="text" value="${block.alt || ''}" 
+                    data-block-id="${block.id}" data-field="alt"
+                    class="block-input w-full bg-white border border-gray-300 rounded p-2 text-xs text-gray-700 outline-none"
+                    placeholder="Alt Text">
+            </div>
+        `;
+    } else if (block.type === 'button') {
+        content.innerHTML = `
+            <div class="p-6 text-center">
+                <a href="${block.link}" style="display: inline-block; background: ${block.color}; color: white; padding: 12px 32px; border-radius: 8px; text-decoration: none; font-weight: bold;">
+                    ${block.text}
+                </a>
+            </div>
+            <div class="p-3 bg-gray-100 border-t border-gray-300 grid grid-cols-3 gap-2">
+                <input type="text" value="${block.text}" 
+                    data-block-id="${block.id}" data-field="text"
+                    class="block-input-with-refresh bg-white border border-gray-300 rounded p-2 text-xs text-gray-700 outline-none"
+                    placeholder="Button Text">
+                <input type="text" value="${block.link}" 
+                    data-block-id="${block.id}" data-field="link"
+                    class="block-input bg-white border border-gray-300 rounded p-2 text-xs text-gray-700 outline-none"
+                    placeholder="Link URL">
+                <input type="color" value="${block.color}" 
+                    data-block-id="${block.id}" data-field="color"
+                    class="block-color-input h-full w-full cursor-pointer">
+            </div>
+        `;
+    }
+    
+    wrapper.appendChild(content);
+    
+    content.querySelectorAll('.block-input').forEach(input => {
+        input.addEventListener('change', (e) => {
+            updateEmailBlock(e.target.dataset.blockId, e.target.dataset.field, e.target.value);
+        });
+    });
+    
+    content.querySelectorAll('.block-input-with-refresh').forEach(input => {
+        input.addEventListener('change', (e) => {
+            updateEmailBlock(e.target.dataset.blockId, e.target.dataset.field, e.target.value);
+            renderEmailBlocks();
+        });
+    });
+    
+    content.querySelectorAll('.block-color-input').forEach(input => {
+        input.addEventListener('change', (e) => {
+            updateEmailBlock(e.target.dataset.blockId, e.target.dataset.field, e.target.value);
+            renderEmailBlocks();
+        });
+    });
+    
+    return wrapper;
+}
+
+async function sendEmailCampaign() {
+    const subjectEl = document.getElementById('email-subject');
+    const previewEl = document.getElementById('email-preview');
+    const sendBtn = document.getElementById('send-email-btn');
+    
+    if (selectedRecipients.size === 0) {
+        return showToast('No recipients selected', 'error');
+    }
+    
+    if (!subjectEl.value.trim()) {
+        return showToast('Email subject is required', 'error');
+    }
+    
+    if (emailBlocks.length === 0) {
+        return showToast('Add at least one content block', 'error');
+    }
+    
+    showCustomPopup('Send Campaign', `Send this email to ${selectedRecipients.size} subscribers?`, 'confirm', async (confirmed) => {
+        if (!confirmed) return;
+        
+        const emailHTML = buildEmailHTML();
+        
+        const campaignData = {
+            subject: subjectEl.value.trim(),
+            preview: previewEl.value.trim(),
+            html: emailHTML,
+            recipients: Array.from(selectedRecipients),
+            sentAt: Date.now(),
+            sentBy: auth.currentUser?.email || 'admin',
+            status: 'sent'
+        };
+        
+        try {
+            sendBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i>Sending...';
+            sendBtn.disabled = true;
+            
+            const campaignId = 'campaign_' + Date.now();
+            await setRTDB(dbRef(rtdb, `email_campaigns/${campaignId}`), campaignData);
+            
+            showToast(`Campaign sent to ${selectedRecipients.size} subscribers!`, 'success');
+            
+            subjectEl.value = '';
+            previewEl.value = '';
+            emailBlocks = [];
+            selectedRecipients.clear();
+            renderEmailBlocks();
+            updateSelectedCount();
+            
+            document.getElementById('email-select-all').checked = false;
+            document.querySelectorAll('.recipient-checkbox').forEach(cb => cb.checked = false);
+            
+        } catch (error) {
+            console.error('Send error:', error);
+            showToast('Failed to send campaign: ' + error.message, 'error');
+        } finally {
+            sendBtn.innerHTML = '<i class="fa-solid fa-rocket mr-2"></i>Send Campaign';
+            sendBtn.disabled = false;
+        }
+    });
+}
+
+function buildEmailHTML() {
+    const subjectEl = document.getElementById('email-subject');
+    let html = `
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>${subjectEl.value}</title>
+        <style>
+            body { margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f5f5f5; }
+            .email-container { max-width: 600px; margin: 20px auto; background: white; }
+            .footer { text-align: center; padding: 20px; background: #1a1a1a; color: #888; font-size: 12px; }
+            .footer a { color: #9F00FF; text-decoration: none; }
+        </style>
+    </head>
+    <body>
+        <div class="email-container">`;
+    
+    emailBlocks.forEach(block => {
+        if (block.type === 'header') {
+            html += `<div style="background: ${block.color}; padding: 40px; text-align: center;">
+                <h1 style="margin: 0; color: white; font-size: 32px;">${block.content}</h1>
+            </div>`;
+        } else if (block.type === 'text') {
+            html += `<div style="padding: 30px; line-height: 1.6; color: #333;">
+                <p style="margin: 0;">${block.content.replace(/\n/g, '<br>')}</p>
+            </div>`;
+        } else if (block.type === 'app') {
+            const appLink = block.appId ? `https://getnaro.in/pages/view.html?id=${block.appId}` : '#';
+            html += `<div style="padding: 30px; background: linear-gradient(135deg, #f5f0ff 0%, #e0f2fe 100%);">
+                <div style="background: white; padding: 20px; border-radius: 12px; display: flex; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+                    <img src="${block.appIcon}" alt="${block.appName}" style="width: 64px; height: 64px; border-radius: 12px; margin-right: 20px;">
+                    <div>
+                        <h3 style="margin: 0 0 8px 0; color: #1a1a1a; font-size: 20px;">${block.appName}</h3>
+                        <p style="margin: 0; color: #666; font-size: 14px;">${block.appDesc}</p>
+                        <a href="${appLink}" style="display: inline-block; margin-top: 12px; color: #9F00FF; text-decoration: none; font-weight: bold;">View App →</a>
+                    </div>
+                </div>
+            </div>`;
+        } else if (block.type === 'image') {
+            html += `<div style="padding: 20px; text-align: center;">
+                <img src="${block.url}" alt="${block.alt}" style="max-width: 100%; height: auto; border-radius: 8px;">
+            </div>`;
+        } else if (block.type === 'button') {
+            html += `<div style="padding: 30px; text-align: center;">
+                <a href="${block.link}" style="display: inline-block; background: ${block.color}; color: white; padding: 16px 40px; border-radius: 8px; text-decoration: none; font-weight: bold; font-size: 16px;">${block.text}</a>
+            </div>`;
+        }
+    });
+    
+    html += `
+        </div>
+        <div class="footer">
+            <p>© 2024 Getnaro. All rights reserved.</p>
+            <p><a href="https://getnaro.in">Visit Website</a> | <a href="#">Unsubscribe</a></p>
+        </div>
+    </body>
+    </html>`;
+    
+    return html;
 }
