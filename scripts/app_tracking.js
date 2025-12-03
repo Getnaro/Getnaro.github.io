@@ -493,35 +493,47 @@ class ViewPageController {
         this.syncTimer = setInterval(() => this.runSyncCycle(), CONFIG.SYNC.INTERVAL_MS);
     }
 
-    async runSyncCycle() {
+async runSyncCycle() {
         if (document.hidden) return;
-        // GUARD: Stop Electron IPC if not logged in
         if (!fbManager.auth.currentUser) return;
-
         if (!this.appName || this.appName === "Loading...") return;
 
         try {
             const localPath = await bridge.findPath(this.appName, this.aggressionLevel);
-            
+
+            // Update UI (Visual only)
             if (localPath) {
                 uiState.updateStatus(CONFIG.STATUS.INSTALLED, localPath);
-            } else {
-                if (uiState.currentStatus !== CONFIG.STATUS.DOWNLOADING) {
-                    uiState.updateStatus(CONFIG.STATUS.UNINSTALLED);
-                }
+            } else if (uiState.currentStatus !== CONFIG.STATUS.DOWNLOADING) {
+                uiState.updateStatus(CONFIG.STATUS.UNINSTALLED);
             }
 
+            // DATABASE LOGIC (Fixed)
             if (fbManager.currentUser && localPath) {
-                fbManager.updateHistory(this.appId, {
-                    appName: this.appName,
-                    icon: this.appIcon,
-                    status: 'Installed',
-                    installLocation: localPath,
-                    lastChecked: Date.now()
-                });
+                const currentStatus = 'Installed';
+
+                // Only write if status changed OR if we haven't synced in a long time (e.g. 1 hour)
+                const shouldWrite =
+                    this.lastSyncedStatus !== currentStatus ||
+                    (Date.now() - (this.lastWriteTime || 0) > 3600000); // 1 hour throttle
+
+                if (shouldWrite) {
+                    fbManager.updateHistory(this.appId, {
+                        appName: this.appName,
+                        icon: this.appIcon,
+                        status: currentStatus,
+                        installLocation: localPath,
+                        lastChecked: Date.now()
+                    });
+
+                    this.lastSyncedStatus = currentStatus;
+                    this.lastWriteTime = Date.now();
+                }
             }
         } catch (e) {}
-    }
+    } // <--- End of runSyncCycle
+
+    // REMOVED EXTRA '}' HERE
 
     checkRemoteStatus(uid) {
         fbManager.addListener(`users/${uid}/history/${this.appId}`, (snapshot) => {
@@ -538,7 +550,6 @@ class ViewPageController {
         });
     }
 }
-
 // ============================================================================
 // 9. PROFILE PAGE LOGIC (MODULAR)
 // ============================================================================
