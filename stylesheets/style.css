@@ -2079,3 +2079,56 @@ body.dark-mode .search-result-item {
     background: var(--gn-bg-alt, #1a1a1a) !important;
     color: var(--gn-text, #fff) !important;
 }
+/* ================= MOBILE DROPDOWN FILTER (FIXED) ================= */
+
+/* Default: Hide on desktop */
+.mobile-filter-container {
+    display: none; 
+}
+
+/* Dropdown Styling */
+#mobile-category-dropdown {
+    width: 90%;
+    margin: 20px auto;
+    display: block;
+    padding: 15px 20px;
+    
+    /* ✅ THEME FIX: Use variables instead of fixed colors */
+    background-color: var(--box); 
+    color: var(--text);
+    
+    border: 2px solid #9F00FF;
+    border-radius: 12px;
+    font-size: 18px;
+    font-weight: bold;
+    outline: none;
+    cursor: pointer;
+    
+    /* Ensure it sits above background particles */
+    position: relative;
+    z-index: 100;
+
+    /* Remove default system styling */
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    
+    /* Custom Purple Arrow */
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%239F00FF'%3e%3cpath d='M7 10l5 5 5-5z'/%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 20px center;
+    background-size: 18px;
+    
+    /* Smooth transition for theme switch */
+    transition: background-color 0.3s, color 0.3s;
+}
+
+/* Mobile View: Switch from Tabs to Dropdown */
+@media (max-width: 800px) {
+    .tabs {
+        display: none !important; 
+    }
+    .mobile-filter-container {
+        display: block !important; 
+    }
+}

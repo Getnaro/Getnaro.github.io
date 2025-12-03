@@ -305,7 +305,19 @@
         <i class="fa-solid fa-film"></i> Video / Graphics
     </button>
 </div>
-
+<div class="mobile-filter-container">
+    <select id="mobile-category-dropdown">
+        <option value="all">All Apps</option>
+        <option value="social">Social Media</option>
+        <option value="tools">Tools / Utilities</option>
+        <option value="opensource">Open Source</option>
+        <option value="desi">Desi Apps</option>
+        <option value="gaming">Gaming</option>
+        <option value="office">Office / Productivity</option>
+        <option value="drivers">Drivers / System</option>
+        <option value="video">Video / Graphics</option>
+    </select>
+</div>
 <!-- ------------------ DOWNLOAD GRID ------------------ -->
 <!-- DYNAMIC CONTENT CONTAINER (This is where DB apps load) -->
  <div class="container" id="apps-container">
@@ -448,32 +460,63 @@
         }
     }
 
-    function initTabs() {
+  function initTabs() {
         const tabs = document.querySelectorAll(".tab");
-        const items = document.querySelectorAll(".content-one");
-
+        const dropdown = document.getElementById("mobile-category-dropdown");
+        
+        // 1. Desktop: Button Click
         tabs.forEach(tab => {
             tab.addEventListener("click", () => {
                 const category = tab.dataset.category;
-                tabs.forEach(t => t.classList.remove("active"));
-                tab.classList.add("active");
-
-                if (category === "all") {
-                    container.classList.remove("filtered");
-                    items.forEach(item => item.style.display = "flex");
-                } else {
-                    container.classList.add("filtered");
-                    items.forEach(item => {
-                        const itemCat = item.getAttribute('data-category');
-                        if (itemCat && itemCat.includes(category)) {
-                            item.style.display = "flex";
-                        } else {
-                            item.style.display = "none";
-                        }
-                    });
-                }
+                updateActiveState(category);
+                filterContent(category);
             });
         });
+
+        // 2. Mobile: Dropdown Selection
+        if(dropdown) {
+            // Use 'change' for standard dropdown behavior
+            dropdown.addEventListener("change", (e) => {
+                const category = e.target.value;
+                updateActiveState(category);
+                filterContent(category);
+            });
+        }
+
+        // Helper to sync visual state between Tabs and Dropdown
+        function updateActiveState(category) {
+            // Update Desktop Buttons
+            tabs.forEach(t => {
+                if(t.dataset.category === category) t.classList.add("active");
+                else t.classList.remove("active");
+            });
+            // Update Mobile Dropdown
+            if(dropdown) dropdown.value = category;
+        }
+    }
+
+    // 3. The Filter Logic
+    function filterContent(category) {
+        const items = document.querySelectorAll(".content-one");
+        const container = document.getElementById('apps-container');
+
+        if (category === "all") {
+            container.classList.remove("filtered");
+            items.forEach(item => {
+                item.style.display = "flex"; // Reset to visible
+            });
+        } else {
+            container.classList.add("filtered");
+            items.forEach(item => {
+                const itemCat = item.getAttribute('data-category');
+                // Check if category matches
+                if (itemCat && itemCat.includes(category)) {
+                    item.style.display = "flex"; // Show
+                } else {
+                    item.style.display = "none"; // Hide
+                }
+            });
+        }
     }
 
     document.addEventListener('DOMContentLoaded', fetchAndRenderApps);
