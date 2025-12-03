@@ -1865,8 +1865,8 @@ color: #111 !important;
     }
 
     /* Main container card */
-    .container .content-one {
-        display: flex !important;
+   .container .content-one {
+        display: flex; 
         flex-direction: row !important;
         align-items: center !important;
 
