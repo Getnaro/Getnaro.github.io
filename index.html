@@ -447,6 +447,89 @@
                 min-width: 100% !important;
             }
         }
+        /* =========================================
+   MOBILE & TABLET OPTIMIZATIONS (FIXED)
+   ========================================= */
+@media (max-width: 1024px) {
+    
+    /* 1. Global Layout Fixes */
+    html, body {
+        width: 100%;
+        overflow-x: hidden;
+        position: relative;
+    }
+
+    .navbar { display: none; } 
+
+    /* 2. Constrain Sections to prevent 3D overflow */
+    .section {
+        padding: 60px 20px; /* Reduced padding from 100px */
+        overflow: hidden;   /* CRITICAL: Cuts off elements waiting to animate in */
+        width: 100vw;       /* Force viewport width */
+        min-height: auto;   /* Allow sections to shrink if content is small */
+    }
+
+    /* 3. Stack Grids Vertically */
+    .layout-split, 
+    .layout-split.reversed { 
+        grid-template-columns: 1fr; 
+        gap: 40px; 
+        text-align: center; 
+        width: 100%;
+        direction: ltr !important; /* Fix direction on mobile */
+    }
+    
+    .layout-split.reversed .text-col { direction: ltr; }
+
+    /* 4. Typography Scaling (Prevent huge text breaking screen) */
+    h1 { font-size: clamp(3rem, 10vw, 4rem); }
+    h2 { font-size: clamp(2.5rem, 8vw, 3.5rem) !important; }
+    
+    /* 5. Fix Huge Icons & "0%" Text Overflow */
+    .visual-container i,
+    .visual-container .fab,
+    .visual-container .fas {
+        font-size: clamp(100px, 40vw, 200px) !important; /* Shrinks icons to fit screen */
+        margin: 0 auto;
+    }
+    
+    /* Specific fix for the "0%" text in Features section */
+    .text-col h1[style*="font-size: 140px"] {
+        font-size: clamp(80px, 25vw, 140px) !important;
+    }
+
+    /* 6. Fix Developer Code Block Overflow */
+    .code-block {
+        padding: 20px !important; /* Reduce padding */
+        width: 100%;
+        max-width: 90vw;
+        overflow-x: auto; /* Allow code to scroll INSIDE the box */
+        font-size: 14px;  /* Smaller code font */
+        margin: 0 auto;
+        white-space: nowrap; /* Keep code lines intact, force scroll */
+    }
+
+    /* 7. Fix Footer */
+    .footer-social {
+        flex-wrap: wrap; /* Allow icons to wrap on very small screens */
+        gap: 15px;
+    }
+    .footer-social a {
+        width: 50px; height: 50px; font-size: 22px; /* Smaller footer buttons */
+    }
+
+    /* 8. Fix Buttons */
+    .download-pill {
+        width: 100%; /* Full width buttons on mobile */
+        max-width: 300px;
+        margin: 5px 0;
+    }
+    #hero-actions, .final-cta-actions {
+        flex-direction: column;
+        align-items: center;
+        gap: 15px;
+    }
+}
     </style>
 </head>
 <body class="dark-mode">
