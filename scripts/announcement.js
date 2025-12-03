@@ -1,7 +1,8 @@
 /**
- * ADVANCED ANNOUNCEMENT SYSTEM (UPDATED)
+ * ADVANCED ANNOUNCEMENT SYSTEM (UPDATED POSITION)
  * /scripts/announcement.js
- * Features: Block Renderer, Floating Minimize, Persistent Dismissal
+ * - Positioned at Top 30% Right to avoid AI Chat & Header
+ * - Slides in from Right side
  */
 
 import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-database.js";
@@ -53,7 +54,6 @@ function renderBlocks(blocks) {
     }).join('');
 }
 
-// Global reference to store data for restoring
 let currentAnnouncementData = null;
 
 function showAnnouncementPopup(data) {
@@ -62,21 +62,24 @@ function showAnnouncementPopup(data) {
     
     currentAnnouncementData = data;
 
-    // --- A. THE FLOATING BAR (Hidden by default) ---
+    // --- A. THE FLOATING BAR (UPDATED POSITION) ---
     const floatBar = document.createElement('div');
     floatBar.id = 'gn-announce-float';
+    
+    // ✅ FIXED: Positioned at Top 30% to avoid Header & AI Chat
+    // ✅ FIXED: Slides in from the RIGHT (translateX) instead of bottom
     floatBar.style.cssText = `
-        position: fixed; bottom: 20px; right: 20px; 
+        position: fixed; top: 30%; right: 20px; 
         background: #111; border: 1px solid #9F00FF; border-radius: 50px;
         padding: 10px 20px; display: flex; align-items: center; gap: 10px;
         box-shadow: 0 10px 30px rgba(0,0,0,0.5); z-index: 99998; cursor: pointer;
-        transform: translateY(100px); opacity: 0; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        transform: translateX(150%); opacity: 0; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         max-width: 300px;
     `;
     floatBar.innerHTML = `
         <i class="fa-solid fa-bell" style="color: #9F00FF; animation: swing 2s infinite;"></i>
         <span style="color: #fff; font-size: 14px; font-weight: 600;">New Announcement</span>
-        <i class="fa-solid fa-chevron-up" style="color: #666; font-size: 12px; margin-left: auto;"></i>
+        <i class="fa-solid fa-chevron-left" style="color: #666; font-size: 12px; margin-left: auto;"></i>
     `;
     
     // Restore logic when clicking float bar
@@ -84,13 +87,12 @@ function showAnnouncementPopup(data) {
         const overlay = document.getElementById('gn-announcement-overlay');
         const box = overlay.querySelector('.gn-announce-box');
         
-        // Hide float
-        floatBar.style.transform = 'translateY(100px)';
+        // Hide float (Slide out to Right)
+        floatBar.style.transform = 'translateX(150%)';
         floatBar.style.opacity = '0';
         
         // Show overlay
         overlay.style.display = 'flex';
-        // Small delay to allow display:flex to apply before opacity transition
         setTimeout(() => {
             overlay.style.opacity = '1';
             box.style.transform = 'translateY(0) scale(1)';
@@ -98,7 +100,6 @@ function showAnnouncementPopup(data) {
     };
 
     document.body.appendChild(floatBar);
-
 
     // --- B. THE MAIN OVERLAY ---
     const overlay = document.createElement('div');
@@ -185,9 +186,6 @@ function showAnnouncementPopup(data) {
     });
 }
 
-/**
- * Handles logic when user clicks OK or Minimize
- */
 function handleMinimize(data) {
     const overlay = document.getElementById('gn-announcement-overlay');
     const box = overlay.querySelector('.gn-announce-box');
@@ -203,22 +201,22 @@ function handleMinimize(data) {
         // Fade out everything and remove
         overlay.style.opacity = '0';
         box.style.transform = 'translateY(20px) scale(0.9)';
-        if (floatBar) floatBar.remove(); // Don't show float bar
+        if (floatBar) floatBar.remove(); 
         setTimeout(() => overlay.remove(), 300);
         
     } else {
-        // TEMPORARY MINIMIZE (Float)
+        // TEMPORARY MINIMIZE
         
         // Animate Overlay Out
         overlay.style.opacity = '0';
         box.style.transform = 'translateY(50px) scale(0.8)';
         
         setTimeout(() => {
-            overlay.style.display = 'none'; // Hide but don't remove
+            overlay.style.display = 'none';
             
-            // Animate Float Bar In
+            // Animate Float Bar In (From Right)
             if (floatBar) {
-                floatBar.style.transform = 'translateY(0)';
+                floatBar.style.transform = 'translateX(0)';
                 floatBar.style.opacity = '1';
             }
         }, 300);
@@ -240,7 +238,6 @@ function checkAndShowAnnouncement() {
             const storageKey = `gn_announce_${data.lastUpdated}`;
             const hasSeen = localStorage.getItem(storageKey);
             
-            // If "always" frequency OR user hasn't permanently dismissed it
             if (data.frequency === 'always' || !hasSeen) {
                 showAnnouncementPopup(data);
             }
