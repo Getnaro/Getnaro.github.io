@@ -1,58 +1,87 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<urlset
+      xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9
+            http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
+<!-- created with Free Online Sitemap Generator www.xml-sitemaps.com -->
+
 
 <url>
-  <loc>/index.html</loc>
-  <lastmod>2025-11-19</lastmod>
+  <loc>https://getnaro.github.io/</loc>
+  <lastmod>2025-12-04T19:32:59+00:00</lastmod>
   <priority>1.00</priority>
 </url>
-
 <url>
   <loc>https://getnaro.github.io/index.html</loc>
-  <lastmod>2025-11-19</lastmod>
+  <lastmod>2025-12-04T19:32:59+00:00</lastmod>
   <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://getnaro.github.io/pages/contact.html</loc>
+  <lastmod>2025-12-04T19:32:59+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://getnaro.github.io/pages/getnaro-app.html</loc>
+  <lastmod>2025-12-04T19:32:59+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://getnaro.github.io/pages/community.html</loc>
+  <lastmod>2025-12-04T19:32:59+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://getnaro.github.io/pages/login.html</loc>
+  <lastmod>2025-12-04T19:32:59+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://getnaro.github.io/pages/about.html</loc>
+  <lastmod>2025-12-04T19:32:59+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://getnaro.github.io/pages/faq.html</loc>
+  <lastmod>2025-12-04T19:32:59+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://getnaro.github.io/pages/t&amp;c.html</loc>
+  <lastmod>2025-12-04T19:32:59+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://getnaro.github.io/pages/coc.html</loc>
+  <lastmod>2025-12-04T19:32:59+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://getnaro.github.io/pages/privacypolicy.html</loc>
+  <lastmod>2025-12-04T19:32:59+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://getnaro.github.io/pages/narotech.html</loc>
+  <lastmod>2025-12-04T19:32:59+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://getnaro.github.io/pages/notfound.html</loc>
+  <lastmod>2025-12-04T19:32:59+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://getnaro.github.io/pages/patch-notes.html</loc>
+  <lastmod>2025-12-04T19:32:59+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://getnaro.github.io/pages/signup.html</loc>
+  <lastmod>2025-12-04T19:32:59+00:00</lastmod>
+  <priority>0.51</priority>
 </url>
 
-<url>
-  <loc>/index.htmlnotfound.html</loc>
-  <lastmod>2025-11-19</lastmod>
-  <priority>0.80</priority>
-</url>
-
-<url>
-  <loc>/index.htmlabout.html</loc>
-  <lastmod>2025-11-19</lastmod>
-  <priority>0.80</priority>
-</url>
-
-<url>
-  <loc>/index.htmlfaq.html</loc>
-  <lastmod>2025-11-19</lastmod>
-  <priority>0.80</priority>
-</url>
-
-<url>
-  <loc>/index.htmlterms-and-conditions.html</loc>
-  <lastmod>2025-11-19</lastmod>
-  <priority>0.80</priority>
-</url>
-
-<url>
-  <loc>/index.htmlcoc.html</loc>
-  <lastmod>2025-11-19</lastmod>
-  <priority>0.80</priority>
-</url>
-
-<url>
-  <loc>/index.htmlprivacypolicy.html</loc>
-  <lastmod>2025-11-19</lastmod>
-  <priority>0.80</priority>
-</url>
-
-<url>
-  <loc>/index.htmlcontact.html</loc>
-  <lastmod>2025-11-19</lastmod>
-  <priority>0.80</priority>
-</url>
 
 </urlset>
