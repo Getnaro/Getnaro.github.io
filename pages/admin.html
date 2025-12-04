@@ -108,7 +108,30 @@
                  </div>
             </div>
         </div>
+        <div id="app-selector-modal" class="modal-overlay">
+    <div class="modal-box max-w-2xl">
+        <div class="flex justify-between items-center pb-3 border-b border-gray-700 mb-4">
+            <h3 class="text-2xl font-bold text-white"><i class="fa-solid fa-list-check gn-text mr-2"></i> Select Featured Apps</h3>
+            <button onclick="document.getElementById('app-selector-modal').style.display='none'" class="text-gray-500 hover:text-white text-3xl leading-none">&times;</button>
+        </div>
 
+        <div class="mb-4">
+            <input type="text" id="app-selector-search" placeholder="Search apps by name or ID..." class="w-full bg-black border border-gray-700 rounded p-2 text-white focus:border-purple-500 outline-none">
+        </div>
+        
+        <div class="max-h-96 overflow-y-auto custom-scrollbar p-1">
+            <div id="app-selector-list" class="space-y-2">
+                </div>
+        </div>
+
+        <div class="flex justify-between items-center pt-4 border-t border-gray-700 mt-4">
+            <p class="text-sm text-gray-400">Selected: <span id="app-selector-count" class="gn-text font-bold">0</span></p>
+            <button id="app-selector-done-btn" class="gn-bg hover:bg-purple-600 text-white px-6 py-2 rounded-lg text-sm font-bold shadow-lg transition">
+                <i class="fa-solid fa-check mr-2"></i> Done
+            </button>
+        </div>
+    </div>
+</div>
         <div id="login-section" class="flex items-center justify-center p-4 min-h-[60vh]">
             <div class="bg-gray-900 p-8 rounded-2xl border border-gray-800 shadow-2xl w-full max-w-md text-center relative overflow-hidden">
                 <div class="absolute top-0 left-0 w-full h-1 gn-bg"></div>
@@ -349,7 +372,35 @@
                     </div>
                     <div id="config-status-msg" class="mt-6 text-sm font-mono text-green-400"></div>
                 </div>
-                
+                <div class="col-span-1 lg:col-span-3 bg-gray-900 p-8 rounded-2xl border border-gray-700 shadow-xl mt-8">
+    <h3 class="text-xl font-bold mb-6 border-b border-gray-800 pb-4 text-white flex items-center gap-3">
+        <i class="fa-solid fa-fire text-red-500"></i> Featured Content Manager
+    </h3>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="bg-black/40 p-5 rounded-xl border border-gray-800">
+            <h4 class="text-xs font-bold text-gray-500 uppercase mb-3">Hot Apps (Top Carousel)</h4>
+            <div id="hot-apps-display" class="min-h-[50px] bg-gray-900 border border-gray-700 rounded p-2 flex flex-wrap gap-2 text-xs text-gray-300">No apps selected.</div>
+            <button data-target="hot" class="select-app-btn w-full mt-3 border border-dashed border-purple-500 text-purple-400 hover:bg-purple-900/20 py-2 rounded-lg text-xs font-bold transition">
+                <i class="fa-solid fa-plus mr-1"></i> Select Hot Apps (Max 4)
+            </button>
+        </div>
+        <div class="bg-black/40 p-5 rounded-xl border border-gray-800">
+            <h4 class="text-xs font-bold text-gray-500 uppercase mb-3">Updated Apps (Section)</h4>
+            <div id="updated-apps-display" class="min-h-[50px] bg-gray-900 border border-gray-700 rounded p-2 flex flex-wrap gap-2 text-xs text-gray-300">No apps selected.</div>
+            <button data-target="updated" class="select-app-btn w-full mt-3 border border-dashed border-purple-500 text-purple-400 hover:bg-purple-900/20 py-2 rounded-lg text-xs font-bold transition">
+                <i class="fa-solid fa-plus mr-1"></i> Select Updated Apps (Max 12)
+            </button>
+        </div>
+    </div>
+    
+    <div class="flex justify-end mt-6">
+        <button id="save-featured-btn" class="gn-bg hover:bg-purple-600 text-white px-6 py-2 rounded-lg text-sm font-bold shadow-lg transition">
+            <i class="fa-solid fa-save mr-2"></i> Save Featured Apps
+        </button>
+    </div>
+    <p id="featured-status-msg" class="mt-4 text-sm font-mono text-green-400"></p>
+</div>
                 <div class="col-span-1 lg:col-span-3 bg-gray-900 p-8 rounded-2xl border border-gray-700 shadow-xl mt-8">
                     <div class="flex justify-between items-center mb-6 border-b border-gray-800 pb-4">
                         <h3 class="text-xl font-bold text-white flex items-center gap-3">

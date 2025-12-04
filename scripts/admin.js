@@ -76,7 +76,12 @@ const els = {
     loginBtn: document.getElementById('admin-login-btn'),
     loginMsg: document.getElementById('login-msg'),
     logoutBtn: document.getElementById('logout-btn'),
-    
+    appSelectorModal: document.getElementById('app-selector-modal'),
+    appSelectorSearch: document.getElementById('app-selector-search'),
+    appSelectorList: document.getElementById('app-selector-list'),
+    appSelectorCount: document.getElementById('app-selector-count'),
+    appSelectorDoneBtn: document.getElementById('app-selector-done-btn'),
+    selectAppButtons: document.querySelectorAll('.select-app-btn'),
     // Stats
     stats: {
         apps: document.getElementById('total-apps-count'),
@@ -138,6 +143,13 @@ const els = {
     toggleSeo: document.getElementById('toggle-seo'),
     toggleCache: document.getElementById('toggle-cache'),
     configStatusMsg: document.getElementById('config-status-msg'),
+
+    featuredHotAppsInput: document.getElementById('featured-hot-apps-input'),
+    featuredUpdatedAppsInput: document.getElementById('featured-updated-apps-input'),
+    saveFeaturedBtn: document.getElementById('save-featured-btn'),
+    featuredStatusMsg: document.getElementById('featured-status-msg'),
+    hotAppsDisplay: document.getElementById('hot-apps-display'),
+        updatedAppsDisplay: document.getElementById('updated-apps-display'),
 
     // Patch Notes
     patchTableBody: document.getElementById('patch-table-body'),
@@ -292,8 +304,187 @@ function loadSiteConfig() {
     els.toggleMaintenance.onchange = handleConfigChange;
     els.toggleSeo.onchange = handleConfigChange;
     els.toggleCache.onchange = handleConfigChange;
+    els.saveFeaturedBtn.addEventListener('click', saveFeaturedApps);
+    initAppSelectorModal();
+}
+// --- STATE VARIABLE for Featured Apps ---
+let currentFeaturedApps = {
+    hot: [],
+    updated: []
+};
+
+// --- NEW FUNCTION: FEATURED APP MANAGEMENT ---
+async function saveFeaturedApps() {
+    const payload = {
+        featuredApps: {
+            hot: currentFeaturedApps.hot,
+            updated: currentFeaturedApps.updated
+        },
+        lastModified: new Date().toISOString()
+    };
+
+    els.featuredStatusMsg.textContent = "Saving...";
+    els.saveFeaturedBtn.disabled = true;
+
+    try {
+        await updateRTDB(dbRef(rtdb, "site_config"), payload);
+
+        els.featuredStatusMsg.textContent = "✓ Featured apps list saved successfully.";
+        els.featuredStatusMsg.style.color = "#10b981";
+        showToast("Featured Apps Saved", 'success');
+
+    } catch(e) {
+        els.featuredStatusMsg.textContent = "✗ Error saving featured apps: " + e.message;
+        els.featuredStatusMsg.style.color = "#ef4444";
+        showToast("Featured Apps Save Failed", 'error');
+    } finally {
+        els.saveFeaturedBtn.disabled = false;
+        setTimeout(() => els.featuredStatusMsg.textContent = '', 3000);
+    }
+}
+// ======================================================
+// --- NEW FEATURE: APP SELECTOR MODAL LOGIC ---
+// ======================================================
+
+let modalTarget = ''; // 'hot' or 'updated'
+let modalSelections = new Set(); // Tracks currently selected IDs in the modal
+
+function initAppSelectorModal() {
+    els.selectAppButtons.forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            modalTarget = e.currentTarget.dataset.target;
+            
+            // Populate selections from the current state
+            modalSelections = new Set(currentFeaturedApps[modalTarget]);
+            
+            // Set limits based on target
+            const max = modalTarget === 'hot' ? 4 : 12;
+            document.getElementById('app-selector-modal').querySelector('h3').textContent = 
+                `Select ${modalTarget === 'hot' ? 'Hot Apps (Max 4)' : 'Updated Apps (Max 12)'}`;
+            
+            // Render the list and open the modal
+            renderAppSelectorList();
+            els.appSelectorSearch.value = '';
+            els.appSelectorModal.style.display = 'flex';
+        });
+    });
+
+    els.appSelectorSearch.addEventListener('input', renderAppSelectorList);
+    els.appSelectorDoneBtn.addEventListener('click', handleDoneSelection);
 }
 
+function renderAppSelectorList() {
+    const searchTerm = els.appSelectorSearch.value.toLowerCase().trim();
+    const max = modalTarget === 'hot' ? 4 : 12;
+    els.appSelectorList.innerHTML = '';
+    
+    let filteredApps = allApps.filter(app => 
+        app.name.toLowerCase().includes(searchTerm) || app.id.toLowerCase().includes(searchTerm)
+    );
+    
+    // Sort selected items to the top
+    filteredApps.sort((a, b) => {
+        const aSelected = modalSelections.has(a._id);
+        const bSelected = modalSelections.has(b._id);
+        if (aSelected && !bSelected) return -1;
+        if (!aSelected && bSelected) return 1;
+        return 0; // Maintain existing sort (alphabetical/last updated)
+    });
+    
+    els.appSelectorCount.textContent = modalSelections.size;
+
+    if (filteredApps.length === 0) {
+        els.appSelectorList.innerHTML = `<p class="text-center text-gray-600 py-6">No apps match the search.</p>`;
+        return;
+    }
+
+    filteredApps.forEach(app => {
+        const isSelected = modalSelections.has(app._id);
+        const isDisabled = !isSelected && modalSelections.size >= max;
+
+        const div = document.createElement('div');
+        div.className = `flex items-center gap-3 p-3 rounded-lg border transition cursor-pointer 
+                        ${isSelected ? 'bg-purple-900/50 border-purple-500' : 
+                                       isDisabled ? 'bg-gray-800/20 border-gray-800 opacity-50' : 
+                                                    'bg-gray-800 hover:bg-gray-700 border-gray-700'}`;
+        
+        div.innerHTML = `
+            <input type="checkbox" id="check-${app._id}" value="${app._id}" 
+                class="w-4 h-4 rounded text-purple-600 focus:ring-purple-500 bg-black border-gray-600 cursor-pointer"
+                ${isSelected ? 'checked' : ''}
+                ${isDisabled ? 'disabled' : ''}>
+            <div class="flex-grow min-w-0">
+                <p class="text-sm font-bold text-white truncate">${app.name}</p>
+                <p class="text-xs text-gray-500 font-mono truncate">ID: ${app.id || app._id}</p>
+            </div>
+            ${isDisabled && !isSelected ? '<span class="text-red-400 text-xs font-bold">MAX</span>' : ''}
+        `;
+
+        const checkbox = div.querySelector('input[type="checkbox"]');
+        
+        div.addEventListener('click', (e) => {
+            if (e.target.tagName !== 'INPUT' && !isDisabled) {
+                checkbox.checked = !checkbox.checked;
+            }
+            // Trigger change event manually
+            checkbox.dispatchEvent(new Event('change'));
+        });
+
+        checkbox.addEventListener('change', (e) => {
+            const id = e.target.value;
+            if (e.target.checked) {
+                if (modalSelections.size < max) {
+                    modalSelections.add(id);
+                } else {
+                    // Prevent check if max reached
+                    e.target.checked = false; 
+                    showToast(`Maximum of ${max} apps for this section.`, 'error');
+                }
+            } else {
+                modalSelections.delete(id);
+            }
+            renderAppSelectorList(); // Re-render to update counts and disabled states
+        });
+        
+        // Ensure checkbox state is correct on initial render
+        if (isSelected) checkbox.checked = true;
+
+        els.appSelectorList.appendChild(div);
+    });
+}
+
+function handleDoneSelection() {
+    // Save the temporary modal selections to the global state
+    currentFeaturedApps[modalTarget] = Array.from(modalSelections);
+    
+    // Close the modal
+    els.appSelectorModal.style.display = 'none';
+    
+    // Re-render the display area on the admin page
+    renderFeaturedAppsDisplay();
+    showToast(`${currentFeaturedApps[modalTarget].length} apps selected for ${modalTarget}.`, 'success');
+}
+
+function renderFeaturedAppsDisplay() {
+    const renderList = (ids, container, max) => {
+        container.innerHTML = '';
+        if (ids.length === 0) {
+            container.innerHTML = 'No apps selected.';
+            return;
+        }
+
+        const appNames = ids.map(id => {
+            const app = allApps.find(a => a._id === id);
+            return app ? `<span class="bg-purple-600 px-2 py-1 rounded-full text-white font-bold text-[10px]">${app.name}</span>` : 
+                         `<span class="bg-red-600 px-2 py-1 rounded-full text-white font-bold text-[10px]">${id} (Missing)</span>`;
+        }).join('');
+
+        container.innerHTML = `${appNames}`;
+    };
+
+    renderList(currentFeaturedApps.hot, els.hotAppsDisplay, 4);
+    renderList(currentFeaturedApps.updated, els.updatedAppsDisplay, 12);
+}
 // --- APP MANAGEMENT (Firestore) ---
 function loadApps() {
     const q = query(collection(firestore, "apps"));

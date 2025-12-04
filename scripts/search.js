@@ -1,34 +1,27 @@
 /**
  * Universal Site Search Module
- * Search functionality only - NO AI Assistant
+ * Corrected to use firebase-config.js for dependency management.
  */
 
 // --- Module Imports ---
-import { getApps, initializeApp } from "//www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-import { getFirestore, collection, getDocs } from "//www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+// We import ONLY the necessary functions from the specific Firebase services
+import { getApps, initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+// We import the main app instance from the central config file
+import { mainApp } from './firebase-config.js'; 
+
 
 // --- GLOBAL VARIABLES ---
 let BASE_URL = ''; 
 let universalSearchData = []; 
-let db = null;
-
-// --- FIREBASE CONFIG ---
-const firebaseConfig = {
-  apiKey: "AIzaSyCtX1G_OEXmkKtBNGzWQFEYiEWibrMIFrg",
-  authDomain: "user-getnaro.firebaseapp.com",
-  databaseURL: "https://user-getnaro-default-rtdb.asia-southeast1.firebasedatabase.app",
-  projectId: "user-getnaro",
-  storageBucket: "user-getnaro.firebasestorage.app",
-  messagingSenderId: "264425704576",
-  appId: "1:264425704576:web:cfd98a1f627e9a59cc2a65"
-};
+let db = null; // Firestore instance
 
 // --- Get or Initialize Firestore ---
+// Function updated to use the imported mainApp instance
 function getFirestoreInstance() {
     if (db) return db;
     try {
-        const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
-        db = getFirestore(app);
+        db = getFirestore(mainApp);
         return db;
     } catch (e) {
         console.error("FIREBASE ERROR: Failed to get Firestore instance for Search.", e);
@@ -44,11 +37,11 @@ function getUiElements() {
         closeBtn: document.getElementById("gn-search-close"),
         input: document.getElementById("gn-search-input"),
         resultsBox: document.getElementById("gn-search-results"),
-        popup: document.querySelector(".popup")
+        // Removed: popup (use existing methods to hide it if needed)
     };
 }
 
-// --- Search Algorithm ---
+// --- Search Algorithm (No changes needed) ---
 function universalSearch(query) {
     const q = query.toLowerCase().trim();
     let matches = [];
@@ -81,7 +74,7 @@ function universalSearch(query) {
     return matches.sort((a, b) => b.score - a.score).slice(0, 15);
 }
 
-// --- Fetch Apps from Firebase ---
+// --- Fetch Apps from Firebase (No changes needed except using the correct DB instance) ---
 async function fetchAppsFromDB() {
     const dbInstance = getFirestoreInstance();
     if (!dbInstance) {
@@ -116,7 +109,6 @@ async function fetchAppsFromDB() {
         });
         
         if (dynamicApps.length > 0) {
-            // Add dynamic apps to search index
             dynamicApps.forEach(app => {
                 if (!universalSearchData.some(item => item.id === app.id)) {
                     universalSearchData.push(app);
@@ -134,7 +126,7 @@ async function fetchAppsFromDB() {
     }
 }
 
-// --- Initialize Search Data (Pages Only) ---
+// --- Initialize Search Data (Pages Only - No changes needed) ---
 function initializeSearchData() {
     BASE_URL = window.location.origin;
     const faviconPath = `${BASE_URL}/assests/Favicon.png`;
@@ -142,7 +134,6 @@ function initializeSearchData() {
     // Clear array completely
     universalSearchData = [];
     
-    // Initialize PAGES_DB
     const PAGES_DB = {
         home: `${BASE_URL}/index.html`,
         login: `${BASE_URL}/pages/login.html`,
@@ -156,7 +147,7 @@ function initializeSearchData() {
         app: `${BASE_URL}/pages/getnaro-app.html`
     };
 
-    // Add ONLY static page entries (NO hardcoded apps)
+    // Add static page entries
     universalSearchData.push({ id: 'index', name: 'Getnaro Home Page', category: 'Page', path: PAGES_DB.home, img: faviconPath, keywords: ['home', 'main', 'index'] });
     universalSearchData.push({ id: 'getnaro-app', name: 'Download Getnaro Windows App', category: 'Page', path: PAGES_DB.app, img: faviconPath, keywords: ['download', 'client', 'windows', 'getnaro', 'installer'] });
     universalSearchData.push({ id: 'about', name: 'About Us Page', category: 'Page', path: PAGES_DB.about, img: faviconPath, keywords: ['about', 'team', 'company', 'mission', 'vision'] });
@@ -167,21 +158,16 @@ function initializeSearchData() {
     universalSearchData.push({ id: 'profile', name: 'My Profile / User Dashboard', category: 'Account', path: PAGES_DB.profile, img: faviconPath, keywords: ['profile', 'dashboard', 'user', 'settings'] });
 
     console.log(`✅ Search initialized with ${universalSearchData.length} PAGES ONLY.`);
-    console.log("📄 Pages loaded:", universalSearchData.map(i => i.name));
 }
 
 // --- Main Search Initialization ---
 async function initSearch() {
-    // Don't initialize on view.html page
     if (window.location.pathname.includes("view.html")) {
         console.log("⏭️ Skipping search init on view.html");
         return;
     }
     
-    // Initialize search data (pages only)
     initializeSearchData();
-    
-    // Get UI elements
     const ui = getUiElements();
     
     if (!ui.openBtn || !ui.overlay || !ui.input || !ui.resultsBox) {
@@ -189,14 +175,12 @@ async function initSearch() {
         return;
     }
 
-    // Fetch apps from Firebase FIRST (wait for it to complete)
     await fetchAppsFromDB();
     
     console.log("🔍 Final search index:", universalSearchData.map(i => `${i.name} (${i.category})`));
 
     // OPEN SEARCH OVERLAY
     ui.openBtn.addEventListener("click", () => {
-        if (ui.popup) ui.popup.style.display = "none";
         ui.overlay.style.display = "flex";
         ui.input.value = "";
         ui.resultsBox.innerHTML = `<div class="no-result initial-msg">Type to search for apps, drivers, or site pages.</div>`;
@@ -254,12 +238,10 @@ async function initSearch() {
                 itemDiv.onclick = () => {
                     console.log("🔗 Navigating to:", item.path);
                     
-                    // Close search overlay
                     ui.overlay.style.display = "none";
                     ui.input.value = "";
                     ui.resultsBox.innerHTML = "";
                     
-                    // Navigate after cleanup
                     setTimeout(() => {
                         window.location.href = item.path;
                     }, 50);
@@ -268,7 +250,6 @@ async function initSearch() {
                 ui.resultsBox.appendChild(itemDiv);
             });
             
-            // Adjust padding
             ui.resultsBox.style.padding = ui.resultsBox.children.length > 0 ? '15px' : '0';
         }, 200);
     });
@@ -278,4 +259,3 @@ async function initSearch() {
 
 // Initialize on DOM ready
 document.addEventListener('DOMContentLoaded', initSearch);
-import { mainAuth, mainDb, mainFirestore, mainStorage } from './firebase-config.js';
