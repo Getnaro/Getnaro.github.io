@@ -551,41 +551,26 @@
 <script type="module" src="/scripts/stats.js"></script>
 <script type="module" src="/scripts/search.js"></script>
 <script type="module" src="/scripts/ai_assistant.js"></script>
-<script type="module">
-    // Production-safe imports with error handling
-    let mainDb;
+<script>
+    // Initialize Firebase (using compat version for better compatibility)
+    const firebaseConfig = {
+        apiKey: "AIzaSyCtX1G_OEXmkKtBNGzWQFEYiEWibrMIFrg",
+        authDomain: "user-getnaro.firebaseapp.com",
+        databaseURL: "https://user-getnaro-default-rtdb.asia-southeast1.firebasedatabase.app",
+        projectId: "user-getnaro",
+        storageBucket: "user-getnaro.firebasestorage.app",
+        messagingSenderId: "264425704576",
+        appId: "1:264425704576:web:cfd98a1f627e9a59cc2a65"
+    };
     
-    try {
-        // Try to import from firebase-config
-        const config = await import('./scripts/firebase-config.js');
-        mainDb = config.mainDb;
-        console.log('✅ Imported mainDb from firebase-config');
-    } catch (error) {
-        console.warn('⚠️ Could not import firebase-config, initializing directly');
-        
-        // Fallback: Initialize directly
-        const { initializeApp } = await import("https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js");
-        const { getDatabase } = await import("https://www.gstatic.com/firebasejs/11.6.1/firebase-database.js");
-        
-        const firebaseConfig = {
-            apiKey: "AIzaSyCtX1G_OEXmkKtBNGzWQFEYiEWibrMIFrg",
-            authDomain: "user-getnaro.firebaseapp.com",
-            databaseURL: "https://user-getnaro-default-rtdb.asia-southeast1.firebasedatabase.app",
-            projectId: "user-getnaro",
-            storageBucket: "user-getnaro.firebasestorage.app",
-            messagingSenderId: "264425704576",
-            appId: "1:264425704576:web:cfd98a1f627e9a59cc2a65"
-        };
-        
-        const app = initializeApp(firebaseConfig);
-        mainDb = getDatabase(app);
-        console.log('✅ Initialized Firebase directly');
+    // Initialize only if not already initialized
+    if (!firebase.apps.length) {
+        firebase.initializeApp(firebaseConfig);
+        console.log('✅ Firebase initialized');
     }
     
-    // Import Firebase functions
-    const { ref, set, get } = await import("https://www.gstatic.com/firebasejs/11.6.1/firebase-database.js");
-    
-    console.log('📧 Newsletter: Ready');
+    const database = firebase.database();
+    console.log('✅ Database ready');
     
     // Custom Popup Function
     window.showSubscribePopup = function(message, isSuccess = true) {
@@ -618,15 +603,18 @@
         }, 4000);
     };
     
-    // Newsletter Form Handler
-    const newsletterForm = document.querySelector('.newsletter-form');
-    
-    if (!newsletterForm) {
-        console.warn('⚠️ Newsletter form not found');
-    } else {
+    // Wait for DOM to load
+    document.addEventListener('DOMContentLoaded', function() {
+        const newsletterForm = document.querySelector('.newsletter-form');
+        
+        if (!newsletterForm) {
+            console.warn('⚠️ Newsletter form not found');
+            return;
+        }
+        
         console.log('✅ Newsletter form found');
         
-        newsletterForm.addEventListener('submit', async (e) => {
+        newsletterForm.addEventListener('submit', async function(e) {
             e.preventDefault();
             console.log('📝 Form submitted');
             
@@ -654,44 +642,59 @@
             try {
                 console.log('🔄 Processing subscription...');
                 
-                // Encode email for Firebase key
+                // Encode email for Firebase key (replace . with ,)
                 const encodedEmail = email.replace(/\./g, ',');
-                const subscriberRef = ref(mainDb, `newsletter_subscribers/${encodedEmail}`);
+                const subscriberRef = database.ref('newsletter_subscribers/' + encodedEmail);
+                
+                console.log('📡 Checking if already subscribed...');
                 
                 // Check if already subscribed
-                const snapshot = await get(subscriberRef);
+                subscriberRef.once('value', function(snapshot) {
+                    if (snapshot.exists()) {
+                        console.log('✅ Already subscribed');
+                        showSubscribePopup('You\'re already on our list! 🎉', false);
+                        btn.innerHTML = originalText;
+                        btn.disabled = false;
+                    } else {
+                        console.log('💾 Saving new subscriber...');
+                        
+                        // Save to RTDB
+                        subscriberRef.set({
+                            email: email,
+                            name: email.split('@')[0],
+                            subscribedAt: Date.now(),
+                            source: 'store_page',
+                            status: 'active'
+                        }).then(function() {
+                            console.log('✅ Successfully subscribed!');
+                            showSubscribePopup('Welcome to Getnaro! You\'ll receive updates on new apps, exclusive features, and more.', true);
+                            input.value = "";
+                            btn.innerHTML = originalText;
+                            btn.disabled = false;
+                        }).catch(function(error) {
+                            console.error('❌ Save Error:', error);
+                            showSubscribePopup('Something went wrong. Please try again later.', false);
+                            btn.innerHTML = originalText;
+                            btn.disabled = false;
+                        });
+                    }
+                }, function(error) {
+                    console.error('❌ Check Error:', error);
+                    showSubscribePopup('Something went wrong. Please try again later.', false);
+                    btn.innerHTML = originalText;
+                    btn.disabled = false;
+                });
                 
-                if (snapshot.exists()) {
-                    console.log('✅ Already subscribed');
-                    showSubscribePopup('You\'re already on our list! 🎉', false);
-                } else {
-                    console.log('💾 Saving new subscriber...');
-                    
-                    // Save to RTDB
-                    await set(subscriberRef, {
-                        email: email,
-                        name: email.split('@')[0],
-                        subscribedAt: Date.now(),
-                        source: 'store_page',
-                        status: 'active'
-                    });
-                    
-                    console.log('✅ Successfully subscribed!');
-                    showSubscribePopup('Welcome to Getnaro! You\'ll receive updates on new apps, exclusive features, and more.', true);
-                    input.value = "";
-                }
             } catch (error) {
                 console.error('❌ Subscribe Error:', error);
-                console.error('Error code:', error.code);
-                console.error('Error message:', error.message);
                 showSubscribePopup('Something went wrong. Please try again later.', false);
+                btn.innerHTML = originalText;
+                btn.disabled = false;
             }
-            
-            // Reset Button
-            btn.innerHTML = originalText;
-            btn.disabled = false;
         });
-    }
+        
+        console.log('✅ Newsletter system ready');
+    });
 </script>
 <script>
     async function fetchAndRenderApps() {
