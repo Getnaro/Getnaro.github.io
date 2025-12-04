@@ -2383,3 +2383,126 @@ body.dark-mode .search-result-item {
         font-size: 15px;
     }
 }
+/* ================== STORE.HTML OS LIST STYLING (PROFESSIONAL LIST) ================== */
+
+.gn-os-title {
+    /* Title Style from Admin Panel */
+    text-align: center;
+    font-size: 32px;
+    margin: 60px 0 30px 0;
+    color: var(--text);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+.gn-os-title i {
+    margin-right: 12px;
+}
+
+.gn-os-master-container {
+    width: 95%;
+    max-width: 1700px;
+    margin: 40px auto;
+    padding: 0 20px;
+}
+
+.gn-os-category-wrapper {
+    margin-bottom: 50px;
+    padding-top: 20px;
+}
+
+.gn-os-category-header {
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 20px;
+    border-bottom: 2px solid #9F00FF;
+    padding-bottom: 10px;
+    letter-spacing: 1px;
+    display: flex;
+    align-items: center;
+}
+
+.gn-os-category-header i {
+    margin-right: 12px;
+}
+
+/* Category Specific Colors */
+.gn-os-category-header.windows i { color: #0078D4; }
+.gn-os-category-header.linux i { color: #ff9900; }
+.gn-os-category-header.android i { color: #3DDC84; }
+
+/* Horizontal Scrolling Container */
+.gn-os-list-container {
+    display: flex;
+    gap: 20px;
+    overflow-x: auto; /* Enable horizontal scrolling */
+    padding: 10px 0;
+    -webkit-overflow-scrolling: touch;
+    scroll-snap-type: x mandatory;
+}
+
+/* Individual OS Card - Clean List Item */
+.os-list-item {
+    flex: 0 0 280px; /* Fixed width for consistent scrolling */
+    min-height: 100px;
+    background: var(--box);
+    border: 1px solid var(--border-color, #333);
+    border-radius: 8px;
+    padding: 15px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    transition: all 0.3s;
+    scroll-snap-align: start;
+}
+
+.os-list-item:hover {
+    border-color: #9F00FF;
+    box-shadow: 0 2px 10px rgba(159, 0, 255, 0.2);
+}
+
+.os-list-item img {
+    width: 60px;
+    height: 60px;
+    object-fit: contain;
+    flex-shrink: 0;
+}
+
+.os-list-details {
+    flex-grow: 1;
+    text-align: left;
+}
+
+.os-list-details h4 {
+    font-size: 16px;
+    margin: 0 0 4px 0;
+    color: var(--text);
+}
+
+.os-list-details p {
+    font-size: 12px;
+    color: #999;
+    margin: 0;
+    font-weight: 500;
+}
+
+.os-list-details a {
+    background: #9F00FF;
+    color: white !important;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none;
+    display: block;
+    margin-top: 8px;
+    text-align: center;
+}
+/* Loader for list */
+.gn-list-loader {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    min-height: 100px;
+}

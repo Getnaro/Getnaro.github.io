@@ -173,6 +173,7 @@
                 <div class="flex flex-wrap gap-2 border-b border-gray-700 pb-2">
                     <button data-tab="stats" class="tab-button bg-gray-800 hover:gn-bg text-gray-300 px-4 py-2 rounded-lg font-bold transition active"><i class="fa-solid fa-chart-line mr-2"></i>Global Stats</button>
                     <button data-tab="apps" class="tab-button bg-gray-800 hover:gn-bg text-gray-300 px-4 py-2 rounded-lg font-bold transition"><i class="fa-solid fa-list-check mr-2"></i>App Library</button>
+                    <button data-tab="os" class="tab-button bg-gray-800 hover:gn-bg text-gray-300 px-4 py-2 rounded-lg font-bold transition"><i class="fa-solid fa-microchip mr-2"></i>OS Library</button>
                     <button data-tab="users" class="tab-button bg-gray-800 hover:gn-bg text-gray-300 px-4 py-2 rounded-lg font-bold transition"><i class="fa-solid fa-users mr-2"></i>User Database</button>
                     <button data-tab="patches" class="tab-button bg-gray-800 hover:gn-bg text-gray-300 px-4 py-2 rounded-lg font-bold transition"><i class="fa-solid fa-scroll mr-2"></i>Patch Notes</button>
                     <button data-tab="email" class="tab-button bg-gray-800 hover:gn-bg text-gray-300 px-4 py-2 rounded-lg font-bold transition">
@@ -251,7 +252,67 @@
                     </div>
                 </div>
             </div>
+            <div id="tab-os" class="tab-content hidden">
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    <div class="lg:col-span-1 bg-gray-900 p-8 rounded-2xl border border-gray-800 h-fit sticky top-6 shadow-xl">
+                         <h3 class="text-xl font-bold mb-6 pb-4 border-b border-gray-800 flex items-center gap-3 text-white">
+                            <i class="fa-solid fa-globe gn-text"></i> OS Editor
+                        </h3>
+                        <input type="hidden" id="os-doc-id">
+                        <div class="space-y-4">
+                            <div><label class="block text-xs text-gray-500 font-bold mb-1">ID (must be URL safe)</label><input type="text" id="os-id" class="w-full bg-black border border-gray-700 rounded p-3 text-white focus:border-purple-500 outline-none"></div>
+                            <div><label class="block text-xs text-gray-500 font-bold mb-1">Name</label><input type="text" id="os-name" class="w-full bg-black border border-gray-700 rounded p-3 text-white focus:border-purple-500 outline-none"></div>
+                            
+                            <div><label class="block text-xs text-gray-500 font-bold mb-1">Category</label><select id="os-category" class="w-full bg-black border border-gray-700 rounded p-3 text-white outline-none">
+                                <option value="windows">Windows</option>
+                                <option value="linux">Linux</option>
+                                <option value="android">Android / Other</option>
+                            </select></div>
+                            
+                            <div class="grid grid-cols-2 gap-4">
+                                <div><label class="block text-xs text-gray-500 font-bold mb-1">Architecture</label><input type="text" id="os-architecture" class="w-full bg-black border border-gray-700 rounded p-3 text-white outline-none" placeholder="e.g., x64"></div>
+                                <div><label class="block text-xs text-gray-500 font-bold mb-1">File Size</label><input type="text" id="os-file-size" class="w-full bg-black border border-gray-700 rounded p-3 text-white outline-none" placeholder="e.g., 5.8 GB"></div>
+                            </div>
+                            
+                            <div><label class="block text-xs text-gray-500 font-bold mb-1">Release Date</label><input type="date" id="os-release-date" class="w-full bg-black border border-gray-700 rounded p-3 text-white outline-none"></div>
+                            
+                            <div><label class="block text-xs text-gray-500 font-bold mb-1">YouTube Video ID</label><input type="text" id="os-youtube-id" class="w-full bg-black border border-gray-700 rounded p-3 text-red-400 outline-none" placeholder="e.g., dQw4w9WgXcQ (from youtube.com/watch?v=dQw4w9WgXcQ)"></div>
 
+                            <div><label class="block text-xs text-gray-500 font-bold mb-1">Key Features</label><input type="text" id="os-key-features" class="w-full bg-black border border-gray-700 rounded p-3 text-white outline-none" placeholder="Comma separated, e.g., Secure Boot, Optimized"></div>
+                            
+                            <div><label class="block text-xs text-gray-500 font-bold mb-1">Description</label><textarea id="os-desc" rows="4" class="w-full bg-black border border-gray-700 rounded p-3 text-gray-300 outline-none"></textarea></div>
+                            
+                            <div><label class="block text-xs text-gray-500 font-bold mb-1">Download Link (ISO)</label><input type="text" id="os-download-link" class="w-full bg-black border border-gray-700 rounded p-3 text-blue-400 outline-none"></div>
+                            <div><label class="block text-xs text-gray-500 font-bold mb-1">Icon/Image URL</label><input type="text" id="os-image" class="w-full bg-black border border-gray-700 rounded p-3 text-white outline-none"></div>
+                            
+                            <div class="flex gap-3 pt-4">
+                                <button id="save-os-btn" class="flex-1 gn-bg hover:bg-purple-600 text-white py-3 rounded-lg font-bold transition shadow-lg">Save OS</button>
+                                <button id="clear-os-form-btn" class="px-6 bg-gray-800 hover:bg-gray-700 text-white py-3 rounded-lg font-bold transition">Clear</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="lg:col-span-2 bg-gray-900 p-8 rounded-2xl border border-gray-800 shadow-xl">
+                        <div class="flex justify-between items-center mb-8">
+                            <h3 class="text-xl font-bold text-white flex items-center gap-3"><i class="fa-solid fa-box-archive gn-text"></i> OS Download Library</h3>
+                            <div class="relative w-72">
+                                <input type="text" id="search-os" placeholder="Search..." class="bg-black border border-gray-700 rounded-full px-5 py-2 pl-10 text-sm text-white w-full focus:border-purple-500 outline-none">
+                                <i class="fa-solid fa-search absolute left-4 top-3 text-gray-500"></i>
+                            </div>
+                        </div>
+                        <div class="overflow-hidden rounded-xl border border-gray-800">
+                            <table class="w-full text-left text-sm text-gray-400">
+                                <thead class="bg-black text-gray-300 uppercase font-bold tracking-wider">
+                                    <tr><th class="px-6 py-4 border-b border-gray-800">Name</th><th class="px-6 py-4 border-b border-gray-800">Category</th><th class="px-6 py-4 border-b border-gray-800 text-right">Actions</th></tr>
+                                </thead>
+                                <tbody id="os-table-body" class="divide-y divide-gray-800 bg-gray-900/50">
+                                    <tr><td colspan="3" class="px-6 py-4 text-center text-gray-500">Loading OS data...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
             <div id="tab-users" class="tab-content hidden">
                 <div class="bg-gray-900 p-8 rounded-2xl border border-gray-800 shadow-xl">
                     <h3 class="text-xl font-bold mb-6 pb-4 border-b border-gray-800 flex items-center gap-3 text-white"><i class="fa-solid fa-database gn-text"></i> User Search & Management</h3>

@@ -220,6 +220,7 @@
     <button class="gn-next">&#10095;</button>
 
 </div>
+
 <!-- ================= STATS BAR ================= -->
 <div class="stats-container">
     
@@ -308,6 +309,32 @@
         </div>
         <!-- Apps will be injected here by JavaScript -->
     </div>
+<h2 class="section-title gn-os-title"><i class="fa-solid fa-cloud-arrow-down" style="color: #00e676;"></i> Operating System Library</h2>
+
+<div class="gn-os-master-container">
+    
+    <div class="gn-os-category-wrapper">
+        <h3 class="gn-os-category-header windows"><i class="fa-brands fa-windows"></i> Windows Downloads</h3>
+        <div class="gn-os-list-container" id="os-windows-container">
+            <div class="gn-list-loader"><div class="gn-spinner"></div></div>
+        </div>
+    </div>
+    
+    <div class="gn-os-category-wrapper">
+        <h3 class="gn-os-category-header linux"><i class="fa-brands fa-linux"></i> Linux Distributions</h3>
+        <div class="gn-os-list-container" id="os-linux-container">
+             <div class="gn-list-loader"><div class="gn-spinner"></div></div>
+        </div>
+    </div>
+
+    <div class="gn-os-category-wrapper">
+        <h3 class="gn-os-category-header android"><i class="fa-brands fa-android"></i> Android / Other OS</h3>
+        <div class="gn-os-list-container" id="os-android-container">
+             <div class="gn-list-loader"><div class="gn-spinner"></div></div>
+        </div>
+    </div>
+
+</div>
 <h2 class="section-title"><i class="fa-solid fa-fire" style="color:#ff0055;"></i> Hot & Updated</h2>
 <div class="container" id="hot-apps-container">
     <div class="gn-grid-loader"><div class="gn-spinner"></div></div>
@@ -392,6 +419,7 @@
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
 <script type="module" src="/scripts/app_rendering.js"></script> 
 <script type="module" src="/scripts/search.js"></script> 
+<script type="module" src="/scripts/os_rendering.js"></script>
 <script type="module" src="/scripts/newsletter.js"></script>
 <script type="module" src="/scripts/appstats.js"></script>
 <script type="module" src="/scripts/app_tracking.js"></script>

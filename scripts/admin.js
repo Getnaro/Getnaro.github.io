@@ -123,7 +123,28 @@ const els = {
         link: document.getElementById('app-download-link'),
         image: document.getElementById('app-image')
     },
-    
+    os: {
+        saveBtn: document.getElementById('save-os-btn'),
+        clearBtn: document.getElementById('clear-os-form-btn'),
+        tableBody: document.getElementById('os-table-body'),
+        search: document.getElementById('search-os'),
+        inputs: {
+            docId: document.getElementById('os-doc-id'),
+            id: document.getElementById('os-id'),
+            name: document.getElementById('os-name'),
+            // NEW: Category Select
+            category: document.getElementById('os-category'), 
+            architecture: document.getElementById('os-architecture'),
+            fileSize: document.getElementById('os-file-size'),
+            releaseDate: document.getElementById('os-release-date'),
+            // NEW: YouTube ID
+            youtubeId: document.getElementById('os-youtube-id'),
+            keyFeatures: document.getElementById('os-key-features'),
+            desc: document.getElementById('os-desc'),
+            link: document.getElementById('os-download-link'),
+            image: document.getElementById('os-image')
+        }
+    },
     // User Manager
     userSearchInput: document.getElementById('user-search-input'),
     searchUserBtn: document.getElementById('search-user-btn'),
@@ -234,6 +255,7 @@ function initDashboard() {
     
     // --- 5. INITIALIZE ANNOUNCEMENT MANAGER ---
     initAdvancedAnnouncement(); 
+    loadOSDownloads();
 }
 
 // --- RTDB STATS ---
@@ -1750,4 +1772,180 @@ function buildEmailHTML() {
     </html>`;
     
     return html;
+}
+let allOS = [];
+
+function loadOSDownloads() {
+    // Listen to the parent node to get all categories
+    const osRef = dbRef(rtdb, 'os_config/featured_os'); 
+    
+    onValue(osRef, (snapshot) => {
+        allOS = [];
+        if (snapshot.exists()) {
+            const data = snapshot.val();
+            
+            // Loop through categories (windows, linux, android)
+            Object.keys(data).forEach(category => {
+                const categoryData = data[category];
+                Object.keys(categoryData).forEach(key => {
+                    // Store the category with the OS item
+                    allOS.push({ id: key, category: category, ...categoryData[key] });
+                });
+            });
+        }
+        allOS.sort((a, b) => (b.releaseDate || "").localeCompare(a.releaseDate || "")); 
+        renderOSTable(allOS);
+    });
+    
+    // Setup listeners (unchanged)
+    els.os.saveBtn.addEventListener('click', saveOS);
+    els.os.clearBtn.addEventListener('click', clearOSForm);
+    els.os.search.addEventListener('input', (e) => {
+        const t = e.target.value.toLowerCase();
+        renderOSTable(allOS.filter(os => os.name.toLowerCase().includes(t) || os.id.toLowerCase().includes(t) || os.category.toLowerCase().includes(t)));
+    });
+}
+
+function renderOSTable(osList) {
+    els.os.tableBody.innerHTML = '';
+    if (osList.length === 0) {
+        els.os.tableBody.innerHTML = `<tr><td colspan="3" class="px-6 py-12 text-center text-gray-500">No operating systems found.</td></tr>`;
+        return;
+    }
+
+    osList.forEach(os => {
+        const tr = document.createElement('tr');
+        tr.className = "hover:bg-gray-800/50 transition border-b border-gray-800 last:border-0 group";
+        tr.innerHTML = `
+            <td class="px-6 py-4">
+                <div class="font-bold text-white group-hover:gn-text transition">${os.name}</div>
+                <div class="text-xs text-gray-600 font-mono">${os.id}</div>
+            </td>
+            <td class="px-6 py-4">
+                <span class="bg-gray-800 text-gray-300 text-xs px-3 py-1 rounded-full border border-gray-700 uppercase font-bold tracking-wide">${os.category || 'N/A'}</span>
+            </td>
+            <td class="px-6 py-4 text-right space-x-2">
+                <button class="edit-os-btn bg-gray-800 hover:bg-blue-600 text-gray-400 hover:text-white w-8 h-8 rounded-md transition" data-id="${os.id}" data-cat="${os.category}"><i class="fa-solid fa-pen"></i></button>
+                <button class="view-os-btn bg-gray-800 hover:bg-green-600 text-gray-400 hover:text-white w-8 h-8 rounded-md transition" data-id="${os.id}" data-cat="${os.category}"><i class="fa-solid fa-eye"></i></button>
+                <button class="del-os-btn bg-gray-800 hover:bg-red-600 text-gray-400 hover:text-white w-8 h-8 rounded-md transition" data-id="${os.id}" data-cat="${os.category}"><i class="fa-solid fa-trash"></i></button>
+            </td>
+        `;
+        els.os.tableBody.appendChild(tr);
+    });
+    
+    // Use data-cat to pass the category to the edit/delete functions
+    document.querySelectorAll('.edit-os-btn').forEach(b => b.addEventListener('click', (e) => editOS(e.currentTarget.dataset.id, e.currentTarget.dataset.cat)));
+    document.querySelectorAll('.del-os-btn').forEach(b => b.addEventListener('click', (e) => deleteOS(e.currentTarget.dataset.id, e.currentTarget.dataset.cat)));
+    document.querySelectorAll('.view-os-btn').forEach(b => b.addEventListener('click', (e) => window.open(`/pages/os_downloads.html?id=${e.currentTarget.dataset.id}&cat=${e.currentTarget.dataset.cat}`, '_blank')));
+}
+
+function editOS(id, category) {
+    const os = allOS.find(o => o.id === id && o.category === category);
+    if (!os) return;
+    
+    // Populate form fields
+    els.os.inputs.docId.value = os.id; 
+    els.os.inputs.id.value = os.id;
+    els.os.inputs.name.value = os.name;
+    els.os.inputs.category.value = os.category || 'windows'; // Set the new category select
+    els.os.inputs.architecture.value = os.architecture || '';
+    els.os.inputs.fileSize.value = os.fileSize || '';
+    els.os.inputs.releaseDate.value = os.releaseDate || '';
+    els.os.inputs.youtubeId.value = os.youtubeId || ''; // New: YouTube ID
+    els.os.inputs.keyFeatures.value = os.keyFeatures || '';
+    els.os.inputs.desc.value = os.description || '';
+    els.os.inputs.link.value = os.downloadLink || ''; 
+    els.os.inputs.image.value = os.image || '';
+    
+    // UI Updates
+    els.os.inputs.id.disabled = true; 
+    els.os.saveBtn.innerHTML = '<i class="fa-solid fa-pen"></i> Update OS';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+async function saveOS() {
+    const inputs = els.os.inputs;
+    const docId = inputs.docId.value || inputs.id.value;
+    const category = inputs.category.value;
+    
+    if(!docId) return showToast("OS ID required", "error");
+    if(!inputs.name.value) return showToast("OS Name required", "error");
+
+    // The key in RTDB must be URL-safe (no ., $, #, [, or ])
+    const safeDocId = docId.replace(/[.#$/\[\]]/g, "-");
+    const safeCategory = category.toLowerCase().replace(/[.#$/\[\]]/g, "-");
+
+    const payload = {
+        id: safeDocId, 
+        name: inputs.name.value,
+        architecture: inputs.architecture.value,
+        fileSize: inputs.fileSize.value,
+        releaseDate: inputs.releaseDate.value,
+        youtubeId: inputs.youtubeId.value || null, // Save the new YouTube ID
+        keyFeatures: inputs.keyFeatures.value,
+        description: inputs.desc.value,
+        downloadLink: inputs.link.value,
+        image: inputs.image.value,
+        lastModified: new Date().toISOString()
+    };
+    
+    els.os.saveBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Saving...';
+    els.os.saveBtn.disabled = true;
+    
+    // The previous path (before update) is needed if the category changed
+    const oldOs = allOS.find(o => o.id === docId);
+    
+    // Construct the dynamic RTDB path
+    const dynamicPath = `os_config/featured_os/${safeCategory}/${safeDocId}`;
+
+    try {
+        // 1. Delete old record if category has changed (prevents orphaned data)
+        if (oldOs && oldOs.category !== safeCategory) {
+            const oldPath = `os_config/featured_os/${oldOs.category}/${oldOs.id}`;
+            await setRTDB(dbRef(rtdb, oldPath), null);
+        }
+        
+        // 2. Write the new/updated record to the correct category path
+        await setRTDB(dbRef(rtdb, dynamicPath), payload);
+        
+        showToast("OS Saved Successfully!", "success");
+        clearOSForm();
+    } catch(e) { 
+        console.error(e);
+        showToast("Error saving OS: " + e.message, 'error');
+    } finally {
+        els.os.saveBtn.innerHTML = '<i class="fa-solid fa-save"></i> Save OS';
+        els.os.saveBtn.disabled = false;
+    }
+}
+
+async function deleteOS(id, category) {
+    showCustomPopup("Delete OS", `Permanently delete OS ID: ${id} from category ${category.toUpperCase()}?`, "confirm", async (confirmed) => {
+        if (confirmed) {
+            try {
+                const dynamicPath = `os_config/featured_os/${category}/${id}`;
+                // Use setRTDB with null to delete the node in RTDB
+                await setRTDB(dbRef(rtdb, dynamicPath), null);
+                showToast("OS Deleted", 'success');
+            } catch(e) { showToast(e.message, 'error'); }
+        }
+    });
+}
+
+function clearOSForm() {
+    els.os.inputs.docId.value = ''; 
+    els.os.inputs.id.value = ''; 
+    els.os.inputs.id.disabled = false;
+    els.os.inputs.name.value = ''; 
+    els.os.inputs.category.value = 'windows'; // Reset to default
+    els.os.inputs.architecture.value = '';
+    els.os.inputs.fileSize.value = '';
+    els.os.inputs.releaseDate.value = ''; 
+    els.os.inputs.youtubeId.value = ''; // Clear new YouTube ID
+    els.os.inputs.keyFeatures.value = '';
+    els.os.inputs.desc.value = ''; 
+    els.os.inputs.link.value = ''; 
+    els.os.inputs.image.value = '';
+    
+    els.os.saveBtn.innerHTML = '<i class="fa-solid fa-save"></i> Save OS';
 }
