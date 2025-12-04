@@ -2443,60 +2443,74 @@ body.dark-mode .search-result-item {
 
 /* Individual OS Card - Clean List Item */
 .os-list-item {
-    flex: 0 0 280px; /* Fixed width for consistent scrolling */
-    min-height: 100px;
-    background: var(--box);
-    border: 1px solid var(--border-color, #333);
-    border-radius: 8px;
+    flex: 0 0 350px; /* Consistent width for scrolling */
+    min-height: 150px;
+    background: var(--box, #1E1E1E);
+    border: none; /* Removed border, using shadow for elevation */
+    border-radius: 12px;
     padding: 15px;
+    
     display: flex;
-    align-items: center;
-    gap: 10px;
+    align-items: center; 
+    justify-content: space-between; /* Spread items */
+    gap: 15px;
+    
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
     transition: all 0.3s;
     scroll-snap-align: start;
 }
 
 .os-list-item:hover {
-    border-color: #9F00FF;
-    box-shadow: 0 2px 10px rgba(159, 0, 255, 0.2);
+    box-shadow: 0 4px 15px rgba(159, 0, 255, 0.3);
+    transform: translateY(-2px);
 }
 
 .os-list-item img {
-    width: 60px;
-    height: 60px;
+    width: 104px; /* Slightly larger logo */
+    height: 104px;
     object-fit: contain;
     flex-shrink: 0;
+    border-radius: 20px; /* Slight rounding for the logo */
 }
 
 .os-list-details {
     flex-grow: 1;
     text-align: left;
+    /* Ensure name and version stack vertically */
+    display: flex;
+    gap: 10px;
+    padding-left: 10px;
+    flex-direction: column;
+    justify-content: center;
+    /* Name and release date are cleaner */
 }
 
 .os-list-details h4 {
-    font-size: 16px;
-    margin: 0 0 4px 0;
-    color: var(--text);
+    font-size: 18px;
+    margin: 0;
+    font-weight: 600;
 }
 
 .os-list-details p {
-    font-size: 12px;
-    color: #999;
-    margin: 0;
-    font-weight: 500;
+    font-size: 13px;
+    color: #A0A0A0;
+    margin: 2px 0 0 0;
 }
 
-.os-list-details a {
+/* Download Icon/Button for OS List */
+.os-list-item a {
+    flex-shrink: 0;
     background: #9F00FF;
     color: white !important;
-    padding: 6px 12px;
-    border-radius: 6px;
-    font-size: 13px;
+    padding: 10px 12px; /* Larger click area */
+    border-radius: 8px;
+    font-size: 14px;
     font-weight: 600;
     text-decoration: none;
-    display: block;
-    margin-top: 8px;
-    text-align: center;
+    transition: background-color 0.2s;
+}
+.os-list-item a:hover {
+    background: #7A00CC;
 }
 /* Loader for list */
 .gn-list-loader {
