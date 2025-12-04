@@ -551,74 +551,146 @@
 <script type="module" src="/scripts/search.js"></script>
 <script type="module" src="/scripts/ai_assistant.js"></script>
 <script type="module">
-    import { mainDb, mainApp } from "/scripts/firebase-config.js";
-    import { ref, set, get } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-database.js";
+    // Production-safe imports with error handling
+    let mainDb;
     
-    console.log('🔍 === FIREBASE DEBUG TEST ===');
-    console.log('mainApp:', mainApp);
-    console.log('mainDb:', mainDb);
-    console.log('Database URL:', mainApp.options.databaseURL);
-    
-    // Test 1: Try writing to a test path
-    async function testWrite() {
-        console.log('🧪 Test 1: Writing to /test_public_write');
-        try {
-            const testRef = ref(mainDb, 'test_public_write');
-            await set(testRef, {
-                test: 'hello',
-                timestamp: Date.now()
-            });
-            console.log('✅ Test write SUCCESS!');
-        } catch (error) {
-            console.error('❌ Test write FAILED:', error);
-            console.error('Error code:', error.code);
-            console.error('Error message:', error.message);
-        }
+    try {
+        // Try to import from firebase-config
+        const config = await import('./scripts/firebase-config.js');
+        mainDb = config.mainDb;
+        console.log('✅ Imported mainDb from firebase-config');
+    } catch (error) {
+        console.warn('⚠️ Could not import firebase-config, initializing directly');
+        
+        // Fallback: Initialize directly
+        const { initializeApp } = await import("https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js");
+        const { getDatabase } = await import("https://www.gstatic.com/firebasejs/11.6.1/firebase-database.js");
+        
+        const firebaseConfig = {
+            apiKey: "AIzaSyCtX1G_OEXmkKtBNGzWQFEYiEWibrMIFrg",
+            authDomain: "user-getnaro.firebaseapp.com",
+            databaseURL: "https://user-getnaro-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "user-getnaro",
+            storageBucket: "user-getnaro.firebasestorage.app",
+            messagingSenderId: "264425704576",
+            appId: "1:264425704576:web:cfd98a1f627e9a59cc2a65"
+        };
+        
+        const app = initializeApp(firebaseConfig);
+        mainDb = getDatabase(app);
+        console.log('✅ Initialized Firebase directly');
     }
     
-    // Test 2: Try writing to newsletter_subscribers
-    async function testNewsletterWrite() {
-        console.log('🧪 Test 2: Writing to /newsletter_subscribers');
-        try {
-            const testEmail = 'test@example,com';
-            const subsRef = ref(mainDb, `newsletter_subscribers/${testEmail}`);
-            await set(subsRef, {
-                email: 'test@example.com',
-                name: 'test',
-                subscribedAt: Date.now(),
-                source: 'debug_test',
-                status: 'active'
-            });
-            console.log('✅ Newsletter write SUCCESS!');
-        } catch (error) {
-            console.error('❌ Newsletter write FAILED:', error);
-            console.error('Error code:', error.code);
-            console.error('Error message:', error.message);
-        }
-    }
+    // Import Firebase functions
+    const { ref, set, get } = await import("https://www.gstatic.com/firebasejs/11.6.1/firebase-database.js");
     
-    // Test 3: Check if we can read anything
-    async function testRead() {
-        console.log('🧪 Test 3: Reading from /stats');
-        try {
-            const statsRef = ref(mainDb, 'stats');
-            const snapshot = await get(statsRef);
-            console.log('✅ Read SUCCESS! Data exists:', snapshot.exists());
-            if (snapshot.exists()) {
-                console.log('Data:', snapshot.val());
+    console.log('📧 Newsletter: Ready');
+    
+    // Custom Popup Function
+    window.showSubscribePopup = function(message, isSuccess = true) {
+        const existingPopup = document.querySelector('.gn-subscribe-popup');
+        if (existingPopup) existingPopup.remove();
+        
+        const popup = document.createElement('div');
+        popup.className = 'gn-subscribe-popup';
+        popup.innerHTML = `
+            <div class="gn-subscribe-box">
+                <div class="popup-icon">
+                    ${isSuccess 
+                        ? '<i class="fa-solid fa-circle-check"></i>' 
+                        : '<i class="fa-solid fa-circle-exclamation"></i>'}
+                </div>
+                <h3>${isSuccess ? 'Successfully Subscribed!' : 'Oops!'}</h3>
+                <p>${message}</p>
+                <button class="popup-close-btn" onclick="this.closest('.gn-subscribe-popup').remove()">
+                    ${isSuccess ? 'Awesome!' : 'Got It'}
+                </button>
+            </div>
+        `;
+        
+        document.body.appendChild(popup);
+        setTimeout(() => popup.classList.add('show'), 10);
+        
+        setTimeout(() => {
+            popup.classList.remove('show');
+            setTimeout(() => popup.remove(), 300);
+        }, 4000);
+    };
+    
+    // Newsletter Form Handler
+    const newsletterForm = document.querySelector('.newsletter-form');
+    
+    if (!newsletterForm) {
+        console.warn('⚠️ Newsletter form not found');
+    } else {
+        console.log('✅ Newsletter form found');
+        
+        newsletterForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            console.log('📝 Form submitted');
+            
+            const input = newsletterForm.querySelector('.newsletter-input');
+            const btn = newsletterForm.querySelector('.newsletter-btn');
+            const email = input.value.trim().toLowerCase();
+            
+            // Validation
+            if (!email) {
+                showSubscribePopup('Please enter a valid email address.', false);
+                return;
             }
-        } catch (error) {
-            console.error('❌ Read FAILED:', error);
-        }
+            
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) {
+                showSubscribePopup('Please enter a valid email format.', false);
+                return;
+            }
+            
+            // Visual Feedback
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Subscribing...';
+            btn.disabled = true;
+            
+            try {
+                console.log('🔄 Processing subscription...');
+                
+                // Encode email for Firebase key
+                const encodedEmail = email.replace(/\./g, ',');
+                const subscriberRef = ref(mainDb, `newsletter_subscribers/${encodedEmail}`);
+                
+                // Check if already subscribed
+                const snapshot = await get(subscriberRef);
+                
+                if (snapshot.exists()) {
+                    console.log('✅ Already subscribed');
+                    showSubscribePopup('You\'re already on our list! 🎉', false);
+                } else {
+                    console.log('💾 Saving new subscriber...');
+                    
+                    // Save to RTDB
+                    await set(subscriberRef, {
+                        email: email,
+                        name: email.split('@')[0],
+                        subscribedAt: Date.now(),
+                        source: 'store_page',
+                        status: 'active'
+                    });
+                    
+                    console.log('✅ Successfully subscribed!');
+                    showSubscribePopup('Welcome to Getnaro! You\'ll receive updates on new apps, exclusive features, and more.', true);
+                    input.value = "";
+                }
+            } catch (error) {
+                console.error('❌ Subscribe Error:', error);
+                console.error('Error code:', error.code);
+                console.error('Error message:', error.message);
+                showSubscribePopup('Something went wrong. Please try again later.', false);
+            }
+            
+            // Reset Button
+            btn.innerHTML = originalText;
+            btn.disabled = false;
+        });
     }
-    
-    // Run all tests
-    setTimeout(async () => {
-        await testWrite();
-        await testNewsletterWrite();
-        await testRead();
-        console.log('🔍 === DEBUG TEST COMPLETE ===');
-    }, 1000);
 </script>
 <script>
     async function fetchAndRenderApps() {
