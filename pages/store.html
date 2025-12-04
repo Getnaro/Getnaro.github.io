@@ -552,16 +552,13 @@
 <script type="module" src="/scripts/ai_assistant.js"></script>
 <script type="module">
     // Import from your existing firebase-config.js
-    import { mainApp } from "/scripts/firebase-config.js";
-    import { getDatabase, ref, set, get } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-database.js";
+    import { mainDb } from "/scripts/firebase-config.js";
+    import { ref, set, get } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-database.js";
     
     // Wait for DOM
     document.addEventListener('DOMContentLoaded', () => {
         console.log('📧 Newsletter: Initializing...');
-        
-        // Initialize RTDB with your existing app
-        const rtdb = getDatabase(mainApp);
-        console.log('✅ RTDB ready');
+        console.log('✅ Using mainDb from firebase-config');
         
         // Custom Popup Function
         window.showSubscribePopup = function(message, isSuccess = true) {
@@ -634,7 +631,7 @@
                 
                 // Encode email for Firebase key (replace . with ,)
                 const encodedEmail = email.replace(/\./g, ',');
-                const subscriberRef = ref(rtdb, `newsletter_subscribers/${encodedEmail}`);
+                const subscriberRef = ref(mainDb, `newsletter_subscribers/${encodedEmail}`);
                 
                 // Check if already subscribed
                 const snapshot = await get(subscriberRef);
@@ -656,7 +653,7 @@
                     
                     console.log('✅ Successfully subscribed!');
                     showSubscribePopup('Welcome to Getnaro! You\'ll receive updates on new apps, exclusive features, and more.', true);
-                    input.value = ""; 
+                    input.value = "";
                 }
             } catch (error) {
                 console.error('❌ Subscribe Error:', error);
