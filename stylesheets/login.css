@@ -6,8 +6,7 @@
             src: url(/assests/Getnaro-medium.ttf);
         }
         .container{
-    margin-top: 100px;
-    padding: 25px;
+    padding: 25px 0px;
 }
 .gn-auth-wrapper {
         width: 100%;
