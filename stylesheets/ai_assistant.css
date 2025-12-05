@@ -355,4 +355,10 @@ body.light-mode #btn-send {
         height: 100% !important;
         border-radius: 0 !important;
     }
+    #btn-mic{
+        display: none;
+    }
+    #btn-speaker{
+        display: none;
+    }
 }
