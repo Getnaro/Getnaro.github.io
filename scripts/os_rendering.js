@@ -42,7 +42,7 @@ function renderOSItem(os, category) {
         <div class="os-list-details">
             <h4 class="${category}">${osName}</h4>
             <p>Release: ${osRelease}</p>
-            <a href="/pages/os_downloads.html?id=${osId}&cat=${category}" 
+            <a  style="text-align: center; padding:15px; font-size:16px;" href="/pages/os_downloads.html?id=${osId}&cat=${category}" 
                onclick="recordOSDownload('${osName}')">
                 VIEW & DOWNLOAD
             </a>
