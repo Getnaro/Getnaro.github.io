@@ -302,6 +302,17 @@ function loadSiteConfig() {
         els.toggleMaintenance.checked = config.maintenanceMode || false;
         els.toggleSeo.checked = config.disableSeo || false;
         els.toggleCache.checked = config.forceCache || false;
+        
+        // ✅ Load existing featured apps (but don't render yet if allApps isn't ready)
+        if (config.featuredApps) {
+            currentFeaturedApps.hot = config.featuredApps.hot || [];
+            currentFeaturedApps.updated = config.featuredApps.updated || [];
+            
+            // Only render if allApps has data
+            if (allApps.length > 0) {
+                renderFeaturedAppsDisplay();
+            }
+        }
     });
     
     const handleConfigChange = async () => {
@@ -525,6 +536,11 @@ function loadApps() {
         allApps.sort((a, b) => (b.lastUpdated || "").localeCompare(a.lastUpdated || "")); 
         renderTable(allApps);
         els.stats.apps.textContent = allApps.length;
+        
+        // ✅ Render featured apps display once allApps is populated
+        if (currentFeaturedApps.hot.length > 0 || currentFeaturedApps.updated.length > 0) {
+            renderFeaturedAppsDisplay();
+        }
     });
 }
 
@@ -1251,10 +1267,6 @@ function initAdvancedAnnouncement() {
         }
     });
 }
-// ==========================================
-// EMAIL CAMPAIGN MANAGER - FINAL VERSION
-// Paste this ENTIRE section at the bottom of admin.js
-// ==========================================
 
 let allSubscribers = [];
 let selectedRecipients = new Set();
