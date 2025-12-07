@@ -6,149 +6,419 @@
     <title id="d-page-title">Getnaro - OS Download</title>
     <link rel="stylesheet" href="/stylesheets/header.css">
     <link rel="stylesheet" href="/stylesheets/ai_assistant.css">
-    <link rel="stylesheet" href="/stylesheets/downloads.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <meta name="robots" content="index, follow">
     <link rel="icon" type="image/x-icon" href="/assests/Favicon.png">
     
     <style>
-        /* Shared Loading */
-        .loading-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg); z-index: 100; display: flex; justify-content: center; align-items: center; }
-        .loader-spinner { border: 4px solid #333; border-top: 4px solid #00e676; border-radius: 50%; width: 50px; height: 50px; animation: spin 1s linear infinite; }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        /* Reset potential conflicts from header.css */
+        #os-download-page * {
+            box-sizing: border-box;
+        }
 
-        /* === 1. MASTER LAYOUT: Clean Two-Column (MS Store Aesthetic) === */
-        .gn-os-view-grid {
-            margin-top: 150px;
-            margin-bottom: 80px;
-            display: grid;
-            grid-template-columns: 2fr 1fr; /* Info is wider (2fr), Specs/Video is narrower (1fr) */
-            gap: 40px;
-            width: 90%;
+        /* Loading Overlay */
+        .loading-overlay { 
+            position: fixed; 
+            inset: 0; 
+            background: var(--bg); 
+            z-index: 9999; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+        }
+        .loader-spinner { 
+            border: 4px solid #333; 
+            border-top: 4px solid #9F00FF; 
+            border-radius: 50%; 
+            width: 60px; 
+            height: 60px; 
+            animation: spin 1s linear infinite; 
+        }
+        @keyframes spin { 
+            0% { transform: rotate(0deg); } 
+            100% { transform: rotate(360deg); } 
+        }
+
+        /* Main Container */
+        #os-download-page {
             max-width: 1400px;
-            margin-left: auto;
-            margin-right: auto;
-            align-items: flex-start;
+            margin: 150px auto 80px;
+            padding: 0 40px;
+            opacity: 0;
+            transition: opacity 0.6s ease;
         }
 
-        /* === 2. LEFT COLUMN: APP HEADER & DESCRIPTION (THEME SAFE) === */
-        .gn-os-header-block {
-            padding: 20px;
-            background: var(--box); /* <-- USE THEME VARIABLE */
-            border-radius: 16px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-            color: var(--text); /* <-- USE THEME VARIABLE */
-            transition: background 0.3s, color 0.3s;
+        #os-download-page.show {
+            opacity: 1;
         }
 
-        .gn-os-header-top {
-            display: flex;
+        /* Hero Section */
+        .os-hero-section {
+            display: grid;
+            grid-template-columns: auto 1fr auto;
             gap: 30px;
             align-items: center;
-            padding-bottom: 30px;
-            border-bottom: 1px solid var(--border-color, #333);
-            margin-bottom: 30px;
-        }
-
-        .gn-os-header-top img {
-            width: 160px;
-            height: 160px;
-            border-radius: 20px;
-            object-fit: contain;
-            flex-shrink: 0;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
-        }
-
-        .gn-os-title-block h1 {
-            font-size: 3.2rem;
-            font-weight: 800;
-            color: var(--text); /* <-- USE THEME VARIABLE */
-            margin: 0 0 10px 0;
-        }
-
-        .gn-os-category {
-            font-size: 1rem;
-            font-weight: bold;
-            color: #00e676;
-            text-transform: uppercase;
-        }
-        
-        .gn-os-description {
-            color: var(--text); /* Ensure text is theme-safe */
-        }
-        .gn-os-description p {
-            font-size: 1.1rem;
-            line-height: 1.7;
-            color: var(--text-secondary, #ccc);
-        }
-
-        /* === 3. RIGHT COLUMN: SPECS, VIDEO & KEY FEATURES (THEME SAFE) === */
-        
-        .gn-os-specs-card, .gn-os-features-card {
-            background: var(--box); /* <-- USE THEME VARIABLE */
-            padding: 25px;
-            border-radius: 16px;
-            margin-bottom: 25px;
+            padding: 40px;
+            background: var(--box);
             border: 1px solid var(--border-color, #333);
-            color: var(--text); /* <-- USE THEME VARIABLE */
-            transition: background 0.3s, color 0.3s;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
         }
-        
-        /* Specs Grid */
-        .gn-os-specs-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 20px;
+
+        .os-hero-icon {
+            width: 140px;
+            height: 140px;
+            object-fit: cover;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.3);
+            border: 1px solid var(--border-color, #333);
         }
-        .os-spec-item h6 {
-            text-transform: uppercase;
-            font-size: 0.8rem;
-            color: #9F00FF; /* Accent color, generally fine */
-            margin-bottom: 5px;
-        }
-        .os-spec-item p {
-            font-size: 1rem;
-            font-weight: bold;
+
+        .os-hero-info h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 8px;
             color: var(--text);
         }
-        
-        /* Download Button */
-        .gn-btn-download {
-            color: white !important; /* Forces white text on the button */
-            padding: 15px 30px;
-            text-decoration: none;
-            border-radius: 10px;
-            font-size: 1.2rem;
-            font-weight: bold;
-            transition: all 0.3s;
-            text-align: center;
-            box-shadow: 0 4px 15px rgba(159, 0, 255, 0.4);
-            display: inline-flex;
-            gap: 10px;
+
+        .os-hero-category {
+            display: inline-block;
+            padding: 6px 12px;
+            background: #9F00FF;
+            color: white;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 15px;
+        }
+
+        .os-hero-meta {
+            display: flex;
+            gap: 30px;
+            margin-top: 15px;
+            color: var(--text-secondary, #aaa);
+            font-size: 0.9rem;
+            flex-wrap: wrap;
+        }
+
+        .os-hero-meta-item {
+            display: flex;
             align-items: center;
+            gap: 8px;
         }
 
-        /* Light Mode specific overrides to ensure contrast */
-        .light-mode .gn-os-header-block,
-        .light-mode .gn-os-specs-card,
-        .light-mode .gn-os-features-card {
-            background: #ffffff !important;
-            border-color: #ddd !important;
-        }
-        .light-mode .gn-os-description p,
-        .light-mode .os-spec-item p,
-        .light-mode .gn-os-features-card p {
-            color: #555 !important;
-        }
-        .light-mode .gn-os-title-block h1 {
-             color: #111 !important;
+        .os-hero-meta-item i {
+            color: #9F00FF;
         }
 
-        /* Responsive Adjustments */
-        @media (max-width: 1024px) {
-            .gn-os-view-grid {
+        .os-hero-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            align-items: flex-end;
+        }
+
+        .os-btn-download {
+            background: #9F00FF;
+            color: white !important;
+            padding: 20px 60px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 1rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.5s linear !important;
+            box-shadow: 0 6px 20px rgba(159, 0, 255, 0.4);
+            white-space: nowrap;
+            border: none;
+            cursor: pointer;
+        }
+
+        .os-btn-download:hover {
+            background: #9F00FF;
+            border: 1px solid #9F00FF;
+            box-shadow: 0 8px 25px rgba(159, 0, 255, 0.5);
+        }
+
+        .os-download-size {
+            font-size: 0.85rem;
+            color: var(--text-secondary, #aaa);
+            font-weight: 500;
+            margin-right: 3pc;
+        }
+
+        /* Content Grid */
+        .os-content-grid {
+            display: grid;
+            grid-template-columns: 1fr 380px;
+            gap: 30px;
+        }
+
+        /* Main Content */
+        .os-main-content {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+
+        .os-section-card {
+            background: var(--box);
+            border: 1px solid var(--border-color, #333);
+            padding: 30px;
+        }
+
+        .os-section-card h2 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: var(--text);
+        }
+
+        .os-section-card h2 i {
+            color: #9F00FF;
+            font-size: 1.3rem;
+        }
+
+        .os-description-text {
+            font-size: 1.05rem;
+            line-height: 1.8;
+            color: var(--text-secondary, #aaa);
+        }
+
+        /* Video Container */
+        .os-video-card {
+            position: relative;
+            padding-bottom: 56.25%;
+            height: 0;
+            overflow: hidden;
+            background: #000;
+        }
+
+        .os-video-card iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        /* Sidebar */
+        .os-sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        /* Specs Card */
+        .os-specs-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .os-spec-item {
+            padding: 16px;
+            background: rgba(159, 0, 255, 0.05);
+            border: 1px solid rgba(159, 0, 255, 0.15);
+        }
+
+        .os-spec-label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            color: #9F00FF;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            margin-bottom: 6px;
+        }
+
+        .os-spec-value {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        /* Features List */
+        .os-features-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .os-features-list li {
+            padding: 12px 0;
+            border-bottom: 1px solid var(--border-color, #333);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: var(--text-secondary, #aaa);
+        }
+
+        .os-features-list li:last-child {
+            border-bottom: none;
+        }
+
+        .os-features-list li i {
+            color: #00e676;
+            font-size: 1.1rem;
+            flex-shrink: 0;
+        }
+
+        /* Status Badge */
+        .os-status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 16px;
+            background: rgba(0, 230, 118, 0.1);
+            border: 1px solid rgba(0, 230, 118, 0.3);
+            color: #00e676;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .os-status-badge i {
+            font-size: 1rem;
+        }
+
+        /* Hidden class */
+        .hidden {
+            display: none !important;
+        }
+
+        /* Light Mode Overrides */
+        .light-mode #os-download-page .os-hero-section,
+        .light-mode #os-download-page .os-section-card {
+            background: #ffffff;
+            border-color: #ddd;
+        }
+
+        .light-mode #os-download-page .os-hero-info h1,
+        .light-mode #os-download-page .os-section-card h2,
+        .light-mode #os-download-page .os-spec-value {
+            color: #111;
+        }
+
+        .light-mode #os-download-page .os-description-text,
+        .light-mode #os-download-page .os-hero-meta,
+        .light-mode #os-download-page .os-features-list li {
+            color: #666;
+        }
+
+        .light-mode #os-download-page .os-hero-icon,
+        .light-mode #os-download-page .os-spec-item {
+            border-color: #ddd;
+        }
+
+        .light-mode #os-download-page .os-features-list li {
+            border-bottom-color: #ddd;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1200px) {
+            .os-content-grid {
                 grid-template-columns: 1fr;
-                gap: 25px;
+            }
+            
+            .os-sidebar {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 20px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            #os-download-page {
+                padding: 0 20px;
+                margin-top: 120px;
+            }
+
+            .os-hero-section {
+                grid-template-columns: 1fr;
+                text-align: center;
+                padding: 30px 20px;
+                gap: 20px;
+            }
+
+            .os-hero-icon {
+                width: 120px;
+                height: 120px;
+                margin: 0 auto;
+            }
+
+            .os-hero-info h1 {
+                font-size: 2rem;
+            }
+
+            .os-hero-meta {
+                justify-content: center;
+            }
+
+            .os-hero-actions {
+                align-items: center;
+                width: 100%;
+            }
+
+            .os-btn-download {
+                width: 100%;
+                justify-content: center;
+                padding: 14px 20px;
+            }
+
+            .os-specs-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .os-sidebar {
+                grid-template-columns: 1fr;
+            }
+
+            .os-section-card {
+                padding: 20px;
+            }
+
+            .os-section-card h2 {
+                font-size: 1.3rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .os-hero-info h1 {
+                font-size: 1.5rem;
+            }
+
+            .os-hero-meta {
+                gap: 15px;
+                font-size: 0.85rem;
+            }
+
+            .os-section-card {
+                padding: 15px;
+            }
+        }
+
+        /* Smooth transitions for theme */
+        #os-download-page *,
+        #os-download-page *::before,
+        #os-download-page *::after {
+            transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+        }
+        @media (min-width: 980px){
+            .os-hero-info{
+                height: 200px;
+            }
+            .os-hero-category{
+                margin-top: 40px;
+            }
+            #d-os-title{
+                margin-top: -10px;
+            }
+            .os-hero-meta{
+                margin-top: 10px;
             }
         }
     </style>
@@ -166,111 +436,176 @@
             <li><a href="/pages/about.html">ABOUT US</a></li>
             <li><a href="/pages/faq.html">FAQ</a></li>
         </ul>
-        <button id="theme-toggle" class="theme-toggle"><i id="theme-icon" class="fa-solid fa-moon"></i></button>
-        <div id="gn-search-btn" class="gn-search-btn"><i class="fa-solid fa-magnifying-glass"></i></div>
-        <a class="dl" href="/pages/getnaro-app.html"><i class="fa-solid fa-download"></i> DOWNLOAD APP</a>
+        <div class="right-actions" style="display:flex; align-items:center; gap:15px;">
+            <button id="theme-toggle" class="theme-toggle"><i id="theme-icon" class="fa-solid fa-moon"></i></button>
+            <div id="gn-search-btn" class="gn-search-btn"><i class="fa-solid fa-magnifying-glass"></i></div>
+            <a class="dl" href="/pages/getnaro-app.html"><i class="fa-solid fa-download"></i> DOWNLOAD APP</a>
+        </div>
     </div>
 
-    <div class="container" id="dynamic-container">
-        
-        <div id="os-view-root" class="gn-os-view-grid" style="display:none; opacity: 0; transition: opacity 0.5s ease;">
+    <div class="hamburger">
+        <div class="bar"></div>
+        <div class="bar"></div>
+        <div class="bar"></div>
+    </div>
+
+    <div id="page-loader" class="loading-overlay">
+        <div class="loader-spinner"></div>
+    </div>
+
+    <div id="os-download-page" class="hidden">
+        <!-- Hero Section -->
+        <div class="os-hero-section">
+            <img id="d-os-image" src="/assests/logo-getnaro-nobg.png" alt="OS Logo" class="os-hero-icon">
             
-            <div class="gn-os-header-block">
+            <div class="os-hero-info">
+                <div class="os-hero-category" id="d-os-category">LOADING...</div>
+                <h1 id="d-os-title" >Loading OS Name</h1>
                 
-                <div class="gn-os-header-top">
-                    <img id="d-os-image" src="/assests/logo-getnaro-nobg.png" alt="OS Logo">
-                    <div class="gn-os-title-block">
-                        <span class="gn-os-category" id="d-os-category">Loading...</span>
-                        <h1 id="d-os-title">Loading OS Name</h1>
-                        
-                        <a href="#" class="gn-btn-download" id="d-btn-download" target="_blank">
-                            <i class="fa-solid fa-download"></i> DOWNLOAD FULL ISO
-                        </a>
+                <div class="os-hero-meta">
+                    <div class="os-hero-meta-item">
+                        <i class="fa-solid fa-calendar"></i>
+                        <span id="d-os-release-inline">2025</span>
+                    </div>
+                    <div class="os-hero-meta-item">
+                        <i class="fa-solid fa-microchip"></i>
+                        <span id="d-os-arch-inline">x64</span>
+                    </div>
+                    <div class="os-hero-meta-item">
+                        <i class="fa-solid fa-file-zipper"></i>
+                        <span id="d-os-size-inline">5 GB</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="os-hero-actions">
+                <a href="#" class="os-btn-download" id="d-btn-download" target="_blank">
+                    <i class="fa-solid fa-download"></i>
+                    Download ISO
+                </a>
+                <span class="os-download-size">Full installer package</span>
+            </div>
+        </div>
+
+        <!-- Content Grid -->
+        <div class="os-content-grid">
+            <!-- Main Content -->
+            <div class="os-main-content">
+                <!-- Description -->
+                <div class="os-section-card">
+                    <h2>
+                        <i class="fa-solid fa-file-lines"></i>
+                        About this OS
+                    </h2>
+                    <p class="os-description-text" id="d-os-desc">Loading description...</p>
+                </div>
+
+                <!-- Video -->
+                <div class="os-section-card hidden" id="video-section">
+                    <h2>
+                        <i class="fa-brands fa-youtube"></i>
+                        Preview Video
+                    </h2>
+                    <div class="os-video-card">
+                        <iframe id="d-os-youtube" src="about:blank" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sidebar -->
+            <div class="os-sidebar">
+                <!-- Specifications -->
+                <div class="os-section-card">
+                    <h2>
+                        <i class="fa-solid fa-cogs"></i>
+                        Specifications
+                    </h2>
+                    <div class="os-specs-grid">
+                        <div class="os-spec-item">
+                            <div class="os-spec-label">Architecture</div>
+                            <div class="os-spec-value" id="d-os-arch">x64</div>
+                        </div>
+                        <div class="os-spec-item">
+                            <div class="os-spec-label">File Size</div>
+                            <div class="os-spec-value" id="d-os-size">7.5 GB</div>
+                        </div>
+                        <div class="os-spec-item">
+                            <div class="os-spec-label">Released</div>
+                            <div class="os-spec-value" id="d-os-release">2025-12-05</div>
+                        </div>
+                        <div class="os-spec-item">
+                            <div class="os-spec-label">Status</div>
+                            <div class="os-spec-value">
+                                <span class="os-status-badge">
+                                    <i class="fa-solid fa-shield-check"></i>
+                                    Verified
+                                </span>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
-                <div class="gn-os-description">
-                    <h2 class="text-xl font-bold text-white mb-3"><i class="fa-solid fa-file-lines mr-2"></i> Description</h2>
-                    <p id="d-os-desc">Loading application details...</p>
+                <!-- Key Features -->
+                <div class="os-section-card">
+                    <h2>
+                        <i class="fa-solid fa-star"></i>
+                        Key Features
+                    </h2>
+                    <ul class="os-features-list" id="d-os-features-list">
+                        <li><i class="fa-solid fa-check-circle"></i> Loading features...</li>
+                    </ul>
                 </div>
-            </div>
-
-            <div class="gn-os-right-side">
-                
-                <div class="video-container" id="d-os-video-container">
-                    <iframe id="d-os-youtube" width="100%" height="100%" src="about:blank" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen style="border-radius: 12px;"></iframe>
-                </div>
-                
-                <div class="gn-os-specs-card">
-                    <h4 class="text-xl font-bold mb-4 text-white"><i class="fa-solid fa-cogs mr-2"></i> Technical Specifications</h4>
-                    <div class="gn-os-specs-grid">
-                        <div class="os-spec-item"><h6>Architecture</h6><p id="d-os-arch">x64</p></div>
-                        <div class="os-spec-item"><h6>File Size</h6><p id="d-os-size">~7.5 GB</p></div>
-                        <div class="os-spec-item"><h6>Release Date</h6><p id="d-os-release">2025-12-05</p></div>
-                        <div class="os-spec-item"><h6>Status</h6><p style="color:#00e676;">Verified</p></div>
-                    </div>
-                </div>
-
-                <div class="gn-os-features-card">
-                    <h4><i class="fa-solid fa-star mr-2"></i> Key Features</h4>
-                    <p id="d-os-features">Standard Installation, Secure Boot, Optimized</p>
-                </div>
-                
-            </div>
-
-        </div>
-
-        <div id="page-loader" class="loading-overlay"><div class="loader-spinner"></div></div>
-    </div>
-
-<footer class="footer">
-    <div class="footer-container">
-
-        <div class="footer-col">
-            <h3>Getnaro</h3>
-            <p>Official download redirection hub for Windows software, tools, utilities and drivers—clean, safe & ad-free.</p>
-        </div>
-        <div class="footer-col">
-            <h3>Quick Links</h3>
-            <a href="/pages/t&c.html">Terms & Conditions</a><br>
-            <a href="/pages/coc.html">Code Of Conduct</a><br>
-            <a href="/pages/privacypolicy.html">Privacy Policy</a><br>
-            <a href="/pages/contact.html">Contact</a>
-        </div>
-
-        <div class="footer-col">
-            <h3>Follow Us</h3>
-            <div class="footer-social">
-                 <a href="https://www.instagram.com/narotech.india" target="_blank"><i class="fa-brands fa-instagram"></i></a>
-                <a href="https://discord.gg/mcxbEsxXcQ" target="_blank"><i class="fa-brands fa-discord"></i></a>
-                <a href="https://whatsapp.com/channel/0029Vb7IFu7HwXbKP3roZa0E" target="_blank"><i class="fa-brands fa-whatsapp"></i></a>
-                <a href="https://www.reddit.com/r/narotech" target="_blank"><i class="fa-brands fa-reddit" ></i></a>
-                <a href="https://www.youtube.com/@narotechofc" target="_blank"><i class="fa-brands fa-youtube"></i></a>
             </div>
         </div>
     </div>
-    <div class="footer-bottom">
-        © 2025 Getnaro — Developed by <a href="/pages/narotech.html" target="_blank" rel="noopener noreferrer" style="text-decoration: none;">Narotech</a> • Hosted on GitHub • Domain by BigRock
-    </div>
-</footer>
+
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-col">
+                <h3>Getnaro</h3>
+                <p>Official download redirection hub for Windows software, tools, utilities and drivers—clean, safe & ad-free.</p>
+            </div>
+            <div class="footer-col">
+                <h3>Quick Links</h3>
+                <a href="/pages/t&c.html">Terms & Conditions</a><br>
+                <a href="/pages/coc.html">Code Of Conduct</a><br>
+                <a href="/pages/privacypolicy.html">Privacy Policy</a><br>
+                <a href="/pages/contact.html">Contact</a>
+            </div>
+            <div class="footer-col">
+                <h3>Follow Us</h3>
+                <div class="footer-social">
+                    <a href="https://www.instagram.com/narotech.india" target="_blank"><i class="fa-brands fa-instagram"></i></a>
+                    <a href="https://discord.gg/mcxbEsxXcQ" target="_blank"><i class="fa-brands fa-discord"></i></a>
+                    <a href="https://whatsapp.com/channel/0029Vb7IFu7HwXbKP3roZa0E" target="_blank"><i class="fa-brands fa-whatsapp"></i></a>
+                    <a href="https://www.reddit.com/r/narotech" target="_blank"><i class="fa-brands fa-reddit"></i></a>
+                    <a href="https://www.youtube.com/@narotechofc" target="_blank"><i class="fa-brands fa-youtube"></i></a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            © 2025 Getnaro – Developed by <a href="/pages/narotech.html" target="_blank" rel="noopener noreferrer" style="text-decoration: none;">Narotech</a> • Hosted on GitHub • Domain by BigRock
+        </div>
+    </footer>
 
     <script src="/scripts/tod.js"></script>
+    <script src="/scripts/tog.js"></script>
     <script src="/scripts/particles.js"></script>
     <script src="/scripts/theme.js"></script>
     <script src="/scripts/hamburger.js"></script>
+    <script type="module" src="/scripts/search.js"></script>
     <script type="module" src="/scripts/appstats.js"></script>
     <script type="module" src="/scripts/app_tracking.js"></script>
     <script type="module" src="/scripts/header_auth.js"></script>
-    <script type="module" src="/scripts/firebase-config.js"></script>
     <script type="module" src="/scripts/ai_assistant.js"></script>
     <script type="module" src="/scripts/stats.js"></script>
+    <script type="module" src="/scripts/announcement.js"></script>
 
     <script type="module">
-        // --- RTDB APP LOADER for os_downloads.html (Functionally Unchanged) ---
         import { mainApp } from "/scripts/firebase-config.js";
         import { getDatabase, ref, get, runTransaction } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-database.js";
         
-        const rtdb = getDatabase(mainApp);     
+        const rtdb = getDatabase(mainApp);
 
         async function loadOS() {
             const urlParams = new URLSearchParams(window.location.search);
@@ -278,8 +613,9 @@
             const category = urlParams.get('cat');
 
             if (!osId || !category) {
-                document.getElementById('page-loader').style.display = 'none';
-                document.getElementById('os-view-root').style.display = 'grid';
+                document.getElementById('page-loader').classList.add('hidden');
+                document.getElementById('os-download-page').classList.remove('hidden');
+                document.getElementById('os-download-page').classList.add('show');
                 document.getElementById('d-os-title').innerText = "Invalid OS Link";
                 return;
             }
@@ -291,61 +627,93 @@
                 if (osSnapshot.exists()) {
                     const data = osSnapshot.val();
                     
+                    // Populate all fields
                     document.getElementById('d-os-title').innerText = data.name || "Unknown OS";
                     document.getElementById('d-os-desc').innerText = data.description || "No description available.";
                     document.getElementById('d-os-category').innerText = category.toUpperCase();
+                    
+                    // Architecture
                     document.getElementById('d-os-arch').innerText = data.architecture || "N/A";
-                    document.getElementById('d-os-release').innerText = data.releaseDate || "N/A";
-                    document.getElementById('d-os-size').innerText = data.fileSize || "N/A";
-                    document.getElementById('d-os-features').innerText = data.keyFeatures || "Standard Installation";
+                    document.getElementById('d-os-arch-inline').innerText = data.architecture || "N/A";
+                    
+                    // Release Date
+                    const releaseDate = data.releaseDate || "N/A";
+                    document.getElementById('d-os-release').innerText = releaseDate;
+                    if (releaseDate !== "N/A") {
+                        const year = new Date(releaseDate).getFullYear();
+                        document.getElementById('d-os-release-inline').innerText = year;
+                    }
+                    
+                    // File Size
+                    const fileSize = data.fileSize || "N/A";
+                    document.getElementById('d-os-size').innerText = fileSize;
+                    document.getElementById('d-os-size-inline').innerText = fileSize;
+                    
+                    // Page Title
                     document.getElementById('d-page-title').innerText = `${data.name} - Download`;
 
+                    // Image
                     const mainImgSrc = data.image || "/assests/logo-getnaro-nobg.png";
                     const img = document.getElementById('d-os-image');
                     img.src = mainImgSrc;
                     img.onerror = () => { img.src = "/assests/logo-getnaro-nobg.png"; };
                     
+                    // Video
                     if (data.youtubeId) {
+                        document.getElementById('video-section').classList.remove('hidden');
                         const iframe = document.getElementById('d-os-youtube');
                         iframe.src = `https://www.youtube.com/embed/${data.youtubeId}?rel=0`;
-                    } else {
-                        document.getElementById('d-os-video-container').style.display = 'none';
                     }
 
+                    // Features
+                    if (data.keyFeatures) {
+                        const features = data.keyFeatures.split(',').map(f => f.trim());
+                        const featuresList = document.getElementById('d-os-features-list');
+                        featuresList.innerHTML = features.map(f => 
+                            `<li><i class="fa-solid fa-check-circle"></i> ${f}</li>`
+                        ).join('');
+                    }
+
+                    // Download Button
                     const dlBtn = document.getElementById('d-btn-download');
                     if (data.downloadLink) {
                         dlBtn.href = data.downloadLink;
                         dlBtn.addEventListener("click", () => {
                             const totalDlRef = ref(rtdb, "stats/total_downloads");
                             runTransaction(totalDlRef, (current) => (current || 0) + 1);
-                            const safeName = data.name.replace(/[.#$/\[\]]/g, "_"); 
+                            const safeName = data.name.replace(/[.#$/\[\]]/g, "_");
                             const osDlRef = ref(rtdb, `os_downloads/${safeName}`);
                             runTransaction(osDlRef, (current) => (current || 0) + 1);
                         }, { once: false });
                     } else {
                         dlBtn.style.opacity = "0.5";
+                        dlBtn.style.cursor = "not-allowed";
                         dlBtn.innerText = "Unavailable";
                         dlBtn.href = "#";
+                        dlBtn.onclick = (e) => e.preventDefault();
                     }
 
+                    // Show content with fade-in
                     setTimeout(() => {
-                        document.getElementById('page-loader').style.display = 'none';
-                        document.getElementById('os-view-root').style.display = 'grid';
-                        void document.getElementById('os-view-root').offsetWidth; 
-                        document.getElementById('os-view-root').style.opacity = '1';
-                    }, 500); 
+                        document.getElementById('page-loader').classList.add('hidden');
+                        document.getElementById('os-download-page').classList.remove('hidden');
+                        setTimeout(() => {
+                            document.getElementById('os-download-page').classList.add('show');
+                        }, 50);
+                    }, 500);
 
                 } else {
-                    document.getElementById('page-loader').style.display = 'none';
+                    document.getElementById('page-loader').classList.add('hidden');
+                    document.getElementById('os-download-page').classList.remove('hidden');
+                    document.getElementById('os-download-page').classList.add('show');
                     document.getElementById('d-os-title').innerText = "OS Not Found";
-                    document.getElementById('os-view-root').style.display = 'grid';
-                    document.getElementById('os-view-root').style.opacity = '1';
                 }
             } catch (error) {
-                console.error("❌ Critical Error loading OS:", error);
-                document.getElementById('page-loader').style.display = 'none';
+                console.error("❌ Error loading OS:", error);
+                document.getElementById('page-loader').classList.add('hidden');
+                document.getElementById('os-download-page').classList.remove('hidden');
+                document.getElementById('os-download-page').classList.add('show');
                 document.getElementById('d-os-title').innerText = "Load Error";
-                alert("Failed to load OS data. Check console for details.");
             }
         }
         
