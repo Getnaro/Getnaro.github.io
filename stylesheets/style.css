@@ -2484,7 +2484,56 @@ body.dark-mode .search-result-item {
     justify-content: center;
     /* Name and release date are cleaner */
 }
+.gn-os-list-wrapper {
+    position: relative;
+    margin-top: 15px; /* Adjust spacing as needed */
+}
 
+/* Control buttons shared style */
+.gn-os-scroll-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 10;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: #9F00FF;
+    color: white;
+    border: none;
+    cursor: pointer;
+    font-size: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: 0.3s;
+    opacity: 0.85;
+    box-shadow: 0 0 15px rgba(159, 0, 255, 0.4);
+}
+
+.gn-os-scroll-btn:hover {
+    opacity: 1;
+    background: #B72BFF;
+}
+
+.gn-os-scroll-btn.left {
+    left: -20px;
+}
+
+.gn-os-scroll-btn.right {
+    right: -20px;
+}
+
+/* Hide buttons on mobile/tablet (non-PC/touchscreen view) */
+/* This re-uses the existing 1435px break point for mobile hamburger menu */
+@media (max-width: 1435px) {
+    .gn-os-scroll-btn {
+        display: none !important;
+    }
+    .gn-os-list-wrapper {
+        margin-top: 0; /* Remove extra margin when buttons are hidden */
+    }
+}
 .os-list-details h4 {
     font-size: 18px;
     margin: 0;
