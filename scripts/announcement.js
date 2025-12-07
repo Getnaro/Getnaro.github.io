@@ -1,8 +1,8 @@
 /**
- * ADVANCED ANNOUNCEMENT SYSTEM (UPDATED POSITION)
+ * MULTI-ANNOUNCEMENT SYSTEM (UPDATED)
  * /scripts/announcement.js
- * - Positioned at Top 30% Right to avoid AI Chat & Header
- * - Slides in from Right side
+ * - Now supports multiple announcements
+ * - Reads from announcements/{id} instead of site_config/announcement
  */
 
 import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-database.js";
@@ -62,12 +62,10 @@ function showAnnouncementPopup(data) {
     
     currentAnnouncementData = data;
 
-    // --- A. THE FLOATING BAR (UPDATED POSITION) ---
+    // --- A. THE FLOATING BAR ---
     const floatBar = document.createElement('div');
     floatBar.id = 'gn-announce-float';
     
-    // ✅ FIXED: Positioned at Top 30% to avoid Header & AI Chat
-    // ✅ FIXED: Slides in from the RIGHT (translateX) instead of bottom
     floatBar.style.cssText = `
         position: fixed; top: 30%; right: 20px; 
         background: #111; border: 1px solid #9F00FF; border-radius: 50px;
@@ -82,16 +80,13 @@ function showAnnouncementPopup(data) {
         <i class="fa-solid fa-chevron-left" style="color: #666; font-size: 12px; margin-left: auto;"></i>
     `;
     
-    // Restore logic when clicking float bar
     floatBar.onclick = () => {
         const overlay = document.getElementById('gn-announcement-overlay');
         const box = overlay.querySelector('.gn-announce-box');
         
-        // Hide float (Slide out to Right)
         floatBar.style.transform = 'translateX(150%)';
         floatBar.style.opacity = '0';
         
-        // Show overlay
         overlay.style.display = 'flex';
         setTimeout(() => {
             overlay.style.opacity = '1';
@@ -124,9 +119,8 @@ function showAnnouncementPopup(data) {
     // Header
     const header = document.createElement('div');
     header.style.cssText = "padding: 20px; border-bottom: 1px solid #222; display: flex; justify-content: space-between; align-items: center;";
-    header.innerHTML = `<span style="color:#9F00FF; font-weight:bold; letter-spacing:1px; text-transform:uppercase; display:flex; align-items:center; gap:10px;"><i class="fa-solid fa-bullhorn"></i> Announcement</span>`;
+    header.innerHTML = `<span style="color:#9F00FF; font-weight:bold; letter-spacing:1px; text-transform:uppercase; display:flex; align-items:center; gap:10px;"><i class="fa-solid fa-bullhorn"></i> ${data.title || 'Announcement'}</span>`;
     
-    // Close (Minimize) Icon
     const closeX = document.createElement('button');
     closeX.innerHTML = '<i class="fa-solid fa-minus"></i>';
     closeX.title = "Minimize";
@@ -139,11 +133,10 @@ function showAnnouncementPopup(data) {
     body.style.cssText = "padding: 30px; overflow-y: auto; text-align: center;";
     body.innerHTML = renderBlocks(data.content);
 
-    // Footer Container
+    // Footer
     const footer = document.createElement('div');
     footer.style.cssText = "background: #0a0a0a; border-top: 1px solid #222; padding: 20px; display: flex; flex-direction: column; gap: 15px;";
 
-    // 1. "Don't Show Again" Red Box
     const redBox = document.createElement('label');
     redBox.style.cssText = `
         display: flex; align-items: center; justify-content: center; gap: 10px;
@@ -157,7 +150,6 @@ function showAnnouncementPopup(data) {
     redBox.onmouseover = () => redBox.style.background = 'rgba(255, 0, 0, 0.15)';
     redBox.onmouseout = () => redBox.style.background = 'rgba(255, 0, 0, 0.1)';
 
-    // 2. OK / Minimize Button
     const actionBtn = document.createElement('button');
     actionBtn.innerHTML = `<i class="fa-solid fa-check"></i> OK, Got it`;
     actionBtn.style.cssText = `
@@ -179,7 +171,6 @@ function showAnnouncementPopup(data) {
     overlay.appendChild(box);
     document.body.appendChild(overlay);
 
-    // Entrance Animation
     requestAnimationFrame(() => {
         overlay.style.opacity = '1';
         box.style.transform = 'translateY(0) scale(1)';
@@ -192,29 +183,22 @@ function handleMinimize(data) {
     const floatBar = document.getElementById('gn-announce-float');
     const dontShowCheckbox = document.getElementById('gn-dont-show');
 
-    // 1. Check if "Don't Show Again" is checked
     if (dontShowCheckbox && dontShowCheckbox.checked) {
-        // PERMANENT DISMISSAL
-        const storageKey = `gn_announce_${data.lastUpdated}`;
+        const storageKey = `gn_announce_${data.id}_${data.lastUpdated}`;
         localStorage.setItem(storageKey, 'true');
         
-        // Fade out everything and remove
         overlay.style.opacity = '0';
         box.style.transform = 'translateY(20px) scale(0.9)';
         if (floatBar) floatBar.remove(); 
         setTimeout(() => overlay.remove(), 300);
         
     } else {
-        // TEMPORARY MINIMIZE
-        
-        // Animate Overlay Out
         overlay.style.opacity = '0';
         box.style.transform = 'translateY(50px) scale(0.8)';
         
         setTimeout(() => {
             overlay.style.display = 'none';
             
-            // Animate Float Bar In (From Right)
             if (floatBar) {
                 floatBar.style.transform = 'translateX(0)';
                 floatBar.style.opacity = '1';
@@ -223,24 +207,65 @@ function handleMinimize(data) {
     }
 }
 
+// ✅ UPDATED: Now reads from announcements/ instead of site_config/announcement
 function checkAndShowAnnouncement() {
-    const announcementRef = ref(rtdb, 'site_config/announcement');
+    const announcementsRef = ref(rtdb, 'announcements');
     
-    onValue(announcementRef, (snapshot) => {
+    onValue(announcementsRef, (snapshot) => {
+        if (!snapshot.exists()) {
+            console.log('📢 No announcements found in database');
+            return;
+        }
+        
+        const allAnnouncements = [];
         const data = snapshot.val();
-        if (!data || !data.enabled || !data.content || data.content.length === 0) return;
+        
+        // Convert to array
+        Object.keys(data).forEach(key => {
+            allAnnouncements.push({ id: key, ...data[key] });
+        });
+        
+        // Filter: Only enabled announcements
+        const enabledAnnouncements = allAnnouncements.filter(a => a.enabled);
+        
+        if (enabledAnnouncements.length === 0) {
+            console.log('📢 No enabled announcements');
+            return;
+        }
         
         const currentPage = getCurrentPageName();
-        const targetPages = data.pages || [];
-        const shouldShow = targetPages.length === 0 || targetPages.includes(currentPage);
+        console.log('📍 Current page:', currentPage);
         
-        if (shouldShow) {
-            const storageKey = `gn_announce_${data.lastUpdated}`;
-            const hasSeen = localStorage.getItem(storageKey);
+        // Filter: Match target pages
+        const matchingAnnouncements = enabledAnnouncements.filter(announcement => {
+            const targetPages = announcement.pages || [];
             
-            if (data.frequency === 'always' || !hasSeen) {
-                showAnnouncementPopup(data);
-            }
+            // Empty array = show on all pages
+            if (targetPages.length === 0) return true;
+            
+            // Check if current page is in target list
+            return targetPages.includes(currentPage);
+        });
+        
+        if (matchingAnnouncements.length === 0) {
+            console.log('📢 No announcements for this page');
+            return;
+        }
+        
+        // Sort by lastUpdated (newest first)
+        matchingAnnouncements.sort((a, b) => (b.lastUpdated || 0) - (a.lastUpdated || 0));
+        
+        // Show the most recent one
+        const announcementToShow = matchingAnnouncements[0];
+        
+        const storageKey = `gn_announce_${announcementToShow.id}_${announcementToShow.lastUpdated}`;
+        const hasSeen = localStorage.getItem(storageKey);
+        
+        if (announcementToShow.frequency === 'always' || !hasSeen) {
+            console.log('✅ Showing announcement:', announcementToShow.title);
+            showAnnouncementPopup(announcementToShow);
+        } else {
+            console.log('👁️ User has already seen this announcement');
         }
     });
 }

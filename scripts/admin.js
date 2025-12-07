@@ -1141,133 +1141,342 @@ function setupImportWipeHandlers() {
 }
 
 // ======================================================
-// --- 4. ADVANCED ANNOUNCEMENT MANAGER (FIXED) ---
+// --- MULTI-ANNOUNCEMENT MANAGER (COMPLETE FIX) ---
 // ======================================================
 
+let allAnnouncements = [];
+let currentEditingAnnouncementId = null;
 let currentAnnounceBlocks = [];
 
 function initAdvancedAnnouncement() {
-    const announceRef = dbRef(rtdb, "site_config/announcement");
-
-    // UI Elements
-    const container = document.getElementById('announce-blocks-container');
-    const emptyMsg = document.getElementById('announce-empty-msg');
-    const enabledCheck = document.getElementById('announce-enabled');
-    const freqSelect = document.getElementById('announce-freq');
-    const pageChecks = document.querySelectorAll('.announce-page-check');
-
-    // 1. Load Data
-    onValue(announceRef, (snap) => {
-        const data = snap.val() || {};
-        
-        enabledCheck.checked = data.enabled || false;
-        freqSelect.value = data.frequency || 'once';
-        
-        // Pages (If empty array, uncheck all, but visually user sees nothing checked)
-        const activePages = data.pages || [];
-        pageChecks.forEach(cb => cb.checked = activePages.includes(cb.value));
-
-        // Content
-        currentAnnounceBlocks = data.content || [];
-        renderAnnounceBlocks();
+    console.log('🔔 Initializing Announcement Manager...');
+    
+    const btnNew = document.getElementById('btn-new-announcement');
+    const btnSave = document.getElementById('save-announce-btn');
+    const btnCancel = document.getElementById('cancel-announce-btn');
+    
+    if (!btnNew || !btnSave || !btnCancel) {
+        console.error('❌ Announcement buttons not found in DOM');
+        return;
+    }
+    
+    loadAllAnnouncements();
+    
+    btnNew.addEventListener('click', () => {
+        console.log('Creating new announcement...');
+        openAnnouncementEditor(null);
     });
+    
+    btnSave.addEventListener('click', saveCurrentAnnouncement);
+    
+    btnCancel.addEventListener('click', () => {
+        document.getElementById('announce-editor-section').classList.add('hidden');
+        document.getElementById('announce-list-section').classList.remove('hidden');
+    });
+    
+    console.log('✅ Announcement Manager initialized');
+}
 
-    // 2. Render Functions
-    function renderAnnounceBlocks() {
-        container.innerHTML = '';
-        if (currentAnnounceBlocks.length === 0) {
-            container.appendChild(emptyMsg);
-            emptyMsg.style.display = 'flex';
-        } else {
-            emptyMsg.style.display = 'none';
-            currentAnnounceBlocks.forEach((block, idx) => {
-                container.appendChild(createAnnounceBlockUI(block, idx));
-            });
-        }
-    }
-
-    function createAnnounceBlockUI(block, index) {
-        const div = document.createElement('div');
-        div.className = "bg-gray-900 border border-gray-700 p-3 rounded-lg relative group transition hover:border-purple-500";
-        
-        let innerHTML = `<div class="flex justify-between mb-2 text-[10px] uppercase font-bold text-gray-500 tracking-wider">
-            <span>${block.type}</span> 
-            <div class="flex gap-2">
-                <button class="text-gray-500 hover:text-white" onclick="moveAnnounceBlock(${index}, -1)"><i class="fa-solid fa-arrow-up"></i></button>
-                <button class="text-gray-500 hover:text-white" onclick="moveAnnounceBlock(${index}, 1)"><i class="fa-solid fa-arrow-down"></i></button>
-                <button class="text-red-500 hover:text-white" onclick="removeAnnounceBlock(${index})"><i class="fa-solid fa-times"></i></button>
-            </div>
-        </div>`;
-
-        if (block.type === 'heading') {
-            innerHTML += `
-                <input type="text" class="w-full bg-black border border-gray-700 rounded p-2 mb-2 text-white font-bold" placeholder="Heading Text" value="${block.content}" onchange="updateAnnounceBlock(${index}, 'content', this.value)">
-                <div class="flex items-center gap-2">
-                    <span class="text-xs text-gray-500">Color:</span>
-                    <input type="color" class="bg-transparent border-0 h-6 w-8 cursor-pointer" value="${block.color || '#ffffff'}" onchange="updateAnnounceBlock(${index}, 'color', this.value)">
-                </div>
-            `;
-        } else if (block.type === 'paragraph' || block.type === 'list-item') {
-            innerHTML += `<textarea class="w-full bg-black border border-gray-700 rounded p-2 text-sm text-gray-300 h-16" placeholder="Content..." onchange="updateAnnounceBlock(${index}, 'content', this.value)">${block.content}</textarea>`;
-        } else if (block.type === 'image') {
-            innerHTML += `<input type="text" class="w-full bg-black border border-gray-700 rounded p-2 text-xs text-green-400 font-mono" placeholder="Image URL" value="${block.url || ''}" onchange="updateAnnounceBlock(${index}, 'url', this.value)">`;
-        } else if (block.type === 'button') {
-            innerHTML += `
-                <div class="grid grid-cols-2 gap-2 mb-2">
-                    <input type="text" class="bg-black border border-gray-700 rounded p-2 text-sm text-white" placeholder="Button Label" value="${block.text || ''}" onchange="updateAnnounceBlock(${index}, 'text', this.value)">
-                    <input type="color" class="h-full w-full bg-black border border-gray-700 rounded cursor-pointer" value="${block.color || '#9F00FF'}" onchange="updateAnnounceBlock(${index}, 'color', this.value)">
-                </div>
-                <input type="text" class="w-full bg-black border border-gray-700 rounded p-2 text-xs text-blue-400 font-mono" placeholder="Link URL (/pages/...)" value="${block.link || ''}" onchange="updateAnnounceBlock(${index}, 'link', this.value)">
-            `;
-        }
-
-        div.innerHTML += innerHTML;
-        return div;
-    }
-
-    // 3. Add Block Listeners
-    document.getElementById('ann-add-heading').onclick = () => { currentAnnounceBlocks.push({type:'heading', content:'', color:'#ffffff'}); renderAnnounceBlocks(); };
-    document.getElementById('ann-add-text').onclick = () => { currentAnnounceBlocks.push({type:'paragraph', content:''}); renderAnnounceBlocks(); };
-    document.getElementById('ann-add-list').onclick = () => { currentAnnounceBlocks.push({type:'list-item', content:''}); renderAnnounceBlocks(); };
-    document.getElementById('ann-add-image').onclick = () => { currentAnnounceBlocks.push({type:'image', url:''}); renderAnnounceBlocks(); };
-    document.getElementById('ann-add-btn').onclick = () => { currentAnnounceBlocks.push({type:'button', text:'Click Me', link:'#', color:'#9F00FF'}); renderAnnounceBlocks(); };
-
-    // 4. Global Helpers (for inline HTML onclicks)
-    window.removeAnnounceBlock = (idx) => { currentAnnounceBlocks.splice(idx, 1); renderAnnounceBlocks(); };
-    window.updateAnnounceBlock = (idx, field, val) => { currentAnnounceBlocks[idx][field] = val; };
-    window.moveAnnounceBlock = (idx, dir) => {
-        if ((dir === -1 && idx > 0) || (dir === 1 && idx < currentAnnounceBlocks.length - 1)) {
-            const temp = currentAnnounceBlocks[idx];
-            currentAnnounceBlocks[idx] = currentAnnounceBlocks[idx + dir];
-            currentAnnounceBlocks[idx + dir] = temp;
-            renderAnnounceBlocks();
+function setupAnnouncementBlockButtons() {
+    console.log('🔘 Setting up block buttons...');
+    
+    const buttonConfigs = {
+        'ann-add-heading': () => { 
+            currentAnnounceBlocks.push({type:'heading', content:'', color:'#ffffff'}); 
+            renderAnnounceBlocks(); 
+        },
+        'ann-add-text': () => { 
+            currentAnnounceBlocks.push({type:'paragraph', content:''}); 
+            renderAnnounceBlocks(); 
+        },
+        'ann-add-list': () => { 
+            currentAnnounceBlocks.push({type:'list-item', content:''}); 
+            renderAnnounceBlocks(); 
+        },
+        'ann-add-image': () => { 
+            currentAnnounceBlocks.push({type:'image', url:''}); 
+            renderAnnounceBlocks(); 
+        },
+        'ann-add-btn': () => { 
+            currentAnnounceBlocks.push({type:'button', text:'Click Me', link:'#', color:'#9F00FF'}); 
+            renderAnnounceBlocks(); 
         }
     };
-
-    // 5. Save Handler
-    document.getElementById('save-announce-btn').addEventListener('click', async () => {
-        const pages = [];
-        pageChecks.forEach(cb => { if(cb.checked) pages.push(cb.value); });
-        
-        // IMPORTANT: If pages array is empty, it means ALL PAGES are targeted.
-        // We save exactly what the user selected. The client script (announcement.js)
-        // handles [] as "Show Everywhere".
-
-        try {
-            await updateRTDB(announceRef, {
-                enabled: enabledCheck.checked,
-                frequency: freqSelect.value,
-                pages: pages, // Save the array (empty or populated)
-                content: currentAnnounceBlocks,
-                lastUpdated: Date.now() // Forces popup to show again if it's new
+    
+    Object.entries(buttonConfigs).forEach(([id, handler]) => {
+        const btn = document.getElementById(id);
+        if (btn) {
+            // Remove all existing listeners by cloning
+            const newBtn = btn.cloneNode(true);
+            btn.parentNode.replaceChild(newBtn, btn);
+            // Add fresh listener
+            newBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                console.log(`Block button clicked: ${id}`);
+                handler();
             });
-            showToast("Announcement Published!", "success");
-        } catch (e) {
-            showToast(e.message, "error");
+            console.log(`✓ Attached listener to ${id}`);
+        } else {
+            console.warn(`✗ Button not found: ${id}`);
         }
     });
 }
 
+async function loadAllAnnouncements() {
+    const announceRef = dbRef(rtdb, "announcements");
+    
+    onValue(announceRef, (snap) => {
+        allAnnouncements = [];
+        
+        if (snap.exists()) {
+            const data = snap.val();
+            Object.keys(data).forEach(key => {
+                allAnnouncements.push({ id: key, ...data[key] });
+            });
+        }
+        
+        allAnnouncements.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+        renderAnnouncementList();
+    }, (error) => {
+        console.error("Error loading announcements:", error);
+        renderAnnouncementList();
+    });
+}
+
+function renderAnnouncementList() {
+    const tbody = document.getElementById('announcement-table-body');
+    if (!tbody) {
+        console.error('❌ announcement-table-body not found!');
+        return;
+    }
+    
+    tbody.innerHTML = '';
+    
+    if (allAnnouncements.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="4" class="px-6 py-12 text-center text-gray-500">No announcements yet. Create one!</td></tr>`;
+        return;
+    }
+    
+    allAnnouncements.forEach(announce => {
+        const tr = document.createElement('tr');
+        tr.className = "hover:bg-gray-800/50 transition border-b border-gray-800 last:border-0";
+        
+        const pagesList = announce.pages && announce.pages.length > 0 
+            ? announce.pages.join(', ') 
+            : 'All Pages';
+        
+        const statusBadge = announce.enabled 
+            ? '<span class="bg-green-900/30 text-green-400 px-2 py-1 rounded text-xs font-bold">ACTIVE</span>'
+            : '<span class="bg-gray-700 text-gray-400 px-2 py-1 rounded text-xs font-bold">DISABLED</span>';
+        
+        tr.innerHTML = `
+            <td class="px-6 py-4">
+                <div class="font-bold text-white">${announce.title || 'Untitled'}</div>
+                <div class="text-xs text-gray-500">${announce.frequency || 'once'}</div>
+            </td>
+            <td class="px-6 py-4 text-sm text-gray-400">${pagesList}</td>
+            <td class="px-6 py-4">${statusBadge}</td>
+            <td class="px-6 py-4 text-right space-x-2">
+                <button class="edit-announce-btn bg-gray-800 hover:bg-blue-600 text-gray-400 hover:text-white w-8 h-8 rounded-md transition" data-id="${announce.id}">
+                    <i class="fa-solid fa-pen"></i>
+                </button>
+                <button class="toggle-announce-btn bg-gray-800 hover:bg-yellow-600 text-gray-400 hover:text-white w-8 h-8 rounded-md transition" data-id="${announce.id}">
+                    <i class="fa-solid fa-${announce.enabled ? 'eye-slash' : 'eye'}"></i>
+                </button>
+                <button class="del-announce-btn bg-gray-800 hover:bg-red-600 text-gray-400 hover:text-white w-8 h-8 rounded-md transition" data-id="${announce.id}">
+                    <i class="fa-solid fa-trash"></i>
+                </button>
+            </td>
+        `;
+        
+        tbody.appendChild(tr);
+    });
+    
+    document.querySelectorAll('.edit-announce-btn').forEach(btn => {
+        btn.addEventListener('click', () => openAnnouncementEditor(btn.dataset.id));
+    });
+    
+    document.querySelectorAll('.toggle-announce-btn').forEach(btn => {
+        btn.addEventListener('click', () => toggleAnnouncementStatus(btn.dataset.id));
+    });
+    
+    document.querySelectorAll('.del-announce-btn').forEach(btn => {
+        btn.addEventListener('click', () => deleteAnnouncement(btn.dataset.id));
+    });
+}
+
+function openAnnouncementEditor(announcementId) {
+    currentEditingAnnouncementId = announcementId;
+    
+    const titleInput = document.getElementById('announce-title');
+    const enabledCheck = document.getElementById('announce-enabled');
+    const freqSelect = document.getElementById('announce-freq');
+    const pageChecks = document.querySelectorAll('.announce-page-check');
+    
+    if (announcementId) {
+        const announce = allAnnouncements.find(a => a.id === announcementId);
+        if (!announce) return;
+        
+        titleInput.value = announce.title || '';
+        enabledCheck.checked = announce.enabled || false;
+        freqSelect.value = announce.frequency || 'once';
+        
+        const activePages = announce.pages || [];
+        pageChecks.forEach(cb => cb.checked = activePages.includes(cb.value));
+        
+        currentAnnounceBlocks = announce.content || [];
+    } else {
+        currentEditingAnnouncementId = 'announce_' + Date.now();
+        titleInput.value = '';
+        enabledCheck.checked = true;
+        freqSelect.value = 'once';
+        pageChecks.forEach(cb => cb.checked = false);
+        currentAnnounceBlocks = [];
+    }
+    
+    document.getElementById('announce-list-section').classList.add('hidden');
+    document.getElementById('announce-editor-section').classList.remove('hidden');
+    
+    // Wait for DOM to update, then setup buttons and render
+    setTimeout(() => {
+        setupAnnouncementBlockButtons();
+        renderAnnounceBlocks();
+    }, 50);
+}
+
+async function saveCurrentAnnouncement() {
+    const titleInput = document.getElementById('announce-title');
+    const enabledCheck = document.getElementById('announce-enabled');
+    const freqSelect = document.getElementById('announce-freq');
+    const pageChecks = document.querySelectorAll('.announce-page-check');
+    
+    const pages = [];
+    pageChecks.forEach(cb => { if(cb.checked) pages.push(cb.value); });
+    
+    if (!titleInput.value.trim()) {
+        return showToast("Please enter a title for this announcement", "error");
+    }
+    
+    const payload = {
+        id: currentEditingAnnouncementId,
+        title: titleInput.value.trim(),
+        enabled: enabledCheck.checked,
+        frequency: freqSelect.value,
+        pages: pages,
+        content: currentAnnounceBlocks,
+        lastUpdated: Date.now(),
+        createdAt: allAnnouncements.find(a => a.id === currentEditingAnnouncementId)?.createdAt || Date.now()
+    };
+    
+    try {
+        await setRTDB(dbRef(rtdb, `announcements/${currentEditingAnnouncementId}`), payload);
+        showToast("Announcement Saved!", "success");
+        
+        document.getElementById('announce-editor-section').classList.add('hidden');
+        document.getElementById('announce-list-section').classList.remove('hidden');
+    } catch (e) {
+        showToast("Error: " + e.message, "error");
+    }
+}
+
+async function toggleAnnouncementStatus(id) {
+    const announce = allAnnouncements.find(a => a.id === id);
+    if (!announce) return;
+    
+    try {
+        await updateRTDB(dbRef(rtdb, `announcements/${id}`), {
+            enabled: !announce.enabled,
+            lastUpdated: Date.now()
+        });
+        showToast(announce.enabled ? "Announcement Disabled" : "Announcement Enabled", "success");
+    } catch (e) {
+        showToast("Error: " + e.message, "error");
+    }
+}
+
+async function deleteAnnouncement(id) {
+    showCustomPopup("Delete Announcement", "Permanently delete this announcement?", "confirm", async (confirmed) => {
+        if (confirmed) {
+            try {
+                await setRTDB(dbRef(rtdb, `announcements/${id}`), null);
+                showToast("Announcement Deleted", "success");
+            } catch (e) {
+                showToast("Error: " + e.message, "error");
+            }
+        }
+    });
+}
+
+function renderAnnounceBlocks() {
+    const container = document.getElementById('announce-blocks-container');
+    const emptyMsg = document.getElementById('announce-empty-msg');
+    
+    if (!container) {
+        console.error('❌ announce-blocks-container not found!');
+        return;
+    }
+    
+    container.innerHTML = '';
+    
+    if (currentAnnounceBlocks.length === 0) {
+        if (emptyMsg) emptyMsg.style.display = 'flex';
+    } else {
+        if (emptyMsg) emptyMsg.style.display = 'none';
+        currentAnnounceBlocks.forEach((block, idx) => {
+            container.appendChild(createAnnounceBlockUI(block, idx));
+        });
+    }
+}
+
+function createAnnounceBlockUI(block, index) {
+    const div = document.createElement('div');
+    div.className = "bg-gray-900 border border-gray-700 p-3 rounded-lg relative group transition hover:border-purple-500";
+    
+    let innerHTML = `<div class="flex justify-between mb-2 text-[10px] uppercase font-bold text-gray-500 tracking-wider">
+        <span>${block.type}</span> 
+        <div class="flex gap-2">
+            <button class="text-gray-500 hover:text-white" onclick="moveAnnounceBlock(${index}, -1)"><i class="fa-solid fa-arrow-up"></i></button>
+            <button class="text-gray-500 hover:text-white" onclick="moveAnnounceBlock(${index}, 1)"><i class="fa-solid fa-arrow-down"></i></button>
+            <button class="text-red-500 hover:text-white" onclick="removeAnnounceBlock(${index})"><i class="fa-solid fa-times"></i></button>
+        </div>
+    </div>`;
+
+    if (block.type === 'heading') {
+        innerHTML += `
+            <input type="text" class="w-full bg-black border border-gray-700 rounded p-2 mb-2 text-white font-bold" placeholder="Heading Text" value="${block.content || ''}" onchange="updateAnnounceBlock(${index}, 'content', this.value)">
+            <div class="flex items-center gap-2">
+                <span class="text-xs text-gray-500">Color:</span>
+                <input type="color" class="bg-transparent border-0 h-6 w-8 cursor-pointer" value="${block.color || '#ffffff'}" onchange="updateAnnounceBlock(${index}, 'color', this.value)">
+            </div>
+        `;
+    } else if (block.type === 'paragraph' || block.type === 'list-item') {
+        innerHTML += `<textarea class="w-full bg-black border border-gray-700 rounded p-2 text-sm text-gray-300 h-16" placeholder="Content..." onchange="updateAnnounceBlock(${index}, 'content', this.value)">${block.content || ''}</textarea>`;
+    } else if (block.type === 'image') {
+        innerHTML += `<input type="text" class="w-full bg-black border border-gray-700 rounded p-2 text-xs text-green-400 font-mono" placeholder="Image URL" value="${block.url || ''}" onchange="updateAnnounceBlock(${index}, 'url', this.value)">`;
+    } else if (block.type === 'button') {
+        innerHTML += `
+            <div class="grid grid-cols-2 gap-2 mb-2">
+                <input type="text" class="bg-black border border-gray-700 rounded p-2 text-sm text-white" placeholder="Button Label" value="${block.text || ''}" onchange="updateAnnounceBlock(${index}, 'text', this.value)">
+                <input type="color" class="h-full w-full bg-black border border-gray-700 rounded cursor-pointer" value="${block.color || '#9F00FF'}" onchange="updateAnnounceBlock(${index}, 'color', this.value)">
+            </div>
+            <input type="text" class="w-full bg-black border border-gray-700 rounded p-2 text-xs text-blue-400 font-mono" placeholder="Link URL (/pages/...)" value="${block.link || ''}" onchange="updateAnnounceBlock(${index}, 'link', this.value)">
+        `;
+    }
+
+    div.innerHTML = innerHTML;
+    return div;
+}
+
+window.removeAnnounceBlock = (idx) => { currentAnnounceBlocks.splice(idx, 1); renderAnnounceBlocks(); };
+window.updateAnnounceBlock = (idx, field, val) => { currentAnnounceBlocks[idx][field] = val; };
+window.moveAnnounceBlock = (idx, dir) => {
+    if ((dir === -1 && idx > 0) || (dir === 1 && idx < currentAnnounceBlocks.length - 1)) {
+        const temp = currentAnnounceBlocks[idx];
+        currentAnnounceBlocks[idx] = currentAnnounceBlocks[idx + dir];
+        currentAnnounceBlocks[idx + dir] = temp;
+        renderAnnounceBlocks();
+    }
+};
 let allSubscribers = [];
 let selectedRecipients = new Set();
 let emailBlocks = [];
