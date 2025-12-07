@@ -139,35 +139,15 @@
     </div>
 </div>
 <script src="/scripts/tod.js"></script>
-<script src="/scripts/tog.js"></script>
 <script src="/scripts/caro.js"></script>
 <script src="/scripts/particles.js"></script>
 <script src="/scripts/theme.js"></script>
 <script src="/scripts/hamburger.js"></script>
 <script src="/scripts/caro.js"></script>
+<script type="module" src="/scripts/firebase-config.js"></script>
 <script type="module" src="/scripts/search.js"></script>
 <script type="module" src="/scripts/header_auth.js"></script>
 <script type="module" src="/scripts/announcement.js"></script>
 <script type="module" src="/scripts/ai_assistant.js"></script>
 <script type="module" src="/scripts/community.js"></script>
-<script type="module">
-/* When clicking download */
-document.querySelectorAll(".gn-btn-download").forEach(btn => {
-    btn.addEventListener("click", e => {
-        const user = auth.currentUser;
-        if (!user) return alert("Please login first.");
-
-        const parent = btn.closest(".content-one");
-        const appId = parent.dataset.app;
-
-        update(ref(db, "users/" + user.uid + "/apps/" + appId), {
-            downloaded: true
-        });
-
-        btn.style.display = "none";
-        parent.querySelector(".gn-btn-update").style.display = "block";
-        parent.querySelector(".gn-btn-uninstall").style.display = "block";
-    });
-});
-</script>
 </body>

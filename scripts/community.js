@@ -2,13 +2,15 @@
    COMMUNITY CHAT - OPTIMIZED PERFORMANCE
    - FAST LOAD: Limits chat history to last 50 messages
    - FIXED AUTH: Uses centralized login state
+   - FIX: Immediate local message display on successful send.
 ========================================================= */
 
+// NOTE: Ensure your firebase-config.js correctly exports mainAuth and mainDb.
 import { mainAuth, mainDb } from './firebase-config.js';
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
 import { 
     ref, set, push, onChildAdded, onValue, onDisconnect, 
-    query, limitToLast // <--- ADDED FOR PERFORMANCE
+    query, limitToLast // <--- USED FOR PERFORMANCE
 } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-database.js";
 
 // --- DOM ELEMENTS ---
@@ -25,8 +27,9 @@ let usersCache = {};
 onAuthStateChanged(mainAuth, (user) => {
     if (user) {
         currentUser = user;
-        const username = user.displayName || "Anonymous";
+        const username = user.displayName || user.email.split('@')[0] || "Anonymous User";
         
+        // 1. Setup User Presence in RTDB
         const userStatusRef = ref(mainDb, `community/users/${user.uid}`);
         set(userStatusRef, {
             username: username,
@@ -34,22 +37,31 @@ onAuthStateChanged(mainAuth, (user) => {
             lastSeen: Date.now()
         });
 
+        // Remove user from 'online' list when they close the page
         onDisconnect(userStatusRef).remove();
+        
+        // 2. Start Chat functionality
         setupChat();
     } else {
+        // Redirect if not logged in
+        console.warn("User not authenticated. Redirecting to login.");
         window.location.href = "/pages/login.html";
     }
 });
 
 function setupChat() {
     // --- 1. OPTIMIZED MESSAGES LOADING ---
-    // Instead of loading ALL messages, we only load the last 50.
     const messagesRef = ref(mainDb, 'community/messages');
     const recentMessagesQuery = query(messagesRef, limitToLast(50));
     
+    // Listens for the last 50 messages initially, and then any new messages.
     onChildAdded(recentMessagesQuery, (snapshot) => {
         const msg = snapshot.val();
         displayMessage(msg);
+    }, (error) => {
+        // ERROR CHECKING: This will fire if 'community/messages' path is missing or permissions are wrong
+        console.error("Firebase Message Listener Failed:", error.message);
+        console.warn("ACTION REQUIRED: Check if the 'community' node exists in your Realtime Database!");
     });
 
     // --- 2. ACTIVE USERS ---
@@ -57,25 +69,46 @@ function setupChat() {
     onValue(usersRef, (snapshot) => {
         if (!userListContainer) return;
         userListContainer.innerHTML = '';
-        usersCache = {};
+        usersCache = {}; // Reset cache
+
+        let isOnline = false;
         
         snapshot.forEach((childSnapshot) => {
             const userData = childSnapshot.val();
             const uid = childSnapshot.key;
             usersCache[uid] = userData.username;
+            
+            if (currentUser && uid === currentUser.uid) {
+                isOnline = true;
+            }
 
             const li = document.createElement('li');
+            // Added check for "online" status based on presence in the list
             li.innerHTML = `<div class="user-status"></div> ${userData.username}`;
             userListContainer.appendChild(li);
         });
+
+        if (!isOnline && currentUser) {
+            // Re-assert presence if for some reason the listener didn't catch the current user's entry
+            console.log("Re-asserting user presence...");
+            const userStatusRef = ref(mainDb, `community/users/${currentUser.uid}`);
+            set(userStatusRef, {
+                username: currentUser.displayName || currentUser.email.split('@')[0] || "Anonymous User",
+                status: 'online',
+                lastSeen: Date.now()
+            });
+        }
     });
 
-    // --- SEND ---
+    // --- INPUT HANDLERS ---
     if (sendBtn) sendBtn.addEventListener('click', sendMessage);
     
     if (messageInput) {
         messageInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') sendMessage();
+            if (e.key === 'Enter') {
+                e.preventDefault(); // Prevents default form submission if input is inside a form
+                sendMessage();
+            }
         });
         messageInput.addEventListener('input', handleMentions);
     }
@@ -89,16 +122,26 @@ function sendMessage() {
     const messagesRef = ref(mainDb, 'community/messages');
     const newMessageRef = push(messagesRef);
     
-    set(newMessageRef, {
-        sender: currentUser.displayName || "Anonymous",
+    const messageData = {
+        sender: currentUser.displayName || currentUser.email.split('@')[0] || "Anonymous",
         senderUid: currentUser.uid,
         text: text,
         timestamp: Date.now()
-    });
-
-    messageInput.value = '';
-    if (mentionList) mentionList.style.display = 'none';
-    scrollToBottom(); 
+    };
+    
+    // 1. Write the message to the database
+    set(newMessageRef, messageData)
+        .then(() => {
+            // 2. FIX: Immediately display the message locally after successful write.
+            displayMessage(messageData); 
+            
+            messageInput.value = '';
+            if (mentionList) mentionList.style.display = 'none';
+        })
+        .catch(error => {
+            console.error("Error sending message:", error);
+            alert("Failed to send message. Please check connection and permissions.");
+        });
 }
 
 function displayMessage(msg) {
@@ -136,6 +179,7 @@ function displayMessage(msg) {
 
 function scrollToBottom() {
     if (!chatMessages) return;
+    // Added a slight delay for smoother scrolling after rendering
     setTimeout(() => {
         chatMessages.scrollTop = chatMessages.scrollHeight;
     }, 50);
@@ -163,6 +207,7 @@ function showMentionPopup(query) {
     mentionList.innerHTML = '';
     let matchCount = 0;
 
+    // Filter usersCache by username
     Object.values(usersCache).forEach(username => {
         if (username.toLowerCase().startsWith(query)) {
             const div = document.createElement('div');
@@ -174,6 +219,7 @@ function showMentionPopup(query) {
         }
     });
 
+    // Use absolute positioning relative to the input area to show the popup
     mentionList.style.display = matchCount > 0 ? 'block' : 'none';
 }
 
@@ -183,10 +229,14 @@ function completeMention(username) {
     const val = messageInput.value;
     const cursorPos = messageInput.selectionStart;
     
+    // Replaces the incomplete mention with the full username and a space
     const textBefore = val.slice(0, cursorPos).replace(/@(\w*)$/, `@${username} `);
     const textAfter = val.slice(cursorPos);
     
     messageInput.value = textBefore + textAfter;
+    // Set cursor position after the completed mention for better UX
+    messageInput.selectionStart = messageInput.selectionEnd = textBefore.length; 
+    
     mentionList.style.display = 'none';
     messageInput.focus();
 }
